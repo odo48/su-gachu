@@ -1,0 +1,2958 @@
+{
+  "metadata": {
+    "source": "60Day Challenge PDF",
+    "language": "ro",
+    "goal": [
+      "fat_loss",
+      "muscle_retention"
+    ]
+  },
+  "recipes": [
+    {
+      "id": "waffle-egg-sandwich",
+      "name": "Waffle egg sandwich",
+      "displayName": "Waffle egg sandwich",
+      "category": "breakfast",
+      "mealType": [
+        "breakfast"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 850,
+        "protein_g": 90,
+        "carbs_g": 29,
+        "fat_g": 41
+      },
+      "ingredients": [
+        {
+          "ingredientId": "whole_egg",
+          "name": "whole_egg",
+          "displayName": "5 ouă întregi",
+          "quantity": 5,
+          "unit": "piece",
+          "optional": false
+        },
+        {
+          "ingredientId": "egg_whites",
+          "name": "egg_whites",
+          "displayName": "150g albuș",
+          "quantity": 150,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "flour",
+          "name": "flour",
+          "displayName": "30g făină",
+          "quantity": 30,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "baking_powder",
+          "name": "baking_powder",
+          "displayName": "praf de copt",
+          "quantity": 0,
+          "unit": "gram",
+          "optional": true
+        },
+        {
+          "ingredientId": "bacon_cubes",
+          "name": "bacon_cubes",
+          "displayName": "25g cubulețe șuncă porc",
+          "quantity": 25,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "protein_cheddar",
+          "name": "protein_cheddar",
+          "displayName": "2 felii cheddar proteic",
+          "quantity": 2,
+          "unit": "slice",
+          "optional": false
+        },
+        {
+          "ingredientId": "turkey_salami",
+          "name": "turkey_salami",
+          "displayName": "40g salam curcan (Kaufland)",
+          "quantity": 40,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "prosciutto_cotto",
+          "name": "prosciutto_cotto",
+          "displayName": "40g prosciutto cotto",
+          "quantity": 40,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "light_cream_cheese",
+          "name": "light_cream_cheese",
+          "displayName": "30g light cream cheese (Kaufland)",
+          "quantity": 30,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Într-un blender punem 1 ou, albușul, făina, sare și praf de copt, apoi mixăm.",
+        "Prăjim compoziția în waffle maker (ies aproximativ 4 waffle).",
+        "Prăjim cubulețele de porc și facem ochiuri din cele 4 ouă rămase.",
+        "Când waffle-urile sunt gata, le ungem cu cream cheese, punem ouăle, feliile de cheddar, prosciutto și salamul.",
+        "Închidem cu cealaltă parte de waffle și le punem în tigaie cu capac peste, ca să se topească cașcavalul.",
+        "Putem folosi sosuri 0kcal."
+      ],
+      "estimatedPrepTimeMinutes": 20,
+      "difficulty": "easy",
+      "highProtein": true,
+      "lowCalorie": false,
+      "splitFriendly": false,
+      "sourcePage": 8,
+      "tags": [
+        "high-protein",
+        "fat-loss",
+        "savory",
+        "meal-prep",
+        "gym-friendly"
+      ]
+    },
+    {
+      "id": "salata-de-oua",
+      "name": "Salată de ouă",
+      "displayName": "Salată de ouă",
+      "category": "breakfast",
+      "mealType": [
+        "breakfast",
+        "lunch"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 529,
+        "protein_g": 54.2,
+        "carbs_g": 16.1,
+        "fat_g": 27
+      },
+      "ingredients": [
+        {
+          "ingredientId": "whole_egg",
+          "name": "whole_egg",
+          "displayName": "4 ouă",
+          "quantity": 4,
+          "unit": "piece",
+          "optional": false
+        },
+        {
+          "ingredientId": "egg_whites",
+          "name": "egg_whites",
+          "displayName": "150 ml albuș de ou",
+          "quantity": 150,
+          "unit": "ml",
+          "optional": false
+        },
+        {
+          "ingredientId": "bacon_cubes",
+          "name": "bacon_cubes",
+          "displayName": "30g cubulețe șuncă porc (bacon)",
+          "quantity": 30,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "toast_bread",
+          "name": "toast_bread",
+          "displayName": "1 felie pâine toast",
+          "quantity": 1,
+          "unit": "slice",
+          "optional": false
+        },
+        {
+          "ingredientId": "light_cream_cheese",
+          "name": "light_cream_cheese",
+          "displayName": "30g light cream cheese (Kaufland)",
+          "quantity": 30,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Punem 4 ouă la fiert pentru 7-8 minute.",
+        "Prăjim baconul, iar când e 90% gata punem peste albușul de ou și îl prăjim împreună.",
+        "Punem ouăle fierte într-un bol, le zdrobim, adăugăm cream cheese, albușul cu bacon și amestecăm până iese o consistență cremoasă.",
+        "Putem unge pe felia de pâine sau o mâncăm alături; pâinea se poate și prăji."
+      ],
+      "estimatedPrepTimeMinutes": 15,
+      "difficulty": "easy",
+      "highProtein": true,
+      "lowCalorie": true,
+      "splitFriendly": false,
+      "sourcePage": 9,
+      "tags": [
+        "high-protein",
+        "low-calorie",
+        "savory",
+        "quick-meal"
+      ]
+    },
+    {
+      "id": "burger-de-pui",
+      "name": "Burger de pui",
+      "displayName": "Burger de pui",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 3,
+      "nutrition": {
+        "calories": 1140,
+        "protein_g": 147,
+        "carbs_g": 76,
+        "fat_g": 27
+      },
+      "ingredients": [
+        {
+          "ingredientId": "chicken_breast",
+          "name": "chicken_breast",
+          "displayName": "500g piept de pui",
+          "quantity": 500,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "burger_bun",
+          "name": "burger_bun",
+          "displayName": "3 chifle burger (Kaufland 135kcal, Schulstad)",
+          "quantity": 3,
+          "unit": "piece",
+          "optional": false
+        },
+        {
+          "ingredientId": "protein_cheddar",
+          "name": "protein_cheddar",
+          "displayName": "3 felii cheddar proteic (Lidl)",
+          "quantity": 3,
+          "unit": "slice",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Tăiem puiul în felii și condimentăm după gust (sare, piper, usturoi, boia dulce/afumat/iute).",
+        "Prăjim în tigaie la foc mic spre mediu, de preferat fără ulei sau cu foarte puțin spray de ulei, cu capac peste pentru a ieși fraged; întoarcem din 2 în 2 minute.",
+        "Punem peste feliile de cheddar proteic și capacul ca să se topească.",
+        "În același timp tăiem chiflele în jumătate și le prăjim în tigaie.",
+        "Asamblăm puiul în chiflă și adăugăm sosuri 0kcal, salată, roșii și ceapă după plac."
+      ],
+      "estimatedPrepTimeMinutes": 20,
+      "difficulty": "easy",
+      "highProtein": true,
+      "lowCalorie": false,
+      "splitFriendly": false,
+      "sourcePage": 10,
+      "tags": [
+        "high-protein",
+        "fat-loss",
+        "comfort-food",
+        "savory",
+        "gym-friendly"
+      ]
+    },
+    {
+      "id": "wrap-cu-pui-si-bacon",
+      "name": "Wrap cu pui și bacon",
+      "displayName": "Wrap cu pui și bacon",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 600,
+        "protein_g": 66,
+        "carbs_g": 34,
+        "fat_g": 21
+      },
+      "ingredients": [
+        {
+          "ingredientId": "chicken_breast",
+          "name": "chicken_breast",
+          "displayName": "200g piept de pui",
+          "quantity": 200,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "tortilla",
+          "name": "tortilla",
+          "displayName": "1 tortilla wrap",
+          "quantity": 1,
+          "unit": "piece",
+          "optional": false
+        },
+        {
+          "ingredientId": "light_cream_cheese",
+          "name": "light_cream_cheese",
+          "displayName": "25g light cream cheese (Kaufland)",
+          "quantity": 25,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "light_cheese",
+          "name": "light_cheese",
+          "displayName": "50g cașcaval light",
+          "quantity": 50,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "bacon_cubes",
+          "name": "bacon_cubes",
+          "displayName": "25g cubulețe șuncă porc",
+          "quantity": 25,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Tăiem puiul în cubulețe și condimentăm după gust.",
+        "Prăjim baconul, îl scoatem, iar în grăsimea rămasă prăjim pieptul de pui.",
+        "Când e gata, adăugăm baconul, cream cheese și cașcavalul, ținem focul la minim până se topește tot.",
+        "Punem în lipie, închidem și prăjim wrap-ul în tigaie."
+      ],
+      "estimatedPrepTimeMinutes": 15,
+      "difficulty": "easy",
+      "highProtein": true,
+      "lowCalorie": true,
+      "splitFriendly": false,
+      "sourcePage": 11,
+      "tags": [
+        "high-protein",
+        "low-calorie",
+        "savory",
+        "quick-meal"
+      ]
+    },
+    {
+      "id": "mac-and-cheese-cu-pui",
+      "name": "Mac and cheese cu pui",
+      "displayName": "Mac and cheese cu pui",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 940,
+        "protein_g": 95,
+        "carbs_g": 83,
+        "fat_g": 24
+      },
+      "ingredients": [
+        {
+          "ingredientId": "chicken_breast",
+          "name": "chicken_breast",
+          "displayName": "250g piept de pui",
+          "quantity": 250,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "pasta",
+          "name": "pasta",
+          "displayName": "100g macaroane",
+          "quantity": 100,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "light_cooking_cream",
+          "name": "light_cooking_cream",
+          "displayName": "100ml smântână de gătit light (Lidl-Milbona)",
+          "quantity": 100,
+          "unit": "ml",
+          "optional": false
+        },
+        {
+          "ingredientId": "mozzarella_light",
+          "name": "mozzarella_light",
+          "displayName": "125g mozzarella light",
+          "quantity": 125,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Punem macaroanele la fiert 8-10 minute.",
+        "Tăiem puiul în cubulețe și condimentăm după gust.",
+        "Prăjim puiul în tigaie fără ulei sau cu puțin spray de ulei.",
+        "Când puiul și pastele sunt gata, le combinăm în tigaie, adăugăm smântâna de gătit, mozzarella light și puțină apă de la paste.",
+        "Amestecăm la foc minim până se topește și obținem o compoziție cremoasă."
+      ],
+      "estimatedPrepTimeMinutes": 25,
+      "difficulty": "medium",
+      "highProtein": true,
+      "lowCalorie": false,
+      "splitFriendly": false,
+      "sourcePage": 12,
+      "tags": [
+        "high-protein",
+        "comfort-food",
+        "savory",
+        "meal-prep"
+      ]
+    },
+    {
+      "id": "carbonara-cu-pui",
+      "name": "Carbonara cu pui",
+      "displayName": "Carbonara cu pui",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 1000,
+        "protein_g": 100,
+        "carbs_g": 80,
+        "fat_g": 29
+      },
+      "ingredients": [
+        {
+          "ingredientId": "chicken_breast",
+          "name": "chicken_breast",
+          "displayName": "300g piept de pui",
+          "quantity": 300,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "pasta",
+          "name": "pasta",
+          "displayName": "100g paste",
+          "quantity": 100,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "light_cooking_cream",
+          "name": "light_cooking_cream",
+          "displayName": "100ml smântână de gătit light (Lidl-Milbona)",
+          "quantity": 100,
+          "unit": "ml",
+          "optional": false
+        },
+        {
+          "ingredientId": "bacon_cubes",
+          "name": "bacon_cubes",
+          "displayName": "50g cubulețe șuncă porc",
+          "quantity": 50,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "parmesan",
+          "name": "parmesan",
+          "displayName": "20g parmezan ras",
+          "quantity": 20,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Punem pastele la fiert 8-10 minute.",
+        "Tăiem puiul în cubulețe și condimentăm după gust (sare, piper, usturoi).",
+        "Prăjim baconul, îl scoatem și prăjim puiul în grăsimea rămasă.",
+        "Adăugăm baconul, pastele, smântâna de gătit și puțină apă de la paste; amestecăm la foc minim până devine cremos.",
+        "Punem în farfurie și adăugăm parmezan ras peste."
+      ],
+      "estimatedPrepTimeMinutes": 25,
+      "difficulty": "medium",
+      "highProtein": true,
+      "lowCalorie": false,
+      "splitFriendly": false,
+      "sourcePage": 13,
+      "tags": [
+        "high-protein",
+        "comfort-food",
+        "savory",
+        "meal-prep"
+      ]
+    },
+    {
+      "id": "spaghete-bolognese",
+      "name": "Spaghete bolognese",
+      "displayName": "Spaghete bolognese",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 1050,
+        "protein_g": 93,
+        "carbs_g": 97,
+        "fat_g": 28
+      },
+      "ingredients": [
+        {
+          "ingredientId": "lean_ground_beef",
+          "name": "lean_ground_beef",
+          "displayName": "300g carne tocată de vită fără grăsime",
+          "quantity": 300,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "pasta",
+          "name": "pasta",
+          "displayName": "100g spaghete",
+          "quantity": 100,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "tomato_sauce",
+          "name": "tomato_sauce",
+          "displayName": "100-200g sos de roșii",
+          "quantity": 150,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "bolognese_sauce",
+          "name": "bolognese_sauce",
+          "displayName": "200g sos de bolognese (Lidl Combino)",
+          "quantity": 200,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "protein_cheddar",
+          "name": "protein_cheddar",
+          "displayName": "1 felie cheddar proteic Lidl",
+          "quantity": 1,
+          "unit": "slice",
+          "optional": false
+        },
+        {
+          "ingredientId": "parmesan",
+          "name": "parmesan",
+          "displayName": "20g parmezan ras",
+          "quantity": 20,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Punem pastele la fiert 8-10 minute.",
+        "Prăjim carnea de vită, adăugăm sosul de roșii și sosul de bolognese, amestecăm puțin.",
+        "Adăugăm pastele în tigaie împreună cu felia de cheddar până ajunge la consistența dorită.",
+        "Adăugăm parmezanul ras peste.",
+        "Se poate împărți și în 2 mese."
+      ],
+      "estimatedPrepTimeMinutes": 25,
+      "difficulty": "medium",
+      "highProtein": true,
+      "lowCalorie": false,
+      "splitFriendly": true,
+      "sourcePage": 14,
+      "tags": [
+        "high-protein",
+        "comfort-food",
+        "savory",
+        "meal-prep"
+      ]
+    },
+    {
+      "id": "sandwich-proteic",
+      "name": "Sandwich proteic",
+      "displayName": "Sandwich proteic",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 1020,
+        "protein_g": 100,
+        "carbs_g": 102,
+        "fat_g": 22
+      },
+      "ingredients": [
+        {
+          "ingredientId": "ciabatta_bread",
+          "name": "ciabatta_bread",
+          "displayName": "1 pâine ciabatta/rustică",
+          "quantity": 1,
+          "unit": "piece",
+          "optional": false
+        },
+        {
+          "ingredientId": "prosciutto",
+          "name": "prosciutto",
+          "displayName": "100g prosciutto",
+          "quantity": 100,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "beef_bresaola",
+          "name": "beef_bresaola",
+          "displayName": "80g bresaola vită",
+          "quantity": 80,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "turkey_salami",
+          "name": "turkey_salami",
+          "displayName": "30g salam curcan (Kaufland)",
+          "quantity": 30,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "light_cream_cheese",
+          "name": "light_cream_cheese",
+          "displayName": "30g cream cheese light (Kaufland)",
+          "quantity": 30,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "mozzarella_light",
+          "name": "mozzarella_light",
+          "displayName": "125g mozzarella light",
+          "quantity": 125,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Tăiem pâinea în jumătate și scoatem miezul (ajungem la 180-200g).",
+        "Ungem cu cream cheese și adăugăm restul ingredientelor.",
+        "Putem mânca alături roșii, castraveți și ardei după plac (adaugă 50-100 kcal)."
+      ],
+      "estimatedPrepTimeMinutes": 10,
+      "difficulty": "easy",
+      "highProtein": true,
+      "lowCalorie": false,
+      "splitFriendly": false,
+      "sourcePage": 15,
+      "tags": [
+        "high-protein",
+        "savory",
+        "quick-meal"
+      ]
+    },
+    {
+      "id": "piure-cu-pui-si-varza",
+      "name": "Piure cu pui și varză",
+      "displayName": "Piure cu pui și varză",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 600,
+        "protein_g": 75,
+        "carbs_g": 51,
+        "fat_g": 10
+      },
+      "ingredients": [
+        {
+          "ingredientId": "chicken_breast",
+          "name": "chicken_breast",
+          "displayName": "300g piept de pui",
+          "quantity": 300,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "instant_mashed_potatoes",
+          "name": "instant_mashed_potatoes",
+          "displayName": "300g piure instant (Harvest Basket-Lidl)",
+          "quantity": 300,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "white_cabbage",
+          "name": "white_cabbage",
+          "displayName": "300g varză albă",
+          "quantity": 300,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Tăiem pieptul de pui în cubulețe/felii, condimentăm după gust și îl prăjim fără ulei.",
+        "Preparăm piureul instant conform instrucțiunilor de pe ambalaj.",
+        "Peste varză punem sare și oțet după gust."
+      ],
+      "estimatedPrepTimeMinutes": 20,
+      "difficulty": "easy",
+      "highProtein": true,
+      "lowCalorie": true,
+      "splitFriendly": false,
+      "sourcePage": 16,
+      "tags": [
+        "high-protein",
+        "low-calorie",
+        "low-fat",
+        "savory"
+      ]
+    },
+    {
+      "id": "pizza-proteica",
+      "name": "Pizza proteică",
+      "displayName": "Pizza proteică",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 910,
+        "protein_g": 82,
+        "carbs_g": 85,
+        "fat_g": 26
+      },
+      "ingredients": [
+        {
+          "ingredientId": "flour",
+          "name": "flour",
+          "displayName": "100g făină",
+          "quantity": 100,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "greek_yogurt_2",
+          "name": "greek_yogurt_2",
+          "displayName": "100g skyr/iaurt grecesc 2%",
+          "quantity": 100,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "tomato_sauce",
+          "name": "tomato_sauce",
+          "displayName": "15g sos de roșii",
+          "quantity": 15,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "mozzarella_light",
+          "name": "mozzarella_light",
+          "displayName": "125g mozzarella light",
+          "quantity": 125,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "protein_cheddar",
+          "name": "protein_cheddar",
+          "displayName": "1 felie cheddar proteic",
+          "quantity": 1,
+          "unit": "slice",
+          "optional": false
+        },
+        {
+          "ingredientId": "prosciutto_cotto",
+          "name": "prosciutto_cotto",
+          "displayName": "50g prosciutto cotto",
+          "quantity": 50,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "bacon_cubes",
+          "name": "bacon_cubes",
+          "displayName": "35g cubulețe șuncă porc",
+          "quantity": 35,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "turkey_salami",
+          "name": "turkey_salami",
+          "displayName": "40g salam curcan (Kaufland)",
+          "quantity": 40,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "corn",
+          "name": "corn",
+          "displayName": "15g porumb",
+          "quantity": 15,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Amestecăm făina și skyr-ul/iaurtul grecesc într-un bol până obținem un aluat.",
+        "Întindem aluatul pe o foaie de copt și îl coacem 8-10 minute la 200°C.",
+        "Scoatem din cuptor, ungem cu sos de roșii și adăugăm prosciutto, mozzarella light, salam de curcan, cubulețele de șuncă și porumbul.",
+        "Punem înapoi în cuptor 12-15 minute la 200°C (gradele și timpul pot varia)."
+      ],
+      "estimatedPrepTimeMinutes": 35,
+      "difficulty": "medium",
+      "highProtein": true,
+      "lowCalorie": false,
+      "splitFriendly": false,
+      "sourcePage": 17,
+      "tags": [
+        "high-protein",
+        "comfort-food",
+        "savory",
+        "meal-prep"
+      ]
+    },
+    {
+      "id": "pollo-parmigiana",
+      "name": "Pollo parmigiana",
+      "displayName": "Pollo parmigiana",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 1000,
+        "protein_g": 131,
+        "carbs_g": 65,
+        "fat_g": 24
+      },
+      "ingredients": [
+        {
+          "ingredientId": "chicken_schnitzel",
+          "name": "chicken_schnitzel",
+          "displayName": "500g șnițel piept de pui",
+          "quantity": 500,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "protein_cheddar",
+          "name": "protein_cheddar",
+          "displayName": "4 felii cheddar proteic (Lidl)",
+          "quantity": 4,
+          "unit": "slice",
+          "optional": false
+        },
+        {
+          "ingredientId": "tomato_sauce",
+          "name": "tomato_sauce",
+          "displayName": "50g sos de roșii",
+          "quantity": 50,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "parmesan",
+          "name": "parmesan",
+          "displayName": "30g parmezan ras",
+          "quantity": 30,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Folosim șnițel pre-pregătit de la frigider (nu cel prăjit în ulei) sau îl facem din piept de pui trecut prin albuș de ou și pesmet.",
+        "Punem șnițelul într-o tavă cu hârtie de copt și dăm foarte puțin spray de ulei pe ambele părți.",
+        "Coacem 10-15 minute la 200-220°C, întoarcem și mai lăsăm 5-8 minute.",
+        "Adăugăm sosul de roșii, feliile de cheddar rupte și parmezanul ras; punem în cuptor câteva minute cât să se topească cașcavalul."
+      ],
+      "estimatedPrepTimeMinutes": 35,
+      "difficulty": "medium",
+      "highProtein": true,
+      "lowCalorie": false,
+      "splitFriendly": false,
+      "sourcePage": 18,
+      "tags": [
+        "high-protein",
+        "comfort-food",
+        "savory",
+        "meal-prep"
+      ]
+    },
+    {
+      "id": "breakfast-wrap",
+      "name": "Breakfast wrap",
+      "displayName": "Breakfast wrap",
+      "category": "breakfast",
+      "mealType": [
+        "breakfast"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 508,
+        "protein_g": 52,
+        "carbs_g": 8,
+        "fat_g": 26
+      },
+      "ingredients": [
+        {
+          "ingredientId": "protein_flatbread",
+          "name": "protein_flatbread",
+          "displayName": "1 lipie proteică",
+          "quantity": 1,
+          "unit": "piece",
+          "optional": false
+        },
+        {
+          "ingredientId": "protein_cheddar",
+          "name": "protein_cheddar",
+          "displayName": "2 felii cheddar proteic",
+          "quantity": 2,
+          "unit": "slice",
+          "optional": false
+        },
+        {
+          "ingredientId": "whole_egg",
+          "name": "whole_egg",
+          "displayName": "2 ouă",
+          "quantity": 2,
+          "unit": "piece",
+          "optional": false
+        },
+        {
+          "ingredientId": "egg_whites",
+          "name": "egg_whites",
+          "displayName": "50ml albuș de ou",
+          "quantity": 50,
+          "unit": "ml",
+          "optional": false
+        },
+        {
+          "ingredientId": "bacon_cubes",
+          "name": "bacon_cubes",
+          "displayName": "15g cubulețe șuncă",
+          "quantity": 15,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "turkey_salami",
+          "name": "turkey_salami",
+          "displayName": "20g salam curcan",
+          "quantity": 20,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Punem cubulețele de șuncă și salamul într-o tigaie de mărimea lipiei și prăjim până sunt 75% gata.",
+        "Turnăm peste ouăle și albușul bătute, plus feliile de cheddar rupte; punem capacul și ținem focul la minim.",
+        "Când e aproape gata dar partea de sus încă lipicioasă, punem lipia și întoarcem ca să se prăjească și ea."
+      ],
+      "estimatedPrepTimeMinutes": 15,
+      "difficulty": "easy",
+      "highProtein": true,
+      "lowCalorie": true,
+      "splitFriendly": false,
+      "sourcePage": 19,
+      "tags": [
+        "high-protein",
+        "low-calorie",
+        "savory",
+        "quick-meal"
+      ]
+    },
+    {
+      "id": "loaded-fries",
+      "name": "Loaded fries",
+      "displayName": "Loaded fries",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 1050,
+        "protein_g": 105,
+        "carbs_g": 68,
+        "fat_g": 37
+      },
+      "ingredients": [
+        {
+          "ingredientId": "lean_ground_beef",
+          "name": "lean_ground_beef",
+          "displayName": "300g carne de vită fără grăsime",
+          "quantity": 300,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "potatoes",
+          "name": "potatoes",
+          "displayName": "300g cartofi",
+          "quantity": 300,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "bacon_cubes",
+          "name": "bacon_cubes",
+          "displayName": "50g cubulețe șuncă porc",
+          "quantity": 50,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "butter",
+          "name": "butter",
+          "displayName": "10g unt",
+          "quantity": 10,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "flour",
+          "name": "flour",
+          "displayName": "10g făină",
+          "quantity": 10,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "milk_1_5",
+          "name": "milk_1_5",
+          "displayName": "130ml lapte 1,5%",
+          "quantity": 130,
+          "unit": "ml",
+          "optional": false
+        },
+        {
+          "ingredientId": "protein_cheddar",
+          "name": "protein_cheddar",
+          "displayName": "4 felii cheddar proteic",
+          "quantity": 4,
+          "unit": "slice",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Tăiem cartofii (sau folosim cartofi congelați neprăjiți), îi fierbem 5-8 minute, apoi îi punem la airfryer cu puțin spray de ulei și condimente, 15-20 minute la 200°C.",
+        "Prăjim baconul, iar în grăsimea rămasă prăjim carnea de vită.",
+        "Pentru sosul de cheddar: topim untul, adăugăm făina și amestecăm, apoi turnăm treptat laptele amestecând continuu.",
+        "Adăugăm feliile de cheddar rupte, condimentăm cu sare și boia dulce; ajustăm consistența cu lapte.",
+        "Punem cartofii, vita și baconul într-un bol și turnăm sosul de cheddar peste."
+      ],
+      "estimatedPrepTimeMinutes": 35,
+      "difficulty": "medium",
+      "highProtein": true,
+      "lowCalorie": false,
+      "splitFriendly": false,
+      "sourcePage": 20,
+      "tags": [
+        "high-protein",
+        "comfort-food",
+        "savory"
+      ]
+    },
+    {
+      "id": "pui-cu-cartofi",
+      "name": "Pui cu cartofi",
+      "displayName": "Pui cu cartofi",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 474,
+        "protein_g": 58,
+        "carbs_g": 45,
+        "fat_g": 7.5
+      },
+      "ingredients": [
+        {
+          "ingredientId": "chicken_breast",
+          "name": "chicken_breast",
+          "displayName": "200g piept de pui",
+          "quantity": 200,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "potatoes",
+          "name": "potatoes",
+          "displayName": "300g cartofi",
+          "quantity": 300,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "greek_yogurt_2",
+          "name": "greek_yogurt_2",
+          "displayName": "100g iaurt grecesc 2%",
+          "quantity": 100,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Tăiem puiul în cubulețe/felii, condimentăm după plac (sare, piper, boia dulce/iute, usturoi) și îl prăjim fără ulei.",
+        "Fierbem cartofii 5-8 minute, apoi îi punem la airfryer cu puțin spray de ulei și condimente, 15-20 minute la 200°C.",
+        "În iaurt punem sare, piper, oregano și usturoi pentru un sos alb cu usturoi."
+      ],
+      "estimatedPrepTimeMinutes": 20,
+      "difficulty": "easy",
+      "highProtein": true,
+      "lowCalorie": true,
+      "splitFriendly": false,
+      "sourcePage": 21,
+      "tags": [
+        "high-protein",
+        "low-calorie",
+        "low-fat",
+        "savory"
+      ]
+    },
+    {
+      "id": "salata-cu-pui-si-parmezan",
+      "name": "Salată cu pui și parmezan",
+      "displayName": "Salată cu pui și parmezan",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 719,
+        "protein_g": 100,
+        "carbs_g": 22,
+        "fat_g": 24
+      },
+      "ingredients": [
+        {
+          "ingredientId": "chicken_breast",
+          "name": "chicken_breast",
+          "displayName": "400g piept de pui",
+          "quantity": 400,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "mixed_salad",
+          "name": "mixed_salad",
+          "displayName": "1 salată mix la pungă (Lidl Fresco/Lupino)",
+          "quantity": 1,
+          "unit": "piece",
+          "optional": false
+        },
+        {
+          "ingredientId": "corn",
+          "name": "corn",
+          "displayName": "30g porumb",
+          "quantity": 30,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "telemea_cheese",
+          "name": "telemea_cheese",
+          "displayName": "30g telemea",
+          "quantity": 30,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "parmesan",
+          "name": "parmesan",
+          "displayName": "20g parmezan ras",
+          "quantity": 20,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "bbq_sauce_zero",
+          "name": "bbq_sauce_zero",
+          "displayName": "30g sos bbq zero",
+          "quantity": 30,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "samurai_sauce_zero",
+          "name": "samurai_sauce_zero",
+          "displayName": "30g sos samurai zero",
+          "quantity": 30,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Tăiem pieptul de pui cubulețe, condimentăm după gust (sare, piper, boia dulce/iute, oregano, usturoi) și prăjim în tigaie fără ulei.",
+        "Punem salata, porumbul și telemeaua în bol.",
+        "Adăugăm peste pieptul de pui, sosurile 0 și parmezanul."
+      ],
+      "estimatedPrepTimeMinutes": 15,
+      "difficulty": "easy",
+      "highProtein": true,
+      "lowCalorie": false,
+      "splitFriendly": false,
+      "sourcePage": 22,
+      "tags": [
+        "high-protein",
+        "low-fat",
+        "savory",
+        "quick-meal"
+      ]
+    },
+    {
+      "id": "shaorma-la-farfurie",
+      "name": "Shaorma la farfurie",
+      "displayName": "Shaorma la farfurie",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 690,
+        "protein_g": 74,
+        "carbs_g": 73,
+        "fat_g": 12
+      },
+      "ingredients": [
+        {
+          "ingredientId": "chicken_breast",
+          "name": "chicken_breast",
+          "displayName": "300g piept de pui",
+          "quantity": 300,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "potatoes",
+          "name": "potatoes",
+          "displayName": "200g cartofi",
+          "quantity": 200,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "tomatoes",
+          "name": "tomatoes",
+          "displayName": "100g roșii",
+          "quantity": 100,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "red_onion",
+          "name": "red_onion",
+          "displayName": "50g ceapă roșie",
+          "quantity": 50,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "white_cabbage",
+          "name": "white_cabbage",
+          "displayName": "150g varză albă",
+          "quantity": 150,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "pickles",
+          "name": "pickles",
+          "displayName": "50g castraveți murați",
+          "quantity": 50,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "honey",
+          "name": "honey",
+          "displayName": "10g miere",
+          "quantity": 10,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "greek_yogurt_2",
+          "name": "greek_yogurt_2",
+          "displayName": "50g iaurt grecesc",
+          "quantity": 50,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "bbq_sauce",
+          "name": "bbq_sauce",
+          "displayName": "25g sos bbq",
+          "quantity": 25,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Punem cartofii la airfryer la 180-200°C pentru 15-20 minute.",
+        "Tăiem pieptul de pui cubulețe, condimentăm și punem în bol cu iaurtul, mierea și sosul bbq; lăsăm la marinat 5-10 minute (sau peste noapte).",
+        "Prăjim puiul marinat.",
+        "Pregătim restul ingredientelor pe o farfurie și adăugăm puiul și cartofii.",
+        "Putem face sos alb cu usturoi sau folosi sosuri 0kcal."
+      ],
+      "estimatedPrepTimeMinutes": 20,
+      "difficulty": "medium",
+      "highProtein": true,
+      "lowCalorie": false,
+      "splitFriendly": false,
+      "sourcePage": 23,
+      "tags": [
+        "high-protein",
+        "savory",
+        "comfort-food"
+      ]
+    },
+    {
+      "id": "snitel-cu-cartofi-si-telemea",
+      "name": "Șnițel cu cartofi și telemea",
+      "displayName": "Șnițel cu cartofi și telemea",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 1035,
+        "protein_g": 100,
+        "carbs_g": 117,
+        "fat_g": 20
+      },
+      "ingredients": [
+        {
+          "ingredientId": "chicken_schnitzel",
+          "name": "chicken_schnitzel",
+          "displayName": "450g șnițel de pui",
+          "quantity": 450,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "potatoes",
+          "name": "potatoes",
+          "displayName": "350g cartofi albi",
+          "quantity": 350,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "telemea_cheese",
+          "name": "telemea_cheese",
+          "displayName": "50g telemea",
+          "quantity": 50,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Punem șnițelul într-o tavă cu hârtie de copt și dăm foarte puțin spray de ulei pe ambele părți.",
+        "Coacem 10-15 minute la 200-220°C, întoarcem și mai lăsăm 5-8 minute până e auriu.",
+        "Punem cartofii la airfryer la 180-200°C pentru 15-20 minute.",
+        "Când sunt gata, adăugăm telemea peste cartofi."
+      ],
+      "estimatedPrepTimeMinutes": 30,
+      "difficulty": "easy",
+      "highProtein": true,
+      "lowCalorie": false,
+      "splitFriendly": false,
+      "sourcePage": 24,
+      "tags": [
+        "high-protein",
+        "comfort-food",
+        "savory"
+      ]
+    },
+    {
+      "id": "fasii-de-pui",
+      "name": "Fâșii de pui",
+      "displayName": "Fâșii de pui",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 874,
+        "protein_g": 103,
+        "carbs_g": 90,
+        "fat_g": 12
+      },
+      "ingredients": [
+        {
+          "ingredientId": "chicken_breast",
+          "name": "chicken_breast",
+          "displayName": "400g piept de pui",
+          "quantity": 400,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "potatoes",
+          "name": "potatoes",
+          "displayName": "400g cartofi",
+          "quantity": 400,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "greek_yogurt_2",
+          "name": "greek_yogurt_2",
+          "displayName": "100g iaurt grecesc",
+          "quantity": 100,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "bbq_sauce",
+          "name": "bbq_sauce",
+          "displayName": "50g sos bbq",
+          "quantity": 50,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Punem cartofii la airfryer la 180-200°C pentru 15-20 minute.",
+        "Punem puiul la fiert 25-30 minute, până îl putem sfâșia cu furculița.",
+        "Facem sos alb cu usturoi din iaurt grecesc (sare, piper, oregano, usturoi).",
+        "Punem cartofii în bol, adăugăm puiul sfâșiat, sosul de usturoi și sosul bbq."
+      ],
+      "estimatedPrepTimeMinutes": 35,
+      "difficulty": "medium",
+      "highProtein": true,
+      "lowCalorie": false,
+      "splitFriendly": false,
+      "sourcePage": 25,
+      "tags": [
+        "high-protein",
+        "low-fat",
+        "savory",
+        "meal-prep"
+      ]
+    },
+    {
+      "id": "steak-sandwich",
+      "name": "Steak sandwich",
+      "displayName": "Steak sandwich",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 1230,
+        "protein_g": 123,
+        "carbs_g": 108,
+        "fat_g": 34
+      },
+      "ingredients": [
+        {
+          "ingredientId": "ribeye_steak",
+          "name": "ribeye_steak",
+          "displayName": "350g ribeye steak (cât mai puțină grăsime)",
+          "quantity": 350,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "ciabatta_bread",
+          "name": "ciabatta_bread",
+          "displayName": "1 pâine ciabatta/rustică",
+          "quantity": 1,
+          "unit": "piece",
+          "optional": false
+        },
+        {
+          "ingredientId": "onion",
+          "name": "onion",
+          "displayName": "1 ceapă",
+          "quantity": 1,
+          "unit": "piece",
+          "optional": false
+        },
+        {
+          "ingredientId": "red_bell_pepper",
+          "name": "red_bell_pepper",
+          "displayName": "1 ardei roșu gras",
+          "quantity": 1,
+          "unit": "piece",
+          "optional": false
+        },
+        {
+          "ingredientId": "mozzarella_light",
+          "name": "mozzarella_light",
+          "displayName": "125g mozzarella light",
+          "quantity": 125,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Punem steak-ul în congelator 1-2h ca să-l putem tăia subțire.",
+        "Tăiem în fâșii subțiri, separăm părțile cu grăsime (le păstrăm), condimentăm și punem înapoi în congelator.",
+        "Tăiem ceapa și ardeiul; încingem o tigaie cu grăsimea de la steak și caramelizăm ceapa și ardeiul, condimentăm.",
+        "Tăiem pâinea în jumătate și scoatem miezul (180-200g).",
+        "Prăjim steak-ul în tigaia preîncălzită la foc maxim 1-2 minute, adăugăm ardeiul, ceapa și cașcavalul; amestecăm până se topește și punem tot în pâine.",
+        "Putem folosi sosuri 0kcal."
+      ],
+      "estimatedPrepTimeMinutes": 30,
+      "difficulty": "medium",
+      "highProtein": true,
+      "lowCalorie": false,
+      "splitFriendly": false,
+      "sourcePage": 26,
+      "tags": [
+        "high-protein",
+        "comfort-food",
+        "savory"
+      ]
+    },
+    {
+      "id": "sandwich-cu-vita",
+      "name": "Sandwich cu vită",
+      "displayName": "Sandwich cu vită",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 1100,
+        "protein_g": 112,
+        "carbs_g": 108,
+        "fat_g": 18
+      },
+      "ingredients": [
+        {
+          "ingredientId": "lean_ground_beef",
+          "name": "lean_ground_beef",
+          "displayName": "300g carne tocată de vită fără grăsime",
+          "quantity": 300,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "ciabatta_bread",
+          "name": "ciabatta_bread",
+          "displayName": "1 pâine ciabatta/rustică",
+          "quantity": 1,
+          "unit": "piece",
+          "optional": false
+        },
+        {
+          "ingredientId": "onion",
+          "name": "onion",
+          "displayName": "1 ceapă",
+          "quantity": 1,
+          "unit": "piece",
+          "optional": false
+        },
+        {
+          "ingredientId": "red_bell_pepper",
+          "name": "red_bell_pepper",
+          "displayName": "1 ardei roșu gras",
+          "quantity": 1,
+          "unit": "piece",
+          "optional": false
+        },
+        {
+          "ingredientId": "mozzarella_light",
+          "name": "mozzarella_light",
+          "displayName": "125g mozzarella light",
+          "quantity": 125,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Tăiem ceapa și ardeiul; încingem o tigaie cu foarte puțin ulei și caramelizăm ceapa și ardeiul.",
+        "Tăiem pâinea în jumătate și scoatem miezul (180-200g).",
+        "Prăjim carnea de vită, adăugăm ardeiul, ceapa și cașcavalul; amestecăm până se topește și punem tot în pâine.",
+        "Putem folosi sosuri 0kcal."
+      ],
+      "estimatedPrepTimeMinutes": 25,
+      "difficulty": "easy",
+      "highProtein": true,
+      "lowCalorie": false,
+      "splitFriendly": false,
+      "sourcePage": 27,
+      "tags": [
+        "high-protein",
+        "low-fat",
+        "comfort-food",
+        "savory"
+      ]
+    },
+    {
+      "id": "chili-con-carne",
+      "name": "Chili con carne",
+      "displayName": "Chili con carne",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 930,
+        "protein_g": 99,
+        "carbs_g": 58,
+        "fat_g": 25
+      },
+      "ingredients": [
+        {
+          "ingredientId": "lean_ground_beef",
+          "name": "lean_ground_beef",
+          "displayName": "300g carne tocată de vită fără grăsime",
+          "quantity": 300,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "red_beans",
+          "name": "red_beans",
+          "displayName": "1 cutie fasole roșii în sos de roșii (Lidl-415g)",
+          "quantity": 1,
+          "unit": "can",
+          "optional": false
+        },
+        {
+          "ingredientId": "bacon_cubes",
+          "name": "bacon_cubes",
+          "displayName": "50g cubulețe șuncă porc",
+          "quantity": 50,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "protein_cheddar",
+          "name": "protein_cheddar",
+          "displayName": "2 felii cheddar proteic",
+          "quantity": 2,
+          "unit": "slice",
+          "optional": false
+        },
+        {
+          "ingredientId": "tomato_sauce",
+          "name": "tomato_sauce",
+          "displayName": "100ml sos de roșii",
+          "quantity": 100,
+          "unit": "ml",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Prăjim cubulețele de șuncă, apoi adăugăm carnea de vită peste și condimentăm (sare, piper, boia dulce/iute, oregano, chilli).",
+        "Când carnea e prăjită, adăugăm cutia de fasole, sosul de roșii și feliile de cheddar.",
+        "Amestecăm până se topește cașcavalul."
+      ],
+      "estimatedPrepTimeMinutes": 25,
+      "difficulty": "easy",
+      "highProtein": true,
+      "lowCalorie": false,
+      "splitFriendly": false,
+      "sourcePage": 28,
+      "tags": [
+        "high-protein",
+        "comfort-food",
+        "savory"
+      ]
+    },
+    {
+      "id": "double-smash-burger",
+      "name": "Double smash burger",
+      "displayName": "Double smash burger",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 1130,
+        "protein_g": 122,
+        "carbs_g": 70,
+        "fat_g": 35
+      },
+      "ingredients": [
+        {
+          "ingredientId": "burger_bun",
+          "name": "burger_bun",
+          "displayName": "2 chifle burger (Kaufland 135kcal, Schulstad)",
+          "quantity": 2,
+          "unit": "piece",
+          "optional": false
+        },
+        {
+          "ingredientId": "lean_ground_beef",
+          "name": "lean_ground_beef",
+          "displayName": "400g carne tocată de vită fără grăsime",
+          "quantity": 400,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "bacon_cubes",
+          "name": "bacon_cubes",
+          "displayName": "50g cubulețe șuncă porc",
+          "quantity": 50,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "red_onion",
+          "name": "red_onion",
+          "displayName": "1 ceapă roșie",
+          "quantity": 1,
+          "unit": "piece",
+          "optional": false
+        },
+        {
+          "ingredientId": "protein_cheddar",
+          "name": "protein_cheddar",
+          "displayName": "4 felii cheddar proteic (Lidl)",
+          "quantity": 4,
+          "unit": "slice",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Facem 4 biluțe egale din carnea de vită și le presăm subțire (smash) în tigaie.",
+        "Prăjim cubulețele de șuncă, iar când sunt 50% gata adăugăm ceapa tăiată și le prăjim împreună.",
+        "Prăjim carnea de vită; după ce o întoarcem punem peste feliile de cheddar să se topească.",
+        "Tăiem chiflele în jumătate și le prăjim.",
+        "Asamblăm: paveluțele de carne în chiflă, ceapa caramelizată cu bacon și sosuri 0kcal (bbq, truffle mayo, sos de burger)."
+      ],
+      "estimatedPrepTimeMinutes": 20,
+      "difficulty": "medium",
+      "highProtein": true,
+      "lowCalorie": false,
+      "splitFriendly": false,
+      "sourcePage": 29,
+      "tags": [
+        "high-protein",
+        "comfort-food",
+        "savory",
+        "gym-friendly"
+      ]
+    },
+    {
+      "id": "protein-tacos",
+      "name": "Protein tacos",
+      "displayName": "Protein tacos",
+      "category": "lunch",
+      "mealType": [
+        "lunch",
+        "dinner"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 850,
+        "protein_g": 106,
+        "carbs_g": 9,
+        "fat_g": 35
+      },
+      "ingredients": [
+        {
+          "ingredientId": "lean_ground_beef",
+          "name": "lean_ground_beef",
+          "displayName": "300g carne tocată de vită fără grăsime",
+          "quantity": 300,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "bacon_cubes",
+          "name": "bacon_cubes",
+          "displayName": "50g cubulețe șuncă porc",
+          "quantity": 50,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "protein_cheddar",
+          "name": "protein_cheddar",
+          "displayName": "3 felii cheddar proteic",
+          "quantity": 3,
+          "unit": "slice",
+          "optional": false
+        },
+        {
+          "ingredientId": "protein_taco",
+          "name": "protein_taco",
+          "displayName": "3 protein taco (lipie)",
+          "quantity": 3,
+          "unit": "piece",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Întindem carnea de vită egal pe cele 3 lipii proteice și presărăm cubulețele de șuncă în carne.",
+        "Punem la prăjit până se prăjește de tot ca să nu se dezlipească carnea, apoi întoarcem să se prăjească și lipia.",
+        "Punem feliile de cheddar proteic, îndoim în 2 și lăsăm câteva secunde pe ambele părți.",
+        "Servim cu sosuri 0kcal sau sos de usturoi."
+      ],
+      "estimatedPrepTimeMinutes": 20,
+      "difficulty": "easy",
+      "highProtein": true,
+      "lowCalorie": false,
+      "splitFriendly": false,
+      "sourcePage": 30,
+      "tags": [
+        "high-protein",
+        "comfort-food",
+        "savory",
+        "gym-friendly"
+      ]
+    },
+    {
+      "id": "inghetata-proteica",
+      "name": "Înghețată proteică",
+      "displayName": "Înghețată proteică",
+      "category": "dessert",
+      "mealType": [
+        "snack",
+        "dessert"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 399,
+        "protein_g": 53,
+        "carbs_g": 27,
+        "fat_g": 7.5
+      },
+      "ingredients": [
+        {
+          "ingredientId": "skyr",
+          "name": "skyr",
+          "displayName": "250g skyr",
+          "quantity": 250,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "protein_powder",
+          "name": "protein_powder",
+          "displayName": "35g pudră proteică",
+          "quantity": 35,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "oreo",
+          "name": "oreo",
+          "displayName": "2 bucăți de oreo",
+          "quantity": 2,
+          "unit": "piece",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Adăugăm pudra proteică în skyr (se poate înlocui cu iaurt grecesc, dar scad proteinele) și amestecăm până se omogenizează.",
+        "Punem în congelator 1-2h, amestecând din 30 în 30 minute pentru o compoziție cât mai bună.",
+        "Când are consistența dorită, adăugăm oreo sfărâmat."
+      ],
+      "estimatedPrepTimeMinutes": 10,
+      "difficulty": "easy",
+      "highProtein": true,
+      "lowCalorie": true,
+      "splitFriendly": false,
+      "sourcePage": 31,
+      "tags": [
+        "high-protein",
+        "low-calorie",
+        "sweet",
+        "low-fat"
+      ]
+    },
+    {
+      "id": "clatite-americane",
+      "name": "Clătite americane",
+      "displayName": "Clătite americane",
+      "category": "breakfast",
+      "mealType": [
+        "breakfast",
+        "dessert"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 440,
+        "protein_g": 50,
+        "carbs_g": 31,
+        "fat_g": 13
+      },
+      "ingredients": [
+        {
+          "ingredientId": "egg_whites",
+          "name": "egg_whites",
+          "displayName": "175ml albuș de ou",
+          "quantity": 175,
+          "unit": "ml",
+          "optional": false
+        },
+        {
+          "ingredientId": "whole_egg",
+          "name": "whole_egg",
+          "displayName": "1 ou întreg",
+          "quantity": 1,
+          "unit": "piece",
+          "optional": false
+        },
+        {
+          "ingredientId": "banana",
+          "name": "banana",
+          "displayName": "30g banană",
+          "quantity": 30,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "oats",
+          "name": "oats",
+          "displayName": "15g ovăz",
+          "quantity": 15,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "greek_yogurt_2",
+          "name": "greek_yogurt_2",
+          "displayName": "50g iaurt grecesc 2%",
+          "quantity": 50,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "sweetener",
+          "name": "sweetener",
+          "displayName": "îndulcitor",
+          "quantity": 0,
+          "unit": "gram",
+          "optional": true
+        },
+        {
+          "ingredientId": "baking_powder",
+          "name": "baking_powder",
+          "displayName": "praf de copt",
+          "quantity": 0,
+          "unit": "gram",
+          "optional": true
+        },
+        {
+          "ingredientId": "cinnamon",
+          "name": "cinnamon",
+          "displayName": "scorțișoară după gust",
+          "quantity": 0,
+          "unit": "gram",
+          "optional": true
+        },
+        {
+          "ingredientId": "protein_powder",
+          "name": "protein_powder",
+          "displayName": "25g pudră proteică",
+          "quantity": 25,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "peanut_butter",
+          "name": "peanut_butter",
+          "displayName": "8g unt de arahide",
+          "quantity": 8,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "cocoa_powder",
+          "name": "cocoa_powder",
+          "displayName": "4g pudră de cacao (grăsime redusă)",
+          "quantity": 4,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Adăugăm albușul, oul, banana, ovăzul, iaurtul, scorțișoara, praful de copt și îndulcitorul în blender.",
+        "Compoziția e mai lichidă, așa că prăjim în tigaie mică pentru a ieși pufoase.",
+        "Pentru ciocolată: amestecăm pudra proteică, untul de arahide și pudra de cacao cu 25ml apă, ajustând consistența.",
+        "Putem adăuga căpșuni sau 15-20g afine."
+      ],
+      "estimatedPrepTimeMinutes": 15,
+      "difficulty": "easy",
+      "highProtein": true,
+      "lowCalorie": true,
+      "splitFriendly": false,
+      "sourcePage": 32,
+      "tags": [
+        "high-protein",
+        "low-calorie",
+        "sweet"
+      ]
+    },
+    {
+      "id": "clatite-americane-2",
+      "name": "Clătite americane 2",
+      "displayName": "Clătite americane 2",
+      "category": "breakfast",
+      "mealType": [
+        "breakfast",
+        "dessert"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 530,
+        "protein_g": 58,
+        "carbs_g": 49,
+        "fat_g": 12
+      },
+      "ingredients": [
+        {
+          "ingredientId": "whole_egg",
+          "name": "whole_egg",
+          "displayName": "1 ou",
+          "quantity": 1,
+          "unit": "piece",
+          "optional": false
+        },
+        {
+          "ingredientId": "flour",
+          "name": "flour",
+          "displayName": "45g făină albă / făină de ovăz",
+          "quantity": 45,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "greek_yogurt_2",
+          "name": "greek_yogurt_2",
+          "displayName": "150g iaurt grecesc 2%",
+          "quantity": 150,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "chocolate_chips",
+          "name": "chocolate_chips",
+          "displayName": "10g bucăți de ciocolată",
+          "quantity": 10,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "low_fat_cottage_cheese",
+          "name": "low_fat_cottage_cheese",
+          "displayName": "200g brânză de vaci slabă (Covalact)",
+          "quantity": 200,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "baking_powder",
+          "name": "baking_powder",
+          "displayName": "praf de copt",
+          "quantity": 0,
+          "unit": "gram",
+          "optional": true
+        },
+        {
+          "ingredientId": "sweetener",
+          "name": "sweetener",
+          "displayName": "îndulcitor",
+          "quantity": 0,
+          "unit": "gram",
+          "optional": true
+        }
+      ],
+      "instructions": [
+        "Adăugăm iaurtul, oul, făina, praful de copt și îndulcitorul într-un bol; mixăm până nu mai există cocoloașe.",
+        "În brânza de vaci adăugăm îndulcitor după gust.",
+        "Punem compoziția în tigaie, formăm clătitele, presărăm bucățile de ciocolată și le întoarcem pe rând.",
+        "Când sunt gata, punem brânza peste (opțional câteva afine)."
+      ],
+      "estimatedPrepTimeMinutes": 15,
+      "difficulty": "easy",
+      "highProtein": true,
+      "lowCalorie": true,
+      "splitFriendly": false,
+      "sourcePage": 33,
+      "tags": [
+        "high-protein",
+        "sweet"
+      ]
+    },
+    {
+      "id": "french-toast",
+      "name": "French toast",
+      "displayName": "French toast",
+      "category": "breakfast",
+      "mealType": [
+        "breakfast"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 522,
+        "protein_g": 52,
+        "carbs_g": 59,
+        "fat_g": 8
+      },
+      "ingredients": [
+        {
+          "ingredientId": "egg_whites",
+          "name": "egg_whites",
+          "displayName": "250ml albuș de ou",
+          "quantity": 250,
+          "unit": "ml",
+          "optional": false
+        },
+        {
+          "ingredientId": "toast_bread",
+          "name": "toast_bread",
+          "displayName": "4 felii pâine toast",
+          "quantity": 4,
+          "unit": "slice",
+          "optional": false
+        },
+        {
+          "ingredientId": "sweetener",
+          "name": "sweetener",
+          "displayName": "îndulcitor după gust (FlavDrops-MyProtein)",
+          "quantity": 0,
+          "unit": "gram",
+          "optional": true
+        },
+        {
+          "ingredientId": "cinnamon",
+          "name": "cinnamon",
+          "displayName": "scorțișoară după gust",
+          "quantity": 0,
+          "unit": "gram",
+          "optional": true
+        },
+        {
+          "ingredientId": "blueberries",
+          "name": "blueberries",
+          "displayName": "30g afine",
+          "quantity": 30,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "protein_powder",
+          "name": "protein_powder",
+          "displayName": "25g pudră proteică",
+          "quantity": 25,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "peanut_butter",
+          "name": "peanut_butter",
+          "displayName": "8g unt de arahide",
+          "quantity": 8,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "cocoa_powder",
+          "name": "cocoa_powder",
+          "displayName": "4g pudră de cacao (grăsime redusă)",
+          "quantity": 4,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Amestecăm albușul, scorțișoara și îndulcitorul într-un bol.",
+        "Înmuiem pâinea în albuș 1 minut, apoi punem feliile în tigaie (foc minim spre mediu) cu puțin spray de ulei.",
+        "Apăsăm afinele în pâine, apoi întoarcem feliile.",
+        "Pentru ciocolată: amestecăm pudra proteică, untul de arahide și pudra de cacao cu 25ml apă, ajustând consistența."
+      ],
+      "estimatedPrepTimeMinutes": 15,
+      "difficulty": "easy",
+      "highProtein": true,
+      "lowCalorie": true,
+      "splitFriendly": false,
+      "sourcePage": 34,
+      "tags": [
+        "high-protein",
+        "low-fat",
+        "sweet"
+      ]
+    },
+    {
+      "id": "clatite-cu-branza",
+      "name": "Clătite cu brânză",
+      "displayName": "Clătite cu brânză",
+      "category": "breakfast",
+      "mealType": [
+        "breakfast",
+        "dessert"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 515,
+        "protein_g": 77,
+        "carbs_g": 31,
+        "fat_g": 10
+      },
+      "ingredients": [
+        {
+          "ingredientId": "egg_whites",
+          "name": "egg_whites",
+          "displayName": "250ml albuș de ou",
+          "quantity": 250,
+          "unit": "ml",
+          "optional": false
+        },
+        {
+          "ingredientId": "whole_egg",
+          "name": "whole_egg",
+          "displayName": "1 ou întreg",
+          "quantity": 1,
+          "unit": "piece",
+          "optional": false
+        },
+        {
+          "ingredientId": "banana",
+          "name": "banana",
+          "displayName": "30g banană",
+          "quantity": 30,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "oats",
+          "name": "oats",
+          "displayName": "20g ovăz",
+          "quantity": 20,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "greek_yogurt_2",
+          "name": "greek_yogurt_2",
+          "displayName": "100g iaurt grecesc 2%",
+          "quantity": 100,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "baking_powder",
+          "name": "baking_powder",
+          "displayName": "praf de copt",
+          "quantity": 0,
+          "unit": "gram",
+          "optional": true
+        },
+        {
+          "ingredientId": "low_fat_cottage_cheese",
+          "name": "low_fat_cottage_cheese",
+          "displayName": "200g brânză de vaci slabă (Covalact)",
+          "quantity": 200,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "sweetener",
+          "name": "sweetener",
+          "displayName": "îndulcitor",
+          "quantity": 0,
+          "unit": "gram",
+          "optional": true
+        },
+        {
+          "ingredientId": "lemon_zest",
+          "name": "lemon_zest",
+          "displayName": "coajă de lămâie",
+          "quantity": 0,
+          "unit": "gram",
+          "optional": true
+        }
+      ],
+      "instructions": [
+        "Adăugăm toate ingredientele în blender, mai puțin brânza de vaci (îndulcitor și coajă de lămâie după gust).",
+        "Prăjim în tigaie cu foarte puțin spray de ulei.",
+        "În brânză punem îndulcitor și coajă de lămâie.",
+        "Umplem clătitele cu brânza."
+      ],
+      "estimatedPrepTimeMinutes": 15,
+      "difficulty": "easy",
+      "highProtein": true,
+      "lowCalorie": true,
+      "splitFriendly": false,
+      "sourcePage": 35,
+      "tags": [
+        "high-protein",
+        "low-fat",
+        "sweet"
+      ]
+    },
+    {
+      "id": "nutella-proteic",
+      "name": "Nutella proteic",
+      "displayName": "Nutella proteic",
+      "category": "dessert",
+      "mealType": [
+        "snack",
+        "dessert"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 200,
+        "protein_g": 24,
+        "carbs_g": 9,
+        "fat_g": 7
+      },
+      "ingredients": [
+        {
+          "ingredientId": "protein_powder",
+          "name": "protein_powder",
+          "displayName": "30g pudră proteică",
+          "quantity": 30,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "peanut_butter",
+          "name": "peanut_butter",
+          "displayName": "10g unt de arahide",
+          "quantity": 10,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "cocoa_powder",
+          "name": "cocoa_powder",
+          "displayName": "5g pudră de cacao (grăsime redusă)",
+          "quantity": 5,
+          "unit": "gram",
+          "optional": false
+        }
+      ],
+      "instructions": [
+        "Adăugăm toate ingredientele într-un bol împreună cu 20-25ml apă, amestecăm și ajustăm consistența cu apă la nevoie."
+      ],
+      "estimatedPrepTimeMinutes": 5,
+      "difficulty": "easy",
+      "highProtein": false,
+      "lowCalorie": true,
+      "splitFriendly": false,
+      "sourcePage": 36,
+      "tags": [
+        "high-protein",
+        "low-calorie",
+        "sweet",
+        "low-fat"
+      ]
+    },
+    {
+      "id": "sos-de-usturoi",
+      "name": "Sos de usturoi",
+      "displayName": "Sos de usturoi",
+      "category": "sauce",
+      "mealType": [
+        "sauce"
+      ],
+      "goal": [
+        "fat_loss",
+        "muscle_retention"
+      ],
+      "servings": 1,
+      "nutrition": {
+        "calories": 58,
+        "protein_g": 8,
+        "carbs_g": 4,
+        "fat_g": 2
+      },
+      "ingredients": [
+        {
+          "ingredientId": "greek_yogurt_2",
+          "name": "greek_yogurt_2",
+          "displayName": "100g iaurt grecesc 2%",
+          "quantity": 100,
+          "unit": "gram",
+          "optional": false
+        },
+        {
+          "ingredientId": "salt",
+          "name": "salt",
+          "displayName": "sare",
+          "quantity": 0,
+          "unit": "gram",
+          "optional": true
+        },
+        {
+          "ingredientId": "pepper",
+          "name": "pepper",
+          "displayName": "piper",
+          "quantity": 0,
+          "unit": "gram",
+          "optional": true
+        },
+        {
+          "ingredientId": "oregano",
+          "name": "oregano",
+          "displayName": "oregano",
+          "quantity": 0,
+          "unit": "gram",
+          "optional": true
+        },
+        {
+          "ingredientId": "garlic",
+          "name": "garlic",
+          "displayName": "usturoi",
+          "quantity": 0,
+          "unit": "gram",
+          "optional": true
+        }
+      ],
+      "instructions": [
+        "Amestecăm toate ingredientele până obținem un sos de usturoi gustos și slab caloric.",
+        "Opțional adăugăm boia iute și chilli pentru picant."
+      ],
+      "estimatedPrepTimeMinutes": 5,
+      "difficulty": "easy",
+      "highProtein": false,
+      "lowCalorie": true,
+      "splitFriendly": false,
+      "sourcePage": 37,
+      "tags": [
+        "low-calorie",
+        "low-fat",
+        "savory",
+        "sauce"
+      ]
+    }
+  ],
+  "ingredientsMaster": [
+    {
+      "ingredientId": "bacon_cubes",
+      "displayName": "cubulețe șuncă porc",
+      "category": "meat",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "baking_powder",
+      "displayName": "praf de copt",
+      "category": "baking",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "banana",
+      "displayName": "banană",
+      "category": "fruit",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "bbq_sauce",
+      "displayName": "sos bbq",
+      "category": "sauce",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "bbq_sauce_zero",
+      "displayName": "sos bbq zero",
+      "category": "sauce",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "beef_bresaola",
+      "displayName": "bresaola vită",
+      "category": "meat",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "blueberries",
+      "displayName": "afine",
+      "category": "fruit",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "bolognese_sauce",
+      "displayName": "sos de bolognese",
+      "category": "sauce",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "burger_bun",
+      "displayName": "chiflă burger",
+      "category": "grains",
+      "defaultUnit": "piece"
+    },
+    {
+      "ingredientId": "butter",
+      "displayName": "unt",
+      "category": "dairy",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "chicken_breast",
+      "displayName": "piept de pui",
+      "category": "meat",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "chicken_schnitzel",
+      "displayName": "șnițel piept de pui",
+      "category": "meat",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "chocolate_chips",
+      "displayName": "bucăți de ciocolată",
+      "category": "other",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "ciabatta_bread",
+      "displayName": "pâine ciabatta/rustică",
+      "category": "grains",
+      "defaultUnit": "piece"
+    },
+    {
+      "ingredientId": "cinnamon",
+      "displayName": "scorțișoară",
+      "category": "spice",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "cocoa_powder",
+      "displayName": "pudră de cacao",
+      "category": "other",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "corn",
+      "displayName": "porumb",
+      "category": "vegetable",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "egg_whites",
+      "displayName": "albuș de ou",
+      "category": "protein",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "flour",
+      "displayName": "făină",
+      "category": "grains",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "garlic",
+      "displayName": "usturoi",
+      "category": "vegetable",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "greek_yogurt_2",
+      "displayName": "skyr/iaurt grecesc 2%",
+      "category": "dairy",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "honey",
+      "displayName": "miere",
+      "category": "other",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "instant_mashed_potatoes",
+      "displayName": "piure instant",
+      "category": "grains",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "lean_ground_beef",
+      "displayName": "carne tocată de vită fără grăsime",
+      "category": "meat",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "lemon_zest",
+      "displayName": "coajă de lămâie",
+      "category": "spice",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "light_cheese",
+      "displayName": "cașcaval light",
+      "category": "dairy",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "light_cooking_cream",
+      "displayName": "smântână de gătit light",
+      "category": "dairy",
+      "defaultUnit": "ml"
+    },
+    {
+      "ingredientId": "light_cream_cheese",
+      "displayName": "light cream cheese",
+      "category": "dairy",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "low_fat_cottage_cheese",
+      "displayName": "brânză de vaci slabă",
+      "category": "dairy",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "milk_1_5",
+      "displayName": "lapte 1,5%",
+      "category": "dairy",
+      "defaultUnit": "ml"
+    },
+    {
+      "ingredientId": "mixed_salad",
+      "displayName": "salată mix",
+      "category": "vegetable",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "mozzarella_light",
+      "displayName": "mozzarella light",
+      "category": "dairy",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "oats",
+      "displayName": "ovăz",
+      "category": "grains",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "onion",
+      "displayName": "ceapă",
+      "category": "vegetable",
+      "defaultUnit": "piece"
+    },
+    {
+      "ingredientId": "oregano",
+      "displayName": "oregano",
+      "category": "spice",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "oreo",
+      "displayName": "oreo",
+      "category": "other",
+      "defaultUnit": "piece"
+    },
+    {
+      "ingredientId": "parmesan",
+      "displayName": "parmezan ras",
+      "category": "dairy",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "pasta",
+      "displayName": "macaroane",
+      "category": "grains",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "peanut_butter",
+      "displayName": "unt de arahide",
+      "category": "other",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "pepper",
+      "displayName": "piper",
+      "category": "spice",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "pickles",
+      "displayName": "castraveți murați",
+      "category": "vegetable",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "potatoes",
+      "displayName": "cartofi",
+      "category": "vegetable",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "prosciutto",
+      "displayName": "prosciutto",
+      "category": "meat",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "prosciutto_cotto",
+      "displayName": "prosciutto cotto",
+      "category": "meat",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "protein_cheddar",
+      "displayName": "cheddar proteic",
+      "category": "dairy",
+      "defaultUnit": "slice"
+    },
+    {
+      "ingredientId": "protein_flatbread",
+      "displayName": "lipie proteică",
+      "category": "grains",
+      "defaultUnit": "piece"
+    },
+    {
+      "ingredientId": "protein_powder",
+      "displayName": "pudră proteică",
+      "category": "supplement",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "protein_taco",
+      "displayName": "protein taco",
+      "category": "grains",
+      "defaultUnit": "piece"
+    },
+    {
+      "ingredientId": "red_beans",
+      "displayName": "fasole roșii în sos de roșii",
+      "category": "legume",
+      "defaultUnit": "can"
+    },
+    {
+      "ingredientId": "red_bell_pepper",
+      "displayName": "ardei roșu gras",
+      "category": "vegetable",
+      "defaultUnit": "piece"
+    },
+    {
+      "ingredientId": "red_onion",
+      "displayName": "ceapă roșie",
+      "category": "vegetable",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "ribeye_steak",
+      "displayName": "ribeye steak",
+      "category": "meat",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "salt",
+      "displayName": "sare",
+      "category": "spice",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "samurai_sauce_zero",
+      "displayName": "sos samurai zero",
+      "category": "sauce",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "skyr",
+      "displayName": "skyr",
+      "category": "dairy",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "sweetener",
+      "displayName": "îndulcitor",
+      "category": "other",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "telemea_cheese",
+      "displayName": "telemea",
+      "category": "dairy",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "toast_bread",
+      "displayName": "pâine toast",
+      "category": "grains",
+      "defaultUnit": "slice"
+    },
+    {
+      "ingredientId": "tomato_sauce",
+      "displayName": "sos de roșii",
+      "category": "sauce",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "tomatoes",
+      "displayName": "roșii",
+      "category": "vegetable",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "tortilla",
+      "displayName": "tortilla wrap",
+      "category": "grains",
+      "defaultUnit": "piece"
+    },
+    {
+      "ingredientId": "turkey_salami",
+      "displayName": "salam curcan",
+      "category": "meat",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "white_cabbage",
+      "displayName": "varză albă",
+      "category": "vegetable",
+      "defaultUnit": "gram"
+    },
+    {
+      "ingredientId": "whole_egg",
+      "displayName": "ou întreg",
+      "category": "protein",
+      "defaultUnit": "piece"
+    }
+  ]
+}
