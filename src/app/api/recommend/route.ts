@@ -1,37 +1,44 @@
-import { NextResponse } from 'next/server';
-import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
+import { NextRequest, NextResponse } from 'next/server';
+import { GoogleGenAI } from '@google/genai';
+import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@/lib/supabase/server';
 import { tdee, targets, age, type Sex, type Activity, type Goal } from '@/lib/nutrition';
 import recipesData from '@/data/recipes.json';
 
 // Recomandarea zilnică. Numerele se calculează DETERMINIST (nutrition.ts);
-// Gemini doar alege mesele potrivite din recipes.json + argumentează + dă antrenament.
+// modelul doar alege mesele potrivite din recipes.json + argumentează + dă antrenament.
+//
+// Structured-output extraction is a different capability than the food-agent's
+// tool-calling loop (src/lib/ai/*), so this stays provider-specific here rather
+// than going through the ModelProvider registry: Gemini uses a response schema,
+// Claude uses a forced single tool call — same net effect, different mechanism.
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const responseSchema = {
-  type: SchemaType.OBJECT,
+  type: 'object',
   properties: {
-    rationale: { type: SchemaType.STRING },
+    rationale: { type: 'string' },
     suggested_meals: {
-      type: SchemaType.ARRAY,
+      type: 'array',
       items: {
-        type: SchemaType.OBJECT,
+        type: 'object',
         properties: {
-          recipe_id: { type: SchemaType.STRING },
-          name: { type: SchemaType.STRING },
-          slot: { type: SchemaType.STRING }, // breakfast|lunch|dinner|snack
+          recipe_id: { type: 'string' },
+          name: { type: 'string' },
+          slot: { type: 'string' }, // breakfast|lunch|dinner|snack
         },
         required: ['recipe_id', 'name', 'slot'],
       },
     },
     training: {
-      type: SchemaType.OBJECT,
+      type: 'object',
       properties: {
-        type: { type: SchemaType.STRING },        // strength|cardio|rest
-        focus: { type: SchemaType.STRING },         // ex: "piept + triceps"
-        cardio_minutes: { type: SchemaType.NUMBER },
-        notes: { type: SchemaType.STRING },
+        type: { type: 'string' },        // strength|cardio|rest
+        focus: { type: 'string' },         // ex: "piept + triceps"
+        cardio_minutes: { type: 'number' },
+        notes: { type: 'string' },
       },
       required: ['type', 'focus', 'cardio_minutes', 'notes'],
     },
@@ -39,7 +46,37 @@ const responseSchema = {
   required: ['rationale', 'suggested_meals', 'training'],
 };
 
-export async function POST() {
+type RecommendAi = {
+  rationale: string;
+  suggested_meals: { recipe_id: string; name: string; slot: string }[];
+  training: { type: string; focus: string; cardio_minutes: number; notes: string };
+};
+
+async function generateWithGemini(prompt: string): Promise<RecommendAi> {
+  const result = await genAI.models.generateContent({
+    model: 'gemini-2.5-flash',
+    contents: prompt,
+    config: { responseMimeType: 'application/json', responseJsonSchema: responseSchema },
+  });
+  return JSON.parse(result.text ?? '{}');
+}
+
+async function generateWithClaude(prompt: string): Promise<RecommendAi> {
+  const response = await anthropic.messages.create({
+    model: 'claude-sonnet-4-5',
+    max_tokens: 1024,
+    tools: [{ name: 'submit_recommendation', description: 'Submit the daily recommendation.', input_schema: responseSchema as Anthropic.Tool.InputSchema }],
+    tool_choice: { type: 'tool', name: 'submit_recommendation' },
+    messages: [{ role: 'user', content: prompt }],
+  });
+  const toolUse = response.content.find((b): b is Anthropic.ToolUseBlock => b.type === 'tool_use');
+  return toolUse?.input as RecommendAi;
+}
+
+export async function POST(req: NextRequest) {
+  const body = await req.json().catch(() => ({}));
+  const provider = body?.provider === 'claude' ? 'claude' : 'gemini';
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
@@ -79,12 +116,7 @@ export async function POST() {
     highProtein: r.highProtein, lowCalorie: r.lowCalorie,
   }));
 
-  // 3. Gemini alege + argumentează
-  const model = genAI.getGenerativeModel({
-    model: 'gemini-2.5-flash',
-    generationConfig: { responseMimeType: 'application/json', responseSchema: responseSchema as any },
-  });
-
+  // 3. Modelul ales alege mesele + argumentează
   const prompt = `Ești un coach pentru un cut agresiv pe termen scurt, asumat de user.
 Prioritatea #1: PĂSTRAREA masei musculare în deficit mare. Proteina e sacră, forța rămâne în program.
 
@@ -100,8 +132,8 @@ ${JSON.stringify(catalog)}
 Pentru antrenament: dacă HRV e scăzut sau somnul sub 6h → recomandă recuperare/cardio ușor.
 Argumentează scurt în limba română.`;
 
-  const result = await model.generateContent(prompt);
-  const ai = JSON.parse(result.response.text());
+  const modelName = provider === 'claude' ? 'claude-sonnet-4-5' : 'gemini-2.5-flash';
+  const ai = provider === 'claude' ? await generateWithClaude(prompt) : await generateWithGemini(prompt);
 
   // 4. Salvează
   const { data: saved } = await supabase.from('recommendations').insert({
@@ -109,7 +141,7 @@ Argumentează scurt în limba română.`;
     target_calories: t.calories, target_protein_g: t.protein_g,
     target_carbs_g: t.carbs_g, target_fat_g: t.fat_g,
     rationale: ai.rationale, suggested_meals: ai.suggested_meals,
-    training: ai.training, model: 'gemini-2.5-flash',
+    training: ai.training, model: modelName,
   }).select().single();
 
   return NextResponse.json({ targets: t, tdee: tdeeVal, ...ai, id: saved?.id });
