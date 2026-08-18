@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { createFoodToolExecutor, FOOD_TOOL_SCHEMAS } from '@/lib/food/tools';
-import { FOOD_MANAGEMENT_PROMPT } from '@/lib/food/prompt';
-import { getProvider } from '@/lib/ai/registry';
+import { runFoodAgentTurn } from '@/lib/food/agent';
 
 // Agentic food-planning endpoint: ports jarvis-brain's food_agent (prompt +
-// tool-calling loop) into su-gachu. Not wired to any UI control yet.
+// tool-calling loop) into su-gachu. Stateless — history is always empty.
+// For persisted multi-turn conversations, see /api/conversations/[id]/messages.
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
   const {
@@ -20,15 +19,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: '"task" is required' }, { status: 400 });
   }
 
-  let provider;
+  let response: string;
   try {
-    provider = getProvider(providerName);
+    response = await runFoodAgentTurn({ supabase, userId: user.id, task, provider: providerName, history: [] });
   } catch (err) {
     return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 400 });
   }
-
-  const executeTool = createFoodToolExecutor(supabase, user.id);
-  const response = await provider.call(task, FOOD_TOOL_SCHEMAS, FOOD_MANAGEMENT_PROMPT, [], executeTool);
 
   return NextResponse.json({ response, provider: providerName });
 }

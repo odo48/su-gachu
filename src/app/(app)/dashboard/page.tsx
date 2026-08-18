@@ -30,7 +30,10 @@ export default async function Dashboard() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Astăzi</h1>
-        <Link href="/profile" className="text-sm text-brand underline">Profil</Link>
+        <div className="flex gap-4">
+          <Link href="/chat" className="text-sm text-brand underline">Chat</Link>
+          <Link href="/profile" className="text-sm text-brand underline">Profil</Link>
+        </div>
       </div>
 
       {!profileReady && (
