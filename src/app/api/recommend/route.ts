@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@/lib/supabase/server';
-import { tdee, targets, age, type Sex, type Activity, type Goal } from '@/lib/nutrition';
+import { tdee, targets, age, type Sex, type Activity, type Goal } from '@/lib/food/nutrition';
 import recipesData from '@/data/recipes.json';
 
 // Recomandarea zilnică. Numerele se calculează DETERMINIST (nutrition.ts);

@@ -13,6 +13,22 @@ const ACTIVITY_FACTOR: Record<Activity, number> = {
   very_active: 1.9,
 };
 
+// Deficit/surplus caloric zilnic per obiectiv.
+const GOAL_CALORIE_ADJUSTMENT: Record<Goal, number> = {
+  fat_loss: -500,
+  recomposition: -350,
+  muscle_gain: 250,
+  maintenance: 0,
+};
+
+// Proteină (g/kg) per obiectiv — mai mare la cut, pentru păstrarea masei musculare.
+const GOAL_PROTEIN_MULTIPLIER: Record<Goal, number> = {
+  fat_loss: 2.2,
+  recomposition: 2.0,
+  muscle_gain: 1.8,
+  maintenance: 2.0,
+};
+
 export function age(birthDate: string): number {
   const d = new Date(birthDate);
   const now = new Date();
@@ -50,25 +66,22 @@ export type TargetOpts = {
   targetWeightKg?: number | null;    // pentru calculul proteinei la supraponderali
 };
 
+// Proteina pe greutatea de referință, în funcție de obiectiv.
+export function proteinTarget(weightKg: number, goal: Goal): number {
+  return Math.round(weightKg * GOAL_PROTEIN_MULTIPLIER[goal]);
+}
+
 // Deficit moderat by default. manualCalorieCap permite cut agresiv asumat de user.
 export function targets(tdeeVal: number, weightKg: number, opts: TargetOpts): Targets {
-  const deficit: Record<Goal, number> = {
-    fat_loss: -500,
-    recomposition: -350,
-    muscle_gain: +250,
-    maintenance: 0,
-  };
-
   // Caloriile: dacă userul a setat un cap dur, îl respectăm (cu floor de siguranță 1200).
   const calories = opts.manualCalorieCap
     ? Math.max(1200, Math.round(opts.manualCalorieCap))
-    : Math.max(1200, Math.round(tdeeVal + deficit[opts.goal]));
+    : Math.max(1200, Math.round(tdeeVal + GOAL_CALORIE_ADJUSTMENT[opts.goal]));
 
-  // Proteina pe greutatea-țintă (sau actuală dacă nu există), ~1.9 g/kg.
-  // La supraponderali, baza pe 98 kg ar umfla inutil proteina și ar mânca tot bugetul.
+  // La supraponderali, baza pe greutatea actuală ar umfla inutil proteina și ar mânca tot bugetul.
   const refWeight = opts.targetWeightKg && opts.targetWeightKg > 0
     ? opts.targetWeightKg : weightKg;
-  let protein_g = Math.round(refWeight * 1.9);
+  let protein_g = proteinTarget(refWeight, opts.goal);
   // Nu lăsa proteina să depășească 45% din calorii (rămâne loc pt carbo/grăsimi).
   protein_g = Math.min(protein_g, Math.floor((calories * 0.45) / 4));
 

@@ -1,10 +1,26 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { ToolExecutor, ToolSchema } from '../ai/types';
-import { computeFoodTargets, type FoodActivityLevel, type FoodObjective } from './targets';
+import { age, tdee, targets, type Activity, type Goal, type Sex } from './nutrition';
 
 // Tool implementations mirroring jarvis-backend's Mcp/RecipeTool, MealPlanTool,
 // ShoppingListTool, MealHistoryTool, UserPreferenceTool. No MCP protocol here —
 // these run in-process against Supabase, scoped to the authenticated user.
+
+// food_preferences stores its own activity/objective enums (schema_food.sql),
+// mapped onto nutrition.ts's Activity/Goal so both flows share one TDEE/macro calc.
+const FOOD_ACTIVITY_TO_ACTIVITY: Record<string, Activity> = {
+  sedentary: 'sedentary',
+  lightly_active: 'light',
+  moderately_active: 'moderate',
+  very_active: 'active',
+  extra_active: 'very_active',
+};
+
+const FOOD_OBJECTIVE_TO_GOAL: Record<string, Goal> = {
+  lean_cut: 'fat_loss',
+  maintenance: 'maintenance',
+  bulk: 'muscle_gain',
+};
 
 type IngredientInput = { name: string; quantity: string };
 
@@ -154,24 +170,29 @@ export async function getUserPreferences(supabase: SupabaseClient, userId: strin
   if (error) throw new Error(error.message);
   if (!prefs) return null;
 
-  const targets = computeFoodTargets({
-    weightKg: Number(prefs.weight_kg),
+  const weightKg = Number(prefs.weight_kg);
+  const sex: Sex = prefs.gender?.toLowerCase() === 'female' ? 'female' : 'male';
+  const activity = FOOD_ACTIVITY_TO_ACTIVITY[prefs.activity_level] ?? 'moderate';
+  const goal = FOOD_OBJECTIVE_TO_GOAL[prefs.objective] ?? 'maintenance';
+
+  const tdeeVal = tdee({
+    weightKg,
     heightCm: Number(prefs.height_cm),
-    gender: prefs.gender,
-    birthDate: prefs.birth_date,
-    activityLevel: prefs.activity_level as FoodActivityLevel,
-    objective: prefs.objective as FoodObjective,
+    ageYears: age(prefs.birth_date),
+    sex,
+    activity,
   });
+  const t = targets(tdeeVal, weightKg, { goal });
 
   return {
     id: prefs.id,
     objective: prefs.objective,
-    weightKg: Number(prefs.weight_kg),
+    weightKg,
     heightCm: Number(prefs.height_cm),
     gender: prefs.gender,
     activityLevel: prefs.activity_level,
-    dailyTargetCalories: targets.dailyTargetCalories,
-    dailyTargetProteinGrams: targets.dailyTargetProteinGrams,
+    dailyTargetCalories: t.calories,
+    dailyTargetProteinGrams: t.protein_g,
     maxStorageDays: prefs.max_storage_days,
     recipeRepeatIntervalDays: prefs.recipe_repeat_interval_days,
     birthDate: prefs.birth_date,

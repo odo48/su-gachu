@@ -3,11 +3,13 @@
 -- Ported from jarvis-backend's Recipe/MealPlan/UserPreference entities.
 -- RLS follows the same per-user pattern as schema.sql.
 --
--- NOTE: deliberately NOT reconciled yet with existing overlap:
---   - food_preferences duplicates profiles.weight_kg/height_cm/activity_level/birth_date
---   - the Mifflin-St-Jeor target calc (src/lib/food/targets.ts) duplicates
---     src/lib/nutrition.ts's existing TDEE/macro calc with a different formula
--- Both are left as-is intentionally; reconcile later.
+-- NOTE: the Mifflin-St-Jeor target calc now lives in one place
+--   (src/lib/food/nutrition.ts, moved from src/lib/nutrition.ts); the food agent
+--   maps food_objective_t/food_activity_t onto its Goal/Activity types.
+-- Still NOT reconciled: food_preferences duplicates
+--   profiles.weight_kg/height_cm/activity_level/birth_date as separate columns
+--   with separate enum types (food_objective_t/food_activity_t vs goal_t/activity_t).
+-- Left as-is intentionally; reconcile later (needs a data migration decision).
 -- ============================================================
 
 create type recipe_status_t as enum ('draft', 'approved');
