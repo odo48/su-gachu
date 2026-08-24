@@ -2,6 +2,86 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-neutral-50 text-neutral-900 antialiased;
+@layer base {
+  :root {
+    --background: 210 33% 98%;
+    --foreground: 214 64% 13%;
+    --card: 0 0% 100%;
+    --card-foreground: 214 64% 13%;
+    --primary: 214 59% 27%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 214 40% 94%;
+    --secondary-foreground: 214 59% 27%;
+    --muted: 214 40% 94%;
+    --muted-foreground: 214 30% 45%;
+    --accent: 214 40% 94%;
+    --accent-foreground: 214 59% 27%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 214 45% 88%;
+    --input: 214 45% 88%;
+    --ring: 214 59% 45%;
+    --radius: 0.75rem;
+    --chart-1: 214 59% 42%;
+    --chart-2: 160 55% 38%;
+    --chart-3: 38 92% 50%;
+    --chart-4: 280 55% 55%;
+  }
+
+  .dark {
+    --background: 214 50% 6%;
+    --foreground: 210 40% 96%;
+    --card: 214 45% 10%;
+    --card-foreground: 210 40% 96%;
+    --primary: 214 55% 55%;
+    --primary-foreground: 214 50% 8%;
+    --secondary: 214 35% 16%;
+    --secondary-foreground: 210 40% 92%;
+    --muted: 214 35% 16%;
+    --muted-foreground: 214 25% 62%;
+    --accent: 214 35% 18%;
+    --accent-foreground: 210 40% 96%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 214 35% 20%;
+    --input: 214 35% 20%;
+    --ring: 214 55% 50%;
+    --chart-1: 214 70% 62%;
+    --chart-2: 160 50% 48%;
+    --chart-3: 38 85% 55%;
+    --chart-4: 280 55% 62%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+@layer components {
+  .input {
+    @apply w-full rounded-lg border border-input bg-background px-3 py-2 text-sm
+           text-foreground placeholder:text-muted-foreground
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+  }
+
+  .nav-shell {
+    @apply sticky top-0 z-20 border-b shadow-lg
+           bg-primary text-primary-foreground border-primary/20
+           dark:bg-brand-950 dark:text-brand-100 dark:border-brand-800;
+  }
+
+  .nav-link {
+    @apply px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
+           text-primary-foreground/85 hover:text-primary-foreground hover:bg-primary-foreground/10
+           dark:text-brand-200 dark:hover:text-white dark:hover:bg-brand-800;
+  }
+
+  .nav-brand {
+    @apply font-bold tracking-tight text-lg text-primary-foreground
+           dark:text-white;
+  }
 }

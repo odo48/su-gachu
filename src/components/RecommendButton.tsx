@@ -1,7 +1,9 @@
 'use client';
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function RecommendButton() {
   const router = useRouter();
@@ -9,7 +11,8 @@ export default function RecommendButton() {
   const [err, setErr] = useState<string | null>(null);
 
   async function run() {
-    setLoading(true); setErr(null);
+    setLoading(true);
+    setErr(null);
     const res = await fetch('/api/recommend', { method: 'POST' });
     setLoading(false);
     if (!res.ok) {
@@ -21,11 +24,11 @@ export default function RecommendButton() {
 
   return (
     <div>
-      <button onClick={run} disabled={loading}
-        className="flex items-center gap-2 rounded bg-brand px-4 py-2 font-medium text-white hover:bg-brand-dark disabled:opacity-50">
-        <Sparkles size={16} /> {loading ? 'Generez...' : 'Generează planul zilei'}
-      </button>
-      {err && <p className="mt-2 text-sm text-red-600">{err}</p>}
+      <Button onClick={run} disabled={loading} size="sm">
+        <Sparkles className="h-4 w-4" />
+        {loading ? 'Generez...' : 'Generează planul'}
+      </Button>
+      {err && <p className="mt-2 text-xs text-destructive">{err}</p>}
     </div>
   );
 }
