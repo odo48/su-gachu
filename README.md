@@ -17,9 +17,14 @@ npm run dev                        # http://localhost:3000
 ## Supabase
 
 1. supabase.com → proiect nou.
-2. SQL Editor → rulează tot `supabase/schema.sql`.
+2. SQL Editor → rulează în ordine: `supabase/schema.sql`, `supabase/schema_chat.sql`,
+   `supabase/schema_food.sql`, `supabase/schema_modules.sql`, `supabase/schema_home_assistant.sql`,
+   `supabase/schema_biometrics.sql`, `supabase/schema_financial.sql`.
 3. Authentication → Providers → activează **Email** (pentru dev, dezactivează „Confirm email").
 4. Settings → API → copiază URL, anon key, service_role key în `.env.local`.
+
+Vault (folosit pentru token-urile Home Assistant/Ultrahuman, vezi mai jos) e activat
+implicit pe proiectele Supabase noi — nu necesită pași suplimentari.
 
 ## Gemini
 
@@ -45,6 +50,40 @@ Model folosit: `gemini-2.5-flash`. Numerele (calorii/macros) se calculează dete
 
 Gratuit, fără cheie. `GET /api/food/search?q=iaurt grecesc` → produse cu macros/100g + poză.
 Folosit pentru logarea meselor din magazin (Lidl/Kaufland) și scanare cod de bare.
+
+## Jarvis (portare în curs)
+
+Domeniile portate din jarvis (vezi `/Users/lucy/projects/jarvis`) rulează toate în acest
+Next.js, fără microserviciu separat. Fiecare domeniu e activabil per-user prin tabela
+`user_modules` (`food` pornit implicit; restul, doar după conectare).
+
+- **Chat unificat**: `/api/conversations/[id]/messages` trece prin `src/lib/agents/router.ts`,
+  care expune fiecare agent activat ca tool către modelul principal — echivalentul
+  `BrainService`-ului din jarvis-brain, dar cu registry+behavior într-un singur fișier
+  (`src/lib/agents/registry.ts`) în loc de `agent_registry.py` + `base_agent.py` separate.
+- **Home Assistant**: fiecare user își conectează propria instanță (`POST /api/home-assistant/connection`
+  cu `mcpUrl` + long-lived token). Spre deosebire de restul domeniilor, tool-urile sunt
+  descoperite dinamic de la serverul MCP al HA-ului, via clientul MCP generic
+  `src/lib/mcp/client.ts` (folosit și de Tavily, vezi mai jos).
+- **Biometrics**: conectare Ultrahuman prin `POST /api/biometrics/connection` (`{token}`),
+  sincronizare zilnică prin `POST /api/biometrics/sync`.
+- **Financial**: conturile se înregistrează manual deocamdată prin `POST /api/financial/accounts`
+  (jarvis nu avea nici el un flow real de legare a contului prin Enable Banking — conturile
+  erau create din afara aplicației). Sincronizare sold/tranzacții prin
+  `/api/financial/accounts/sync-balances` și `/api/financial/transactions/sync`.
+  `ENABLE_BANKING_*` sunt credențiale la nivel de aplicație (o singură cheie privată
+  înregistrată la Enable Banking), nu per-user.
+- Token-urile per-user (Home Assistant, Ultrahuman) trec prin Supabase Vault
+  (`supabase/schema_home_assistant.sql`, `supabase/schema_biometrics.sql`) — niciodată
+  într-o coloană în clar.
+- **Tavily** (căutare web, `src/lib/mcp/tavily.ts`): în jarvis era `module: "general"`,
+  adică disponibil pentru toate agentele, nu doar food. Portat la fel — `combineTools()`
+  (`src/lib/ai/combine-tools.ts`) adaugă tool-urile Tavily peste tool-urile fiecărui
+  agent (food/HA/biometrics/financial) și peste router. Credențial la nivel de
+  aplicație (`TAVILY_API_KEY`), nu per-user.
+
+Neportat încă: fluxul real de legare a contului bancar (redirect + consimțământ la bancă)
+și o interfață pentru conectarea integrărilor (momentan doar API).
 
 ## Structură
 

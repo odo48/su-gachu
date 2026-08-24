@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { runFoodAgentTurn } from '@/lib/food/agent';
+import { runRouterTurn } from '@/lib/agents/router';
 import type { ChatMessage } from '@/lib/ai/types';
 
 // Mirrors jarvis-backend's ListConversationMessagesController /
 // CreateConversationMessageController, collapsed into one POST since
 // su-gachu has no separate brain microservice to orchestrate the two
 // backend calls jarvis-brain's BrainService.get_chat_response makes.
+// Delegates to the top-level router (lib/agents/router.ts) rather than a
+// single domain agent, so one conversation can span food/home_assistant/
+// biometrics/financial depending on what's enabled for this user.
 
 async function getOwnedConversation(supabase: Awaited<ReturnType<typeof createClient>>, userId: string, id: number) {
   const { data, error } = await supabase.from('conversations').select('*').eq('id', id).eq('user_id', userId).maybeSingle();
@@ -86,7 +89,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // 3. Run the agent turn.
   let response: string;
   try {
-    response = await runFoodAgentTurn({ supabase, userId: user.id, task: content, provider: providerName, history });
+    response = await runRouterTurn({ supabase, userId: user.id, task: content, provider: providerName, history });
   } catch (err) {
     return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 400 });
   }
