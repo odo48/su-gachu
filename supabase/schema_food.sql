@@ -4,17 +4,16 @@
 -- RLS follows the same per-user pattern as schema.sql.
 --
 -- NOTE: the Mifflin-St-Jeor target calc now lives in one place
---   (src/lib/food/nutrition.ts, moved from src/lib/nutrition.ts); the food agent
---   maps food_objective_t/food_activity_t onto its Goal/Activity types.
--- Still NOT reconciled: food_preferences duplicates
---   profiles.weight_kg/height_cm/activity_level/birth_date as separate columns
---   with separate enum types (food_objective_t/food_activity_t vs goal_t/activity_t).
--- Left as-is intentionally; reconcile later (needs a data migration decision).
+--   (src/lib/food/nutrition.ts, moved from src/lib/nutrition.ts). food_objective_t
+--   and food_activity_t are kept as their own enum types (separate from profiles'
+--   goal_t/activity_t) but use the exact same string values as nutrition.ts's
+--   Goal/Activity, so food_preferences.objective/activity_level cast directly
+--   to Goal/Activity in src/lib/food/tools.ts with no translation table.
 -- ============================================================
 
 create type recipe_status_t as enum ('draft', 'approved');
-create type food_objective_t as enum ('lean_cut', 'maintenance', 'bulk');
-create type food_activity_t as enum ('sedentary', 'lightly_active', 'moderately_active', 'very_active', 'extra_active');
+create type food_objective_t as enum ('fat_loss', 'recomposition', 'muscle_gain', 'maintenance');
+create type food_activity_t as enum ('sedentary', 'light', 'moderate', 'active', 'very_active');
 
 -- 1. RECIPES ------------------------------------------------------
 create table recipes (
@@ -82,7 +81,7 @@ create table food_preferences (
   weight_kg                   numeric(5,1) not null,
   height_cm                   numeric(5,1) not null,
   gender                      text not null,
-  activity_level              food_activity_t not null default 'moderately_active',
+  activity_level              food_activity_t not null default 'moderate',
   max_storage_days            int not null default 7,
   recipe_repeat_interval_days int not null default 14,
   birth_date                  date not null,

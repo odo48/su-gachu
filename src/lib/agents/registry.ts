@@ -24,7 +24,7 @@ export const AGENT_REGISTRY: Record<AppModule, { toolName: string; description: 
   food: {
     toolName: 'food_agent',
     description:
-      "Specialized agent for meal planning, nutrition optimization, and recipe management. Route to this agent for generating weekly or monthly meal plans aligned with specific fitness goals (e.g., Lean Cut, Bulk, Maintenance). It specializes in 'batch cooking' optimization, structuring plans into large meal blocks (bulk breakfast and lunch prep) rather than rigid daily menus. The agent handles automated recipe searching from the local database or external target platforms (GymBeam, Jamila Cuisine), enforces strict dietary restrictions (e.g., excluding mushrooms, olives, or other blacklisted items), calculates dynamically adjusted macro-nutrients at the plan level, and compiles aggregated, categorized weekly shopping lists.",
+      "Specialized agent for meal planning, nutrition optimization, and recipe management. Route to this agent for generating weekly or monthly meal plans aligned with specific fitness goals (e.g., Lean Cut, Bulk, Maintenance, Recomposition). It specializes in 'batch cooking' optimization, structuring plans into large meal blocks (bulk breakfast and lunch prep) rather than rigid daily menus. The agent handles automated recipe searching from the local database or external target platforms (GymBeam, Jamila Cuisine), enforces strict dietary restrictions (e.g., excluding mushrooms, olives, or other blacklisted items), calculates dynamically adjusted macro-nutrients at the plan level, and compiles aggregated, categorized weekly shopping lists.",
     runTurn: runFoodAgentTurn,
   },
   home_assistant: {

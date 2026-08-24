@@ -6,22 +6,6 @@ import { age, tdee, targets, type Activity, type Goal, type Sex } from './nutrit
 // ShoppingListTool, MealHistoryTool, UserPreferenceTool. No MCP protocol here —
 // these run in-process against Supabase, scoped to the authenticated user.
 
-// food_preferences stores its own activity/objective enums (schema_food.sql),
-// mapped onto nutrition.ts's Activity/Goal so both flows share one TDEE/macro calc.
-const FOOD_ACTIVITY_TO_ACTIVITY: Record<string, Activity> = {
-  sedentary: 'sedentary',
-  lightly_active: 'light',
-  moderately_active: 'moderate',
-  very_active: 'active',
-  extra_active: 'very_active',
-};
-
-const FOOD_OBJECTIVE_TO_GOAL: Record<string, Goal> = {
-  lean_cut: 'fat_loss',
-  maintenance: 'maintenance',
-  bulk: 'muscle_gain',
-};
-
 type IngredientInput = { name: string; quantity: string };
 
 function mapRecipeRow(row: {
@@ -172,8 +156,8 @@ export async function getUserPreferences(supabase: SupabaseClient, userId: strin
 
   const weightKg = Number(prefs.weight_kg);
   const sex: Sex = prefs.gender?.toLowerCase() === 'female' ? 'female' : 'male';
-  const activity = FOOD_ACTIVITY_TO_ACTIVITY[prefs.activity_level] ?? 'moderate';
-  const goal = FOOD_OBJECTIVE_TO_GOAL[prefs.objective] ?? 'maintenance';
+  const activity = prefs.activity_level as Activity;
+  const goal = prefs.objective as Goal;
 
   const tdeeVal = tdee({
     weightKg,
