@@ -1,5 +1,6 @@
 import { GarminConnect } from 'garmin-connect';
 import { parseIsoDate } from './dates';
+import { activitiesForDate, flattenGarminRaw, type GarminActivityRaw } from './raw';
 import type { GarminDayMetrics, GarminOauthTokens, GarminSecret } from './types';
 
 const GC_API = 'https://connectapi.garmin.com';
@@ -91,11 +92,17 @@ export async function readProfile(client: GarminConnect): Promise<ProfileBits> {
   };
 }
 
+export async function fetchRecentActivities(client: GarminConnect): Promise<unknown[]> {
+  const list = await settled(client.getActivities(0, 80));
+  return Array.isArray(list) ? list : [];
+}
+
 export async function fetchDayMetrics(
   client: GarminConnect,
   isoDate: string,
   displayName: string,
-  vo2max: number | null
+  vo2max: number | null,
+  recentActivities: unknown[] = []
 ): Promise<GarminDayMetrics> {
   const day = parseIsoDate(isoDate);
 
@@ -117,7 +124,6 @@ export async function fetchDayMetrics(
   const heartR = asRecord(heart);
   const sleepR = asRecord(sleep);
   const sleepDto = asRecord(sleepR?.dailySleepDTO);
-  const scores = asRecord(asRecord(sleepDto?.sleepScores)?.overall);
   const weightR = asRecord(weight);
   const weightAvg = asRecord(weightR?.totalAverage);
   const hrvR = asRecord(hrv);
@@ -131,6 +137,15 @@ export async function fetchDayMetrics(
   const weightGrams = num(weightAvg?.weight);
   const hrvValue = num(hrvSummary?.lastNightAvg) ?? num(hrvSummary?.lastNight) ?? num(hrvSummary?.weeklyAvg);
 
+  const dayActivities: GarminActivityRaw[] = activitiesForDate(recentActivities, isoDate);
+  const nestedRaw: Record<string, unknown> = {
+    summary: summaryR ?? {},
+    heartRate: heartR ?? {},
+    sleep: sleepR ?? {},
+    hrv: hrvR ?? {},
+    hrvStatus: hrvSummary?.status ?? null,
+  };
+
   return {
     date: isoDate,
     steps,
@@ -141,17 +156,22 @@ export async function fetchDayMetrics(
     hrv: hrvValue != null ? Math.round(hrvValue) : null,
     vo2max,
     weight_kg: weightGrams != null ? Math.round((weightGrams / 1000) * 10) / 10 : null,
-    raw: {
-      summary: summaryR,
-      heartRate: heartR,
-      sleepScore: scores?.value ?? null,
-      hrvStatus: hrvSummary?.status ?? null,
-      stress: summaryR?.averageStressLevel ?? null,
-      bodyBattery: summaryR?.bodyBatteryMostRecentValue ?? null,
-    },
+    raw: flattenGarminRaw(nestedRaw, dayActivities),
   };
 }
 
 export function hasMetricData(m: GarminDayMetrics): boolean {
-  return !!(m.steps || m.active_kcal || m.sleep_minutes || m.avg_hr || m.resting_hr || m.hrv || m.weight_kg);
+  const acts = m.raw?.activities;
+  const hasActs = Array.isArray(acts) && acts.length > 0;
+  return !!(
+    hasActs ||
+    m.steps ||
+    m.active_kcal ||
+    m.sleep_minutes ||
+    m.avg_hr ||
+    m.resting_hr ||
+    m.hrv ||
+    m.weight_kg ||
+    m.raw?.total_kcal
+  );
 }

@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import {
   fetchDayMetrics,
+  fetchRecentActivities,
   hasMetricData,
   loginGarmin,
   parseSecret,
@@ -120,6 +121,8 @@ export async function POST(req: NextRequest) {
     // summary endpoint needs displayName; other calls still work
   }
 
+  const recentActivities = await fetchRecentActivities(client);
+
   const syncedDates: string[] = [];
   const failed: { date: string; error: string }[] = [];
   let todayMetrics = null;
@@ -127,7 +130,7 @@ export async function POST(req: NextRequest) {
 
   for (const iso of dates) {
     try {
-      const metrics = await fetchDayMetrics(client, iso, displayName, vo2max);
+      const metrics = await fetchDayMetrics(client, iso, displayName, vo2max, recentActivities);
       if (!hasMetricData(metrics)) {
         failed.push({ date: iso, error: 'Garmin nu are date pentru această zi' });
         continue;
