@@ -26,7 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ro" className={cn(raleway.variable, lora.variable, 'font-sans')}>
       <body>
         {children}
-        <p className="mx-auto max-w-3xl px-4 pb-8 text-xs text-muted-foreground">
+        <p className="mx-auto max-w-4xl px-4 pb-8 text-xs text-muted-foreground">
           Informativ, nu sfat medical. Consultă un medic înainte de un deficit caloric agresiv.
         </p>
         <Toaster />

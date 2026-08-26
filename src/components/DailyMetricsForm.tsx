@@ -1,13 +1,26 @@
 'use client';
-import { useState } from 'react';
+
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Loader2, RefreshCw, Watch } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { isoDateLocal } from '@/lib/garmin/dates';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-export default function DailyMetricsForm({ garminConnected = false }: { garminConnected?: boolean }) {
+type SyncStatus = 'idle' | 'syncing' | 'ok' | 'error';
+
+export default function DailyMetricsForm({
+  garminConnected = false,
+  hasGarminToday = false,
+  needsWeekSync = false,
+}: {
+  garminConnected?: boolean;
+  hasGarminToday?: boolean;
+  needsWeekSync?: boolean;
+}) {
   const router = useRouter();
   const supabase = createClient();
   const [weight, setWeight] = useState('');
@@ -15,81 +28,185 @@ export default function DailyMetricsForm({ garminConnected = false }: { garminCo
   const [activeKcal, setActiveKcal] = useState('');
   const [sleep, setSleep] = useState('');
   const [saving, setSaving] = useState(false);
-  const [syncing, setSyncing] = useState(false);
-  const [syncMsg, setSyncMsg] = useState<string | null>(null);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>(
+    garminConnected && hasGarminToday ? 'ok' : 'idle'
+  );
+  const [syncMsg, setSyncMsg] = useState('');
+
+  const syncGarmin = useCallback(
+    async (force = false) => {
+      setSyncStatus('syncing');
+      setSyncMsg('');
+      try {
+        const qs = force ? 'days=7&onlyMissing=false' : 'days=7&onlyMissing=true';
+        const res = await fetch(`/api/garmin/sync?${qs}`, { method: 'POST' });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || data.error || data.saved === false) {
+          setSyncStatus('error');
+          setSyncMsg(data.error ?? `HTTP ${res.status}`);
+          return;
+        }
+        const m = data.metrics ?? {};
+        const parts: string[] = [];
+        if (data.synced > 0) {
+          parts.push(`${data.synced} ${data.synced === 1 ? 'zi' : 'zile'} din săptămână`);
+        } else if (data.skipped) {
+          parts.push('Săptămâna e la zi');
+        }
+        if (m.steps) parts.push(`${Number(m.steps).toLocaleString('ro-RO')} pași azi`);
+        if (m.resting_hr) parts.push(`HR ${m.resting_hr} bpm`);
+        if (m.sleep_minutes) parts.push(`${Math.round((m.sleep_minutes / 60) * 10) / 10}h somn`);
+        if (m.hrv) parts.push(`HRV ${m.hrv}ms`);
+        if (m.weight_kg) parts.push(`${m.weight_kg}kg`);
+        if (data.failed?.length) parts.push(`${data.failed.length} zile fără date Garmin`);
+        setSyncStatus('ok');
+        setSyncMsg(parts.length ? parts.join(' · ') : 'Date sincronizate.');
+        router.refresh();
+      } catch (e: unknown) {
+        setSyncStatus('error');
+        setSyncMsg(e instanceof Error ? e.message : 'Sincronizarea a eșuat');
+      }
+    },
+    [router]
+  );
+
+  useEffect(() => {
+    if (!garminConnected) return;
+    if (needsWeekSync || !hasGarminToday) syncGarmin();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return;
-    await supabase.from('daily_metrics').upsert({
-      user_id: user.id,
-      date: new Date().toISOString().slice(0, 10),
-      source: 'manual',
-      weight_kg: weight ? Number(weight) : null,
-      steps: steps ? Number(steps) : null,
-      active_kcal: activeKcal ? Number(activeKcal) : null,
-      sleep_minutes: sleep ? Number(sleep) * 60 : null,
-    }, { onConflict: 'user_id,date,source' });
+    await supabase.from('daily_metrics').upsert(
+      {
+        user_id: user.id,
+        date: isoDateLocal(),
+        source: 'manual',
+        weight_kg: weight ? Number(weight) : null,
+        steps: steps ? Number(steps) : null,
+        active_kcal: activeKcal ? Number(activeKcal) : null,
+        sleep_minutes: sleep ? Math.round(Number(sleep) * 60) : null,
+      },
+      { onConflict: 'user_id,date,source' }
+    );
     if (weight) await supabase.from('profiles').update({ weight_kg: Number(weight) }).eq('id', user.id);
     setSaving(false);
     router.refresh();
   }
 
-  async function syncGarmin() {
-    setSyncing(true);
-    setSyncMsg(null);
-    const res = await fetch('/api/garmin/sync?days=7&onlyMissing=false', { method: 'POST' });
-    const data = await res.json().catch(() => ({}));
-    setSyncing(false);
-    if (!res.ok) {
-      setSyncMsg(data.error ?? `HTTP ${res.status}`);
-      return;
-    }
-    const parts: string[] = [];
-    if (data.skipped) parts.push('Săptămâna e la zi');
-    else if (data.synced > 0) parts.push(`${data.synced} ${data.synced === 1 ? 'zi' : 'zile'} din Garmin`);
-    if (data.failed?.length) parts.push(`${data.failed.length} zile fără date`);
-    setSyncMsg(parts.join(' · ') || 'Sincronizat.');
-    router.refresh();
-  }
-
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {garminConnected ? (
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <Button type="button" onClick={syncGarmin} disabled={syncing}>
-            {syncing ? 'Sincronizez Garmin…' : 'Sincronizează Garmin'}
-          </Button>
-          {syncMsg && <p className="text-sm text-muted-foreground">{syncMsg}</p>}
+        <div className="flex items-center gap-2 text-sm">
+          {syncStatus === 'syncing' && (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin text-secondary" />
+              <span className="text-muted-foreground">Se sincronizează cu Garmin...</span>
+            </>
+          )}
+          {syncStatus === 'ok' && (
+            <>
+              <Watch className="h-4 w-4 text-primary" />
+              <span className="text-muted-foreground">{syncMsg || 'Garmin sincronizat'}</span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => syncGarmin(true)}
+                className="ml-auto h-9 text-xs"
+              >
+                <RefreshCw /> reîncarcă
+              </Button>
+            </>
+          )}
+          {syncStatus === 'idle' && (
+            <>
+              <Watch className="h-4 w-4 text-muted-foreground" />
+              <span className="text-muted-foreground">Garmin conectat</span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => syncGarmin(true)}
+                className="ml-auto h-9 text-xs"
+              >
+                <RefreshCw /> sincronizează
+              </Button>
+            </>
+          )}
+          {syncStatus === 'error' && (
+            <>
+              <Watch className="h-4 w-4 text-destructive" />
+              <span className="text-xs text-destructive">{syncMsg}</span>
+              <Button
+                type="button"
+                variant="link"
+                size="sm"
+                onClick={() => syncGarmin(true)}
+                className="ml-auto h-9 text-xs"
+              >
+                Reîncearcă
+              </Button>
+            </>
+          )}
         </div>
       ) : (
         <p className="text-sm text-muted-foreground">
-          <Link href="/profile" className="underline">Conectează Garmin</Link> pe profil ca să tragi pașii, somnul și HR automat.
+          <Link href="/profile" className="underline">
+            Conectează Garmin
+          </Link>{' '}
+          pe profil ca să tragi pașii, somnul și HR automat.
         </p>
       )}
-      <form onSubmit={save} className="grid grid-cols-2 gap-3">
-        <div className="space-y-2">
-          <Label htmlFor="weight">Greutate azi (kg)</Label>
-          <Input id="weight" type="number" step="0.1" value={weight} onChange={(e) => setWeight(e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="steps">Pași</Label>
-          <Input id="steps" type="number" value={steps} onChange={(e) => setSteps(e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="kcal">Calorii arse activ</Label>
-          <Input id="kcal" type="number" value={activeKcal} onChange={(e) => setActiveKcal(e.target.value)} />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="sleep">Somn (ore)</Label>
-          <Input id="sleep" type="number" step="0.1" value={sleep} onChange={(e) => setSleep(e.target.value)} />
-        </div>
-        <Button type="submit" variant="outline" disabled={saving} className="col-span-2">
-          {saving ? 'Salvez...' : 'Salvează metricile zilei'}
-        </Button>
-      </form>
+
+      <details>
+        <summary className="cursor-pointer select-none text-xs text-muted-foreground hover:text-foreground">
+          Sau introdu manual
+        </summary>
+        <form onSubmit={save} className="mt-3 grid grid-cols-2 gap-3">
+          <div className="space-y-2">
+            <Label htmlFor="weight">Greutate azi (kg)</Label>
+            <Input
+              id="weight"
+              type="number"
+              step="0.1"
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="steps">Pași</Label>
+            <Input id="steps" type="number" value={steps} onChange={(e) => setSteps(e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="kcal">Calorii arse activ</Label>
+            <Input
+              id="kcal"
+              type="number"
+              value={activeKcal}
+              onChange={(e) => setActiveKcal(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="sleep">Somn (ore)</Label>
+            <Input
+              id="sleep"
+              type="number"
+              step="0.1"
+              value={sleep}
+              onChange={(e) => setSleep(e.target.value)}
+            />
+          </div>
+          <Button type="submit" variant="outline" disabled={saving} className="col-span-2">
+            {saving ? 'Salvez...' : 'Salvează metricile zilei'}
+          </Button>
+        </form>
+      </details>
     </div>
   );
 }
