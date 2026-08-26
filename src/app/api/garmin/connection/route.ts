@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { GarminMfaNeededError, loginGarmin, readProfile, serializeSecret } from '@/lib/garmin/client';
+import { hasUltrahumanConnection } from '@/lib/ultrahuman/connection';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -72,6 +73,13 @@ export async function POST(req: NextRequest) {
   });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
+  await supabase
+    .from('user_modules')
+    .upsert(
+      { user_id: user.id, module: 'biometrics', enabled: true, updated_at: new Date().toISOString() },
+      { onConflict: 'user_id,module' }
+    );
+
   return NextResponse.json({ ok: true });
 }
 
@@ -85,6 +93,14 @@ export async function DELETE() {
   const admin = createAdminClient();
   const { error } = await admin.rpc('delete_garmin_connection', { p_user_id: user.id });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  const keepOn = await hasUltrahumanConnection(supabase, user.id);
+  await supabase
+    .from('user_modules')
+    .upsert(
+      { user_id: user.id, module: 'biometrics', enabled: keepOn, updated_at: new Date().toISOString() },
+      { onConflict: 'user_id,module' }
+    );
 
   return NextResponse.json({ ok: true });
 }

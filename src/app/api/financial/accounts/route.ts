@@ -17,14 +17,27 @@ export async function GET(req: NextRequest) {
   const bank = req.nextUrl.searchParams.get('bank');
   const currency = req.nextUrl.searchParams.get('currency');
 
-  let query = supabase.from('accounts').select('id, bank, currency, balance').eq('user_id', user.id);
+  let query = supabase
+    .from('accounts')
+    .select('id, account_id, bank, currency, balance, iban')
+    .eq('user_id', user.id);
   if (bank) query = query.ilike('bank', `%${bank}%`);
   if (currency) query = query.eq('currency', currency);
 
   const { data, error } = await query;
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  return NextResponse.json((data ?? []).map((a) => ({ accountId: a.id, bank: a.bank, currencyCode: a.currency, balance: Number(a.balance) })));
+  return NextResponse.json(
+    (data ?? []).map((a) => ({
+      id: a.id,
+      accountId: a.id,
+      externalAccountId: a.account_id,
+      bank: a.bank,
+      currencyCode: a.currency,
+      balance: Number(a.balance),
+      iban: a.iban,
+    }))
+  );
 }
 
 export async function POST(req: NextRequest) {
@@ -55,4 +68,30 @@ export async function POST(req: NextRequest) {
     );
 
   return NextResponse.json(data, { status: 201 });
+}
+
+export async function DELETE(req: NextRequest) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+
+  const id = Number(req.nextUrl.searchParams.get('id'));
+  if (!id) return NextResponse.json({ error: '"id" is required' }, { status: 400 });
+
+  const { error } = await supabase.from('accounts').delete().eq('id', id).eq('user_id', user.id);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  const { data: remaining } = await supabase.from('accounts').select('id').eq('user_id', user.id).limit(1);
+  if ((remaining ?? []).length === 0) {
+    await supabase
+      .from('user_modules')
+      .upsert(
+        { user_id: user.id, module: 'financial', enabled: false, updated_at: new Date().toISOString() },
+        { onConflict: 'user_id,module' }
+      );
+  }
+
+  return NextResponse.json({ ok: true });
 }

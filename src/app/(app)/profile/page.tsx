@@ -3,6 +3,9 @@ import { revalidatePath } from 'next/cache';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import GarminConnectForm from '@/components/GarminConnectForm';
+import UltrahumanConnectForm from '@/components/UltrahumanConnectForm';
+import BankingConnectForm from '@/components/BankingConnectForm';
+import HomeAssistantConnectForm from '@/components/HomeAssistantConnectForm';
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -73,8 +76,11 @@ export default async function ProfilePage() {
           Salvează
         </button>
       </form>
-      <div className="mt-8">
+      <div className="mt-8 space-y-6">
         <GarminConnectForm />
+        <UltrahumanConnectForm />
+        <BankingConnectForm />
+        <HomeAssistantConnectForm />
       </div>
     </div>
   );

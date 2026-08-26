@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { hasGarminConnection } from '@/lib/garmin/metrics';
 
 // Manages the caller's own Ultrahuman API token. Mirrors
 // /api/home-assistant/connection — the token goes through Vault via
@@ -61,10 +62,11 @@ export async function DELETE() {
   const { error } = await admin.rpc('delete_ultrahuman_connection', { p_user_id: user.id });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
+  const keepOn = await hasGarminConnection(supabase, user.id);
   await supabase
     .from('user_modules')
     .upsert(
-      { user_id: user.id, module: 'biometrics', enabled: false, updated_at: new Date().toISOString() },
+      { user_id: user.id, module: 'biometrics', enabled: keepOn, updated_at: new Date().toISOString() },
       { onConflict: 'user_id,module' }
     );
 
