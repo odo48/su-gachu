@@ -4,11 +4,15 @@ import { useEffect, useState } from 'react';
 import {
   Activity,
   CalendarDays,
+  CircleDashed,
   Flame,
   Footprints,
+  Gauge,
   Heart,
   Landmark,
+  Moon,
   Sparkles,
+  Sun,
   TrendingUp,
   Zap,
 } from 'lucide-react';
@@ -26,6 +30,11 @@ import WeightChartCard from '@/components/charts/WeightChartCard';
 import SportTodayCard from '@/components/SportTodayCard';
 import BankingConnectForm from '@/components/BankingConnectForm';
 import FinanceDashboard from '@/components/finance/FinanceDashboard';
+import CommonWeekCharts from '@/components/charts/CommonWeekCharts';
+import CommonWeekTable from '@/components/CommonWeekTable';
+import UltrahumanWeekChart from '@/components/charts/UltrahumanWeekChart';
+import UltrahumanWeekTable from '@/components/UltrahumanWeekTable';
+import type { CommonWeekRow, UltrahumanWeekRow } from '@/lib/dashboard/weekRows';
 
 export type GarminTodayData = {
   active_kcal?: number | null;
@@ -36,6 +45,58 @@ export type GarminTodayData = {
   hrv?: number | null;
   vo2max?: number | null;
   raw: Record<string, unknown>;
+} | null;
+
+// Merged view from the common `daily_biometrics` table — whichever
+// wearable(s) the user has connected, translated into one row per day.
+// `sources` names which provider last set each field, so the overview can
+// still credit the right device instead of presenting one blended number.
+export type CommonTodayData = {
+  weight_kg: number | null;
+  steps: number | null;
+  active_kcal: number | null;
+  resting_hr: number | null;
+  avg_hr: number | null;
+  sleep_minutes: number | null;
+  hrv: number | null;
+  vo2max: number | null;
+  sources: Record<string, string>;
+} | null;
+
+const SOURCE_LABELS: Record<string, string> = { garmin: 'Garmin', ultrahuman: 'Ultrahuman', manual: 'manual' };
+
+// Full-detail Ultrahuman ring data — ultrahuman_daily_biometrics +
+// ultrahuman_sleep_sessions, not carried by the common table.
+export type UltrahumanTodayData = {
+  hrLastRead: number | null;
+  hrMin: number | null;
+  hrMax: number | null;
+  spo2Min: number | null;
+  spo2Max: number | null;
+  hrvLastRead: number | null;
+  hrvMin: number | null;
+  hrvMax: number | null;
+  steps: number | null;
+  nightRhrAvg: number | null;
+  nightRhrMin: number | null;
+  nightRhrMax: number | null;
+  sleepScore: number | null;
+  restfulness: number | null;
+  sleepConsistency: number | null;
+  recoveryIndex: number | null;
+  movementIndex: number | null;
+  vo2max: number | null;
+  sleep: {
+    totalSleepSeconds: number | null;
+    efficiency: number | null;
+    deepSeconds: number | null;
+    lightSeconds: number | null;
+    remSeconds: number | null;
+    awakeSeconds: number | null;
+    completedCycles: number | null;
+    movements: number | null;
+    morningAlertness: number | null;
+  } | null;
 } | null;
 
 export type PlanRec = {
@@ -52,8 +113,13 @@ type Props = {
   garminConnected: boolean;
   hasGarminToday: boolean;
   needsWeekSync: boolean;
+  todayData: CommonTodayData;
   garminToday: GarminTodayData;
+  ultrahumanConnected: boolean;
+  ultrahumanToday: UltrahumanTodayData;
   garminWeekRows: GarminWeekRow[];
+  commonWeekRows: CommonWeekRow[];
+  ultrahumanWeekRows: UltrahumanWeekRow[];
   weightChart: { date: string; weight: number }[];
   targetWeight?: number | null;
   profileReady: boolean;
@@ -65,18 +131,28 @@ export default function DashboardTabs({
   garminConnected,
   hasGarminToday,
   needsWeekSync,
+  todayData,
   garminToday,
+  ultrahumanConnected,
+  ultrahumanToday,
   garminWeekRows,
+  commonWeekRows,
+  ultrahumanWeekRows,
   weightChart,
   targetWeight,
   profileReady,
   rec,
   recipes,
 }: Props) {
-  const [tab, setTab] = useState('garmin');
+  const [tab, setTab] = useState('today');
   useEffect(() => {
     if (new URLSearchParams(window.location.search).has('banking')) setTab('banca');
   }, []);
+
+  const sourceLabel = (field: string) => {
+    const source = todayData?.sources?.[field];
+    return source ? SOURCE_LABELS[source] ?? source : undefined;
+  };
 
   const raw = garminToday?.raw ?? {};
   const bbHigh = raw.body_battery_high as number | undefined;
@@ -88,14 +164,31 @@ export default function DashboardTabs({
         ? ('amber' as const)
         : ('red' as const);
 
+  const extraTabs = (garminConnected ? 1 : 0) + (ultrahumanConnected ? 1 : 0);
+  const gridClass = extraTabs === 2 ? 'grid-cols-6' : extraTabs === 1 ? 'grid-cols-5' : 'grid-cols-4';
+
   return (
     <Tabs value={tab} onValueChange={setTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-4">
-        <TabsTrigger value="garmin" className="gap-1.5">
-          <Activity className="h-4 w-4 shrink-0" />
-          <span className="hidden sm:inline">Garmin</span>
-          <span className="sm:hidden">Date</span>
+      <TabsList className={`grid w-full ${gridClass}`}>
+        <TabsTrigger value="today" className="gap-1.5">
+          <Sun className="h-4 w-4 shrink-0" />
+          <span className="hidden sm:inline">Sănătate</span>
+          <span className="sm:hidden">Sănătate</span>
         </TabsTrigger>
+        {garminConnected && (
+          <TabsTrigger value="garmin" className="gap-1.5">
+            <Activity className="h-4 w-4 shrink-0" />
+            <span className="hidden sm:inline">Garmin</span>
+            <span className="sm:hidden">Date</span>
+          </TabsTrigger>
+        )}
+        {ultrahumanConnected && (
+          <TabsTrigger value="ultrahuman" className="gap-1.5">
+            <CircleDashed className="h-4 w-4 shrink-0" />
+            <span className="hidden sm:inline">Ultrahuman</span>
+            <span className="sm:hidden">Inel</span>
+          </TabsTrigger>
+        )}
         <TabsTrigger value="plan" className="gap-1.5">
           <CalendarDays className="h-4 w-4 shrink-0" />
           <span className="hidden sm:inline">Plan zilei</span>
@@ -112,17 +205,69 @@ export default function DashboardTabs({
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="garmin" className="space-y-4">
+      <TabsContent value="today" className="space-y-4">
         <Card>
           <CardContent className="pb-4 pt-4">
             <DailyMetricsForm
               garminConnected={garminConnected}
               hasGarminToday={hasGarminToday}
               needsWeekSync={needsWeekSync}
+              ultrahumanConnected={ultrahumanConnected}
             />
           </CardContent>
         </Card>
 
+        <div>
+          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Prezentare generală
+          </h3>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <StatCard
+              label="Greutate"
+              value={todayData?.weight_kg}
+              unit="kg"
+              sub={sourceLabel('weight_kg')}
+              icon={<TrendingUp className="h-4 w-4" />}
+            />
+            <StatCard
+              label="Pași"
+              value={todayData?.steps}
+              accent="teal"
+              sub={sourceLabel('steps')}
+              icon={<Footprints className="h-4 w-4" />}
+            />
+            <StatCard
+              label="Active"
+              value={todayData?.active_kcal}
+              unit="kcal"
+              accent="green"
+              sub={sourceLabel('active_kcal')}
+              icon={<Zap className="h-4 w-4" />}
+            />
+            <StatCard
+              label="Somn"
+              value={todayData?.sleep_minutes != null ? Math.round((todayData.sleep_minutes / 60) * 10) / 10 : undefined}
+              unit="h"
+              accent="purple"
+              sub={sourceLabel('sleep_minutes')}
+            />
+            <StatCard
+              label="HR repaus"
+              value={todayData?.resting_hr}
+              unit="bpm"
+              accent="red"
+              sub={sourceLabel('resting_hr')}
+              icon={<Heart className="h-4 w-4" />}
+            />
+            <StatCard label="HR mediu" value={todayData?.avg_hr} unit="bpm" accent="amber" sub={sourceLabel('avg_hr')} />
+            <StatCard label="HRV" value={todayData?.hrv} unit="ms" accent="purple" sub={sourceLabel('hrv')} />
+            <StatCard label="VO₂ max" value={todayData?.vo2max} accent="teal" sub={sourceLabel('vo2max')} />
+          </div>
+        </div>
+      </TabsContent>
+
+      {garminConnected && (
+      <TabsContent value="garmin" className="space-y-4">
         <SportTodayCard raw={raw} />
 
         <div>
@@ -250,6 +395,112 @@ export default function DashboardTabs({
           </Card>
         </div>
       </TabsContent>
+      )}
+
+      {ultrahumanConnected && (
+      <TabsContent value="ultrahuman" className="space-y-4">
+        <div>
+          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Recovery & somn
+          </h3>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <StatCard
+              label="Sleep score"
+              value={ultrahumanToday?.sleepScore}
+              accent="purple"
+              icon={<Moon className="h-4 w-4" />}
+            />
+            <StatCard label="Restfulness" value={ultrahumanToday?.restfulness} accent="teal" />
+            <StatCard label="Consistență somn" value={ultrahumanToday?.sleepConsistency} accent="default" />
+            <StatCard
+              label="Recovery index"
+              value={ultrahumanToday?.recoveryIndex}
+              accent="green"
+              icon={<Gauge className="h-4 w-4" />}
+            />
+          </div>
+        </div>
+
+        <div>
+          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Cardiovascular & activitate
+          </h3>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <StatCard
+              label="RHR nocturn"
+              value={ultrahumanToday?.nightRhrAvg}
+              unit="bpm"
+              accent="red"
+              sub={
+                ultrahumanToday?.nightRhrMin != null
+                  ? `${ultrahumanToday.nightRhrMin}–${ultrahumanToday.nightRhrMax} bpm`
+                  : undefined
+              }
+              icon={<Heart className="h-4 w-4" />}
+            />
+            <StatCard
+              label="HRV"
+              value={ultrahumanToday?.hrvLastRead}
+              unit="ms"
+              accent="purple"
+              sub={
+                ultrahumanToday?.hrvMin != null
+                  ? `${ultrahumanToday.hrvMin}–${ultrahumanToday.hrvMax} ms`
+                  : undefined
+              }
+            />
+            <StatCard
+              label="SPO2"
+              value={ultrahumanToday?.spo2Max}
+              unit="%"
+              accent="teal"
+              sub={
+                ultrahumanToday?.spo2Min != null
+                  ? `Min ${ultrahumanToday.spo2Min}%`
+                  : undefined
+              }
+            />
+            <StatCard
+              label="Pași"
+              value={ultrahumanToday?.steps}
+              accent="green"
+              icon={<Footprints className="h-4 w-4" />}
+            />
+            <StatCard label="VO₂ max" value={ultrahumanToday?.vo2max} accent="teal" />
+            <StatCard label="Movement index" value={ultrahumanToday?.movementIndex} accent="default" />
+          </div>
+        </div>
+
+        {ultrahumanToday?.sleep && (
+          <Card>
+            <CardContent className="space-y-3 pt-5">
+              <SleepBar
+                totalMin={
+                  ultrahumanToday.sleep.totalSleepSeconds != null
+                    ? Math.round(ultrahumanToday.sleep.totalSleepSeconds / 60)
+                    : null
+                }
+                deepSec={ultrahumanToday.sleep.deepSeconds}
+                lightSec={ultrahumanToday.sleep.lightSeconds}
+                remSec={ultrahumanToday.sleep.remSeconds}
+                awakeSec={ultrahumanToday.sleep.awakeSeconds}
+                score={ultrahumanToday.sleepScore}
+              />
+              <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                {ultrahumanToday.sleep.efficiency != null && <span>Eficiență {ultrahumanToday.sleep.efficiency}%</span>}
+                {ultrahumanToday.sleep.completedCycles != null && (
+                  <span>{ultrahumanToday.sleep.completedCycles} cicluri complete</span>
+                )}
+                {ultrahumanToday.sleep.movements != null && <span>{ultrahumanToday.sleep.movements} mișcări</span>}
+                {ultrahumanToday.sleep.morningAlertness != null && (
+                  <span>Alertness dimineață {ultrahumanToday.sleep.morningAlertness}min</span>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </TabsContent>
+      )}
 
       <TabsContent value="plan" className="space-y-4">
         <div className="flex items-center justify-between">
@@ -312,10 +563,37 @@ export default function DashboardTabs({
         )}
       </TabsContent>
 
-      <TabsContent value="trends" className="space-y-4">
-        <WeekMetricsCharts rows={garminWeekRows} />
-        <GarminWeekTable rows={garminWeekRows} />
+      <TabsContent value="trends" className="space-y-6">
+        <div className="space-y-4">
+          <CommonWeekCharts rows={commonWeekRows} />
+          <CommonWeekTable rows={commonWeekRows} />
+        </div>
+
         <WeightChartCard data={weightChart} target={targetWeight} />
+
+        {garminConnected && (
+          <div>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Trend Garmin
+            </h3>
+            <div className="space-y-4">
+              <WeekMetricsCharts rows={garminWeekRows} />
+              <GarminWeekTable rows={garminWeekRows} />
+            </div>
+          </div>
+        )}
+
+        {ultrahumanConnected && (
+          <div>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Trend Ultrahuman
+            </h3>
+            <div className="space-y-4">
+              <UltrahumanWeekChart rows={ultrahumanWeekRows} />
+              <UltrahumanWeekTable rows={ultrahumanWeekRows} />
+            </div>
+          </div>
+        )}
       </TabsContent>
 
       <TabsContent value="banca" className="space-y-6">

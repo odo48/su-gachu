@@ -84,10 +84,9 @@ export async function POST(req: NextRequest) {
 
   if (onlyMissing && dates.length > 1) {
     const { data: existing } = await supabase
-      .from('daily_metrics')
+      .from('garmin_daily_biometrics')
       .select('date')
       .eq('user_id', user.id)
-      .eq('source', 'garmin')
       .in('date', dates);
     const have = new Set((existing ?? []).map((r) => r.date));
     dates = dates.filter((d) => !have.has(d));
@@ -96,11 +95,10 @@ export async function POST(req: NextRequest) {
   if (dates.length === 0) {
     const today = isoDateLocal();
     const { data: row } = await supabase
-      .from('daily_metrics')
+      .from('garmin_daily_biometrics')
       .select('*')
       .eq('user_id', user.id)
       .eq('date', today)
-      .eq('source', 'garmin')
       .maybeSingle();
     return NextResponse.json({
       metrics: row ?? null,
@@ -153,11 +151,10 @@ export async function POST(req: NextRequest) {
 
   if (!todayMetrics) {
     const { data: row } = await supabase
-      .from('daily_metrics')
+      .from('garmin_daily_biometrics')
       .select('*')
       .eq('user_id', user.id)
       .eq('date', today)
-      .eq('source', 'garmin')
       .maybeSingle();
     todayMetrics = row;
   }

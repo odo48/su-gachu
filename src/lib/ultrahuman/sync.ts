@@ -1,9 +1,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { getUltrahumanDailyMetrics } from './client';
+import { translateUltrahumanToCommon, upsertCommonBiometrics } from '../biometrics/translate';
 
 // Ported from jarvis-backend's Service/Ultrahuman/UltrahumanDailyMetricsSyncService.php.
 // Maps Ultrahuman's daily_metrics response (an array of {type, object}
-// entries) into daily_biometrics + sleep_sessions rows for the given user.
+// entries) into ultrahuman_daily_biometrics + ultrahuman_sleep_sessions rows
+// for the given user, then translates the result into the common
+// daily_biometrics table (see ../biometrics/translate.ts).
 
 type UltrahumanMetric = { type: string; object: Record<string, unknown> & Record<string, any> };
 
@@ -87,12 +90,13 @@ export async function syncUltrahumanDailyMetrics(
   }
 
   const { data: biometricsRow, error: upsertError } = await supabase
-    .from('daily_biometrics')
+    .from('ultrahuman_daily_biometrics')
     .upsert({ user_id: userId, date, updated_at: new Date().toISOString(), ...biometrics }, { onConflict: 'user_id,date' })
     .select('id')
     .single();
   if (upsertError) return { status: 'failure', message: upsertError.message };
 
+  let totalSleepSeconds: number | undefined;
   const sleepMetric = metrics.find((m) => m.type === 'sleep');
   if (sleepMetric) {
     const sleepObject = sleepMetric.object;
@@ -135,9 +139,28 @@ export async function syncUltrahumanDailyMetrics(
       morning_alertness: Number(sleepObject.morning_alertness?.minutes ?? 0),
     };
 
-    const { error: sleepError } = await supabase.from('sleep_sessions').upsert(sleepRow, { onConflict: 'daily_biometrics_id' });
+    const { error: sleepError } = await supabase
+      .from('ultrahuman_sleep_sessions')
+      .upsert(sleepRow, { onConflict: 'daily_biometrics_id' });
     if (sleepError) return { status: 'failure', message: sleepError.message };
+    totalSleepSeconds = sleepRow.total_sleep_seconds;
   }
+
+  await upsertCommonBiometrics(
+    supabase,
+    userId,
+    date,
+    translateUltrahumanToCommon(
+      {
+        steps: biometrics.steps,
+        hrv_last_read: biometrics.hrv_last_read,
+        vo2max: biometrics.vo2max,
+        night_rhr_avg: biometrics.night_rhr_avg,
+      },
+      totalSleepSeconds
+    ),
+    'ultrahuman'
+  );
 
   return { status: 'success', message: `Successfully synced metrics for ${date}` };
 }

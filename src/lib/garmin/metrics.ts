@@ -5,7 +5,6 @@ import { parseGarminActivities } from '@/lib/sport';
 
 type MetricRow = {
   date: string;
-  source: string;
   steps?: number | null;
   active_kcal?: number | null;
   resting_hr?: number | null;
@@ -67,14 +66,13 @@ export function mapGarminMetricRow(row: MetricRow) {
 }
 
 const GARMIN_SELECT =
-  'date, source, steps, active_kcal, resting_hr, avg_hr, sleep_minutes, hrv, vo2max, weight_kg, raw';
+  'date, steps, active_kcal, resting_hr, avg_hr, sleep_minutes, hrv, vo2max, weight_kg, raw';
 
 export async function getLatestGarminMetrics(supabase: SupabaseClient, userId: string) {
   const { data, error } = await supabase
-    .from('daily_metrics')
+    .from('garmin_daily_biometrics')
     .select(GARMIN_SELECT)
     .eq('user_id', userId)
-    .eq('source', 'garmin')
     .order('date', { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -88,10 +86,9 @@ export async function getGarminMetricTrends(supabase: SupabaseClient, userId: st
   const sinceIso = isoDateLocal(since);
 
   const { data, error } = await supabase
-    .from('daily_metrics')
+    .from('garmin_daily_biometrics')
     .select(GARMIN_SELECT)
     .eq('user_id', userId)
-    .eq('source', 'garmin')
     .gte('date', sinceIso)
     .order('date', { ascending: true });
   if (error) throw new Error(error.message);

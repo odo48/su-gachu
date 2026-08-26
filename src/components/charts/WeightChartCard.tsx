@@ -56,11 +56,11 @@ export default function WeightChartCard({
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Evoluție greutate</CardTitle>
-          <CardDescription>Istoric din Garmin sau introducere manuală</CardDescription>
+          <CardDescription>Istoric din dispozitivele conectate sau introducere manuală</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Încă nu ai date de greutate. Adaugă manual sau sincronizează din Garmin.
+            Încă nu ai date de greutate. Adaugă manual din tab-ul Sănătate sau conectează un device de pe Profil.
           </p>
         </CardContent>
       </Card>

@@ -7,14 +7,21 @@ export const BIOMETRICS_SHARED_PROMPT = `### DOMAIN: BIOMETRICS & HEALTH MANAGEM
 - If a requested source has no rows, tell the user to sync that device (Dashboard → Garmin → reîncarcă, or Profile → Ultrahuman → sincronizează). Do not claim you lack permission to wearables.
 - Always respond in Romanian.`;
 
+export const COMMON_BIOMETRICS_PROMPT = `### MERGED VIEW (daily_biometrics)
+Use tools \`get_latest_biometrics\` and \`get_biometric_trends\` for general "how am I doing today / this week" questions — they combine whichever wearables are connected into one row per day (weight, steps, active calories, resting/avg HR, sleep minutes, HRV, VO2max), plus a \`sources\` map naming which device last set each field.
+
+This is a shortcut, not a replacement for the device-specific tools:
+- Still name the device per field using \`sources\` (e.g. "HRV-ul, de pe Ultrahuman, e...").
+- If the user names a device, or asks to compare devices, or asks about anything the merged view doesn't carry (sleep stages, body battery, stress, recovery index, restfulness, activities), go straight to get_latest_garmin/get_ultrahuman_trends etc. instead.`;
+
 export const ULTRAHUMAN_PROMPT = `### SOURCE: ULTRAHUMAN (ring)
-Use tools \`get_latest_ultrahuman\` and \`get_ultrahuman_trends\`. Data lives in daily_biometrics + sleep_sessions.
+Use tools \`get_latest_ultrahuman\` and \`get_ultrahuman_trends\`. Data lives in ultrahuman_daily_biometrics + ultrahuman_sleep_sessions.
 
 Ultrahuman is overnight recovery from the ring — not training load:
 - sleepScore, restfulness, sleepConsistency, recoveryIndex, movementIndex
 - sleep_hrv_avg, night RHR (night_rhr_avg / min / max)
 - SPO2, daytime HR snapshot, steps from the ring
-- sleep_sessions: bedtime, stages (deep/light/REM/awake), efficiency, cycles, movements, morning alertness
+- ultrahuman_sleep_sessions: bedtime, stages (deep/light/REM/awake), efficiency, cycles, movements, morning alertness
 
 Interpretation:
 - Sleep score / recovery below 60 → high fatigue; suggest scaling intensity.
@@ -23,7 +30,7 @@ Interpretation:
 - Restfulness and consistency are Ultrahuman-specific; do not invent Garmin equivalents for them.`;
 
 export const GARMIN_PROMPT = `### SOURCE: GARMIN (watch)
-Use tools \`get_latest_garmin\` and \`get_garmin_trends\`. Data lives in daily_metrics (source=garmin) after dashboard sync.
+Use tools \`get_latest_garmin\` and \`get_garmin_trends\`. Data lives in garmin_daily_biometrics after dashboard sync.
 
 Garmin is the watch: activity, training, and a second view of sleep:
 - sleepHours / sleepMinutes, sleepScore, sleep stages (deep/light/REM/awake)
@@ -45,7 +52,7 @@ The user has Ultrahuman and Garmin. Treat them as two instruments:
 - If the user names a device ("cum am dormit pe Garmin" / "recovery-ul de pe inel"), use only that source.`;
 
 export function buildBiometricsPrompt(connected: { ultrahuman: boolean; garmin: boolean }): string {
-  const parts = [BIOMETRICS_SHARED_PROMPT];
+  const parts = [BIOMETRICS_SHARED_PROMPT, COMMON_BIOMETRICS_PROMPT];
   if (connected.ultrahuman) parts.push(ULTRAHUMAN_PROMPT);
   if (connected.garmin) parts.push(GARMIN_PROMPT);
   if (connected.ultrahuman && connected.garmin) parts.push(WEARABLE_DIFFERENTIATION_PROMPT);
