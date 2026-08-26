@@ -3,7 +3,9 @@ import type { ToolExecutor, ToolSchema } from '../ai/types';
 import { getGarminMetricTrends, getLatestGarminMetrics } from '../garmin/metrics';
 
 // Ultrahuman tools (get_latest_ultrahuman / get_ultrahuman_trends) read
-// daily_biometrics. Garmin tools are separate. No sync logic here.
+// ultrahuman_daily_biometrics; Garmin tools read garmin_daily_biometrics;
+// the common tools (get_latest_biometrics / get_biometric_trends) read the
+// merged daily_biometrics table. No sync logic here.
 
 function mapBiometricsRow(row: {
   id: number;
@@ -29,7 +31,7 @@ function mapBiometricsRow(row: {
   vo2max: number;
   created_at: string;
   updated_at: string;
-  sleep_sessions?:
+  ultrahuman_sleep_sessions?:
     | {
         bedtime_start: string;
         bedtime_end: string;
@@ -62,7 +64,7 @@ function mapBiometricsRow(row: {
       }[]
     | null;
 }) {
-  const sleep = row.sleep_sessions?.[0] ?? null;
+  const sleep = row.ultrahuman_sleep_sessions?.[0] ?? null;
   return {
     source: 'ultrahuman' as const,
     id: row.id,
@@ -123,8 +125,8 @@ function mapBiometricsRow(row: {
 
 export async function getLatestUltrahuman(supabase: SupabaseClient, userId: string) {
   const { data, error } = await supabase
-    .from('daily_biometrics')
-    .select('*, sleep_sessions(*)')
+    .from('ultrahuman_daily_biometrics')
+    .select('*, ultrahuman_sleep_sessions(*)')
     .eq('user_id', userId)
     .order('date', { ascending: false })
     .limit(1)
@@ -143,8 +145,8 @@ export async function getUltrahumanTrends(supabase: SupabaseClient, userId: stri
   const sinceDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
   const { data, error } = await supabase
-    .from('daily_biometrics')
-    .select('*, sleep_sessions(*)')
+    .from('ultrahuman_daily_biometrics')
+    .select('*, ultrahuman_sleep_sessions(*)')
     .eq('user_id', userId)
     .gte('date', sinceDate)
     .order('date', { ascending: true });
@@ -218,6 +220,97 @@ export function createGarminToolExecutor(supabase: SupabaseClient, userId: strin
         }
         case 'get_garmin_trends':
           return JSON.stringify(await getGarminMetricTrends(supabase, userId, Number(args.days ?? 7)));
+        default:
+          return `Tool '${name}' not found.`;
+      }
+    } catch (err) {
+      return `Tool '${name}' failed: ${err instanceof Error ? err.message : String(err)}`;
+    }
+  };
+}
+
+// Merged view: the common `daily_biometrics` table, translated from
+// whichever provider(s) synced most recently (see ../biometrics/translate.ts),
+// plus manual entries. `sources` names which provider last set each field —
+// callers should still cite the device per field, not present this as one
+// unified reading.
+
+function mapCommonRow(row: {
+  date: string;
+  weight_kg: number | null;
+  steps: number | null;
+  active_kcal: number | null;
+  resting_hr: number | null;
+  avg_hr: number | null;
+  sleep_minutes: number | null;
+  hrv: number | null;
+  vo2max: number | null;
+  sources: Record<string, string> | null;
+}) {
+  return {
+    date: row.date,
+    weightKg: row.weight_kg,
+    steps: row.steps,
+    activeKcal: row.active_kcal,
+    restingHr: row.resting_hr,
+    avgHr: row.avg_hr,
+    sleepMinutes: row.sleep_minutes,
+    hrv: row.hrv,
+    vo2Max: row.vo2max,
+    sources: row.sources ?? {},
+  };
+}
+
+export async function getLatestBiometrics(supabase: SupabaseClient, userId: string) {
+  const { data, error } = await supabase
+    .from('daily_biometrics')
+    .select('*')
+    .eq('user_id', userId)
+    .order('date', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return data ? mapCommonRow(data) : { message: 'Nu există încă date biometrice.' };
+}
+
+export async function getBiometricTrends(supabase: SupabaseClient, userId: string, days: number) {
+  const sinceDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
+  const { data, error } = await supabase
+    .from('daily_biometrics')
+    .select('*')
+    .eq('user_id', userId)
+    .gte('date', sinceDate)
+    .order('date', { ascending: true });
+  if (error) throw new Error(error.message);
+  return (data ?? []).map(mapCommonRow);
+}
+
+export const COMMON_BIOMETRICS_TOOL_SCHEMAS: ToolSchema[] = [
+  {
+    name: 'get_latest_biometrics',
+    description:
+      'Merged daily overview (weight, steps, active calories, resting/avg HR, sleep minutes, HRV, VO2max) combining whichever wearables the user has connected. Includes a `sources` map naming which device last updated each field. Prefer this for general "how am I doing" questions; use get_latest_garmin/get_latest_ultrahuman instead for device-specific detail (sleep stages, body battery, recovery index, etc).',
+    parameters: { type: 'object', properties: {} },
+  },
+  {
+    name: 'get_biometric_trends',
+    description: 'Merged daily trend for the past X days, combining whichever wearables are connected.',
+    parameters: {
+      type: 'object',
+      properties: { days: { type: 'integer', description: 'Number of past days to include (default 7)' } },
+    },
+  },
+];
+
+export function createCommonBiometricsToolExecutor(supabase: SupabaseClient, userId: string): ToolExecutor {
+  return async (name, args) => {
+    try {
+      switch (name) {
+        case 'get_latest_biometrics':
+          return JSON.stringify(await getLatestBiometrics(supabase, userId));
+        case 'get_biometric_trends':
+          return JSON.stringify(await getBiometricTrends(supabase, userId, Number(args.days ?? 7)));
         default:
           return `Tool '${name}' not found.`;
       }

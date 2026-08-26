@@ -39,24 +39,22 @@ export default async function Dashboard() {
         .limit(1)
         .maybeSingle(),
       supabase
-        .from('daily_metrics')
+        .from('daily_biometrics')
         .select('date, weight_kg')
         .eq('user_id', user.id)
         .not('weight_kg', 'is', null)
         .order('date', { ascending: true })
         .limit(60),
       supabase
-        .from('daily_metrics')
+        .from('garmin_daily_biometrics')
         .select('*')
         .eq('user_id', user.id)
         .eq('date', today)
-        .eq('source', 'garmin')
         .maybeSingle(),
       supabase
-        .from('daily_metrics')
+        .from('garmin_daily_biometrics')
         .select('date, active_kcal, avg_hr, sleep_minutes, raw')
         .eq('user_id', user.id)
-        .eq('source', 'garmin')
         .gte('date', weekStartIso)
         .lte('date', today)
         .order('date', { ascending: false }),

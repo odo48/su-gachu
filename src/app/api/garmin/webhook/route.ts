@@ -19,16 +19,15 @@ export async function POST(req: NextRequest) {
       .eq('garmin_user_id', d.userId).maybeSingle();
     if (!tok) continue;
 
-    await admin.from('daily_metrics').upsert({
+    await admin.from('garmin_daily_biometrics').upsert({
       user_id: tok.user_id,
       date: d.calendarDate,
-      source: 'garmin',
       steps: d.steps,
       active_kcal: d.activeKilocalories,
       resting_hr: d.restingHeartRateInBeatsPerMinute,
       avg_hr: d.averageHeartRateInBeatsPerMinute,
       raw: d,
-    }, { onConflict: 'user_id,date,source' });
+    }, { onConflict: 'user_id,date' });
   }
   // sleeps → sleep_minutes, hrv ; vezi docs Garmin pentru câmpuri exacte.
 

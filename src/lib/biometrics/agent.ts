@@ -4,8 +4,10 @@ import { getProvider } from '../ai/registry';
 import { combineTools } from '../ai/combine-tools';
 import { getGeneralToolSource } from '../mcp/tavily';
 import {
+  createCommonBiometricsToolExecutor,
   createGarminToolExecutor,
   createUltrahumanToolExecutor,
+  COMMON_BIOMETRICS_TOOL_SCHEMAS,
   GARMIN_TOOL_SCHEMAS,
   ULTRAHUMAN_TOOL_SCHEMAS,
 } from './tools';
@@ -27,7 +29,12 @@ export async function runBiometricsAgentTurn(params: {
     throw new Error('Niciun wearable conectat. Adaugă Garmin și/sau Ultrahuman pe Profil.');
   }
 
-  const sources = [];
+  const sources = [
+    {
+      schemas: COMMON_BIOMETRICS_TOOL_SCHEMAS,
+      executor: createCommonBiometricsToolExecutor(params.supabase, params.userId),
+    },
+  ];
   if (ultrahuman) {
     sources.push({
       schemas: ULTRAHUMAN_TOOL_SCHEMAS,

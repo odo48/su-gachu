@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Loader2, RefreshCw, Watch } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { isoDateLocal } from '@/lib/garmin/dates';
+import { upsertCommonBiometrics } from '@/lib/biometrics/translate';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -82,17 +83,17 @@ export default function DailyMetricsForm({
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) return;
-    await supabase.from('daily_metrics').upsert(
+    await upsertCommonBiometrics(
+      supabase,
+      user.id,
+      isoDateLocal(),
       {
-        user_id: user.id,
-        date: isoDateLocal(),
-        source: 'manual',
         weight_kg: weight ? Number(weight) : null,
         steps: steps ? Number(steps) : null,
         active_kcal: activeKcal ? Number(activeKcal) : null,
         sleep_minutes: sleep ? Math.round(Number(sleep) * 60) : null,
       },
-      { onConflict: 'user_id,date,source' }
+      'manual'
     );
     if (weight) await supabase.from('profiles').update({ weight_kg: Number(weight) }).eq('id', user.id);
     setSaving(false);

@@ -92,9 +92,9 @@ export async function POST(req: NextRequest) {
 
   const today = new Date().toISOString().slice(0, 10);
   const { data: metrics } = await supabase
-    .from('daily_metrics').select('*')
+    .from('daily_biometrics').select('*')
     .eq('user_id', user.id).eq('date', today)
-    .order('source', { ascending: false }).limit(1).maybeSingle();
+    .maybeSingle();
 
   // 1. Numere deterministe
   const tdeeVal = tdee({
