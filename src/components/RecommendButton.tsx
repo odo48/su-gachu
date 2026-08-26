@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 type Provider = 'gemini' | 'claude';
 
@@ -33,17 +34,16 @@ export default function RecommendButton() {
           value={provider}
           onChange={(e) => setProvider(e.target.value as Provider)}
           disabled={loading}
-          className="rounded border border-gray-300 px-2 py-2 text-sm disabled:opacity-50"
+          className="h-11 rounded-lg border border-input bg-background px-2 text-sm disabled:opacity-50"
         >
           <option value="gemini">Gemini</option>
           <option value="claude">Claude</option>
         </select>
-        <button onClick={run} disabled={loading}
-          className="flex items-center gap-2 rounded bg-brand px-4 py-2 font-medium text-white hover:bg-brand-dark disabled:opacity-50">
-          <Sparkles size={16} /> {loading ? 'Generez...' : 'Generează planul zilei'}
-        </button>
+        <Button onClick={run} disabled={loading}>
+          <Sparkles /> {loading ? 'Generez...' : 'Generează planul zilei'}
+        </Button>
       </div>
-      {err && <p className="mt-2 text-sm text-red-600">{err}</p>}
+      {err && <p className="mt-2 text-sm text-destructive">{err}</p>}
     </div>
   );
 }

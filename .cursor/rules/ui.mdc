@@ -1,0 +1,33 @@
+---
+description: Always use Tailwind and shadcn/ui for UI work
+globs: src/**/*.{tsx,css}
+alwaysApply: false
+---
+
+# UI: Tailwind + shadcn
+
+New or changed UI uses **Tailwind utilities** and **shadcn primitives** in `src/components/ui`. Follow `design-system/MASTER.md` (page overrides in `design-system/pages/`).
+
+## Do
+
+```tsx
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
+<Label htmlFor="email">Email</Label>
+<Input id="email" type="email" />
+<Button type="submit" disabled={loading}>{loading ? 'Se trimite…' : 'Salvează'}</Button>
+```
+
+Missing primitive: `npx shadcn@latest add <name>` then import from `@/components/ui`.
+
+Icons: Lucide (or official Google/Apple SVGs). Toasts: `Toaster` in root layout only.
+
+## Don't
+
+- New CSS modules / global classes that duplicate shadcn (`btn-primary`, etc.)
+- Raw `<button>` / `<input>` when Button/Input exist
+- Emoji as icons
+- Placeholder-only fields (no `Label`)
+- Async submit without `disabled` + loading text

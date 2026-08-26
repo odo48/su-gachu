@@ -1,0 +1,14 @@
+---
+description: Su Gachu design system source of truth
+alwaysApply: true
+---
+
+# Design system
+
+Canonical file: `design-system/MASTER.md`.
+
+Page work: if `design-system/pages/<page>.md` exists, its rules override Master.
+
+Tokens (cyan canvas, emerald CTA, Lora + Raleway) are in `src/app/globals.css` / `tailwind.config.ts` — do not introduce a second palette.
+
+SQL changes: dated files under `supabase/` (see migrations rule). UI changes: Tailwind + shadcn.

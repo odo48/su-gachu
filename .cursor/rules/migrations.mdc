@@ -1,0 +1,40 @@
+---
+description: How to write Supabase SQL migrations in this repo
+globs: supabase/**/*.sql
+alwaysApply: false
+---
+
+# Supabase migrations
+
+`schema.sql` is **bootstrap only** (empty project). Never add incremental changes there — they belong in a dated migration.
+
+## New file
+
+`supabase/YYYYMMDD_short_name.sql`
+
+- Date prefix = day created (`20260825_…`).
+- Header: `Created: YYYY-MM-DD`, what it does, which file it runs after.
+- Prefer idempotent SQL: `create or replace`, `if not exists`, `on conflict do nothing`.
+
+```sql
+-- ============================================================
+-- Created: 2026-08-25
+-- OAuth profile name. Run after schema.sql.
+-- ============================================================
+```
+
+## Order (also in README)
+
+1. `schema.sql` (once, new project)
+2. Dated migrations (`20260825_schema_oauth.sql`, `20260825_fix_auth_signup.sql`, `20260826_garmin_connect.sql`, …)
+3. Domain files: `schema_chat.sql` → `schema_food.sql` → `schema_modules.sql` → `schema_home_assistant.sql` → `schema_biometrics.sql` → `schema_financial.sql`
+
+`20260825_fix_auth_signup.sql` must run **after** `schema_modules.sql` (it replaces both signup triggers).
+
+Do not re-run `schema.sql` on a project that already has it.
+
+## Schema rules
+
+- User tables: RLS + `auth.uid()` policies.
+- Vault / `security definer` functions: `grant execute` to `service_role` only.
+- Signup side-effects: extra `auth.users` triggers (like `handle_new_user`), not edits to old migration bodies.
