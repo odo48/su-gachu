@@ -3,10 +3,16 @@ import type { ChatMessage } from '../ai/types';
 import { getProvider } from '../ai/registry';
 import { combineTools } from '../ai/combine-tools';
 import { getGeneralToolSource } from '../mcp/tavily';
-import { createBiometricsToolExecutor, BIOMETRICS_TOOL_SCHEMAS } from './tools';
-import { BIOMETRICS_PROMPT } from './prompt';
+import {
+  createGarminToolExecutor,
+  createUltrahumanToolExecutor,
+  GARMIN_TOOL_SCHEMAS,
+  ULTRAHUMAN_TOOL_SCHEMAS,
+} from './tools';
+import { buildBiometricsPrompt } from './prompt';
+import { hasGarminConnection } from '../garmin/metrics';
+import { hasUltrahumanConnection } from '../ultrahuman/connection';
 
-// Mirrors src/lib/food/agent.ts's shape.
 export async function runBiometricsAgentTurn(params: {
   supabase: SupabaseClient;
   userId: string;
@@ -14,20 +20,35 @@ export async function runBiometricsAgentTurn(params: {
   provider: string;
   history: ChatMessage[];
 }): Promise<string> {
-  const { data: moduleRow } = await params.supabase
-    .from('user_modules')
-    .select('enabled')
-    .eq('user_id', params.userId)
-    .eq('module', 'biometrics')
-    .maybeSingle();
-  if (!moduleRow?.enabled) {
-    throw new Error('Biometrics is not enabled for this account. Connect Ultrahuman first.');
+  const ultrahuman = await hasUltrahumanConnection(params.supabase, params.userId);
+  const garmin = await hasGarminConnection(params.supabase, params.userId);
+
+  if (!ultrahuman && !garmin) {
+    throw new Error('Niciun wearable conectat. Adaugă Garmin și/sau Ultrahuman pe Profil.');
   }
 
+  const sources = [];
+  if (ultrahuman) {
+    sources.push({
+      schemas: ULTRAHUMAN_TOOL_SCHEMAS,
+      executor: createUltrahumanToolExecutor(params.supabase, params.userId),
+    });
+  }
+  if (garmin) {
+    sources.push({
+      schemas: GARMIN_TOOL_SCHEMAS,
+      executor: createGarminToolExecutor(params.supabase, params.userId),
+    });
+  }
+  sources.push(await getGeneralToolSource());
+
   const provider = getProvider(params.provider);
-  const { schemas, executor } = combineTools(
-    { schemas: BIOMETRICS_TOOL_SCHEMAS, executor: createBiometricsToolExecutor(params.supabase, params.userId) },
-    await getGeneralToolSource()
+  const { schemas, executor } = combineTools(...sources);
+  return provider.call(
+    params.task,
+    schemas,
+    buildBiometricsPrompt({ ultrahuman, garmin }),
+    params.history,
+    executor
   );
-  return provider.call(params.task, schemas, BIOMETRICS_PROMPT, params.history, executor);
 }

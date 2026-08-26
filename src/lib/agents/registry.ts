@@ -36,7 +36,7 @@ export const AGENT_REGISTRY: Record<AppModule, { toolName: string; description: 
   biometrics: {
     toolName: 'biometrics_agent',
     description:
-      'Specialized agent for physical biometrics, sleep tracking, and health data. Use this for: analyzing sleep scores, recovery indices, heart rate (HR) trends, heart rate variability (HRV), daily steps, sleep consistency, and tracking physical performance over time.',
+      'Specialized agent for sleep and wearables. Ultrahuman (ring: recovery, restfulness, night HRV) and/or Garmin (watch: workouts, body battery, stress, activity). Always keep the two sources distinct. Do NOT send sleep or wearable questions to the food agent.',
     runTurn: runBiometricsAgentTurn,
   },
   financial: {

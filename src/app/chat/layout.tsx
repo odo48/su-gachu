@@ -21,7 +21,7 @@ export default async function ChatLayout({ children }: { children: React.ReactNo
       <ConversationSidebar conversations={conversations ?? []} />
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex items-center justify-between border-b border-neutral-200 px-4 py-3">
-          <h1 className="font-semibold">Food Agent</h1>
+          <h1 className="font-semibold">AI Coach</h1>
           <Link href="/dashboard" className="text-sm text-brand underline">
             ← Dashboard
           </Link>

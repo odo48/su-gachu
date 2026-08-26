@@ -5,6 +5,7 @@ import { combineTools } from '../ai/combine-tools';
 import { getGeneralToolSource } from '../mcp/tavily';
 import { createFinancialToolExecutor, FINANCIAL_TOOL_SCHEMAS } from './tools';
 import { FINANCIAL_MANAGEMENT_PROMPT } from './prompt';
+import { hasFinancialAccounts } from './connection';
 
 // Mirrors src/lib/food/agent.ts's shape.
 export async function runFinancialAgentTurn(params: {
@@ -21,7 +22,10 @@ export async function runFinancialAgentTurn(params: {
     .eq('module', 'financial')
     .maybeSingle();
   if (!moduleRow?.enabled) {
-    throw new Error('Financial is not enabled for this account. Link a bank account first.');
+    const linked = await hasFinancialAccounts(params.supabase, params.userId);
+    if (!linked) {
+      throw new Error('Financial is not enabled. Adaugă un cont pe Profil.');
+    }
   }
 
   const provider = getProvider(params.provider);

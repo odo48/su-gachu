@@ -5,6 +5,10 @@ import { combineTools } from '../ai/combine-tools';
 import { getGeneralToolSource } from '../mcp/tavily';
 import { AGENT_REGISTRY, type AppModule } from './registry';
 import { CORE_IDENTITY_PROMPT } from './prompt';
+import { hasGarminConnection } from '../garmin/metrics';
+import { hasUltrahumanConnection } from '../ultrahuman/connection';
+import { hasFinancialAccounts } from '../financial/connection';
+import { hasHomeAssistantConnection } from '../home-assistant/connection';
 
 // Ported from jarvis-brain's BrainService.get_chat_response + _execute_tool.
 // The main orchestrator sees each of the user's *enabled* specialist agents
@@ -25,6 +29,14 @@ export async function runRouterTurn(params: {
 
   const { data: modules } = await supabase.from('user_modules').select('module, enabled').eq('user_id', userId);
   const enabled = new Set((modules ?? []).filter((m) => m.enabled).map((m) => m.module as AppModule));
+  if (
+    (await hasGarminConnection(supabase, userId)) ||
+    (await hasUltrahumanConnection(supabase, userId))
+  ) {
+    enabled.add('biometrics');
+  }
+  if (await hasFinancialAccounts(supabase, userId)) enabled.add('financial');
+  if (await hasHomeAssistantConnection(supabase, userId)) enabled.add('home_assistant');
 
   const entries = (Object.entries(AGENT_REGISTRY) as [AppModule, (typeof AGENT_REGISTRY)[AppModule]][]).filter(([module]) =>
     enabled.has(module)

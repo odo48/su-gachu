@@ -1,10 +1,9 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { ToolExecutor, ToolSchema } from '../ai/types';
+import { getGarminMetricTrends, getLatestGarminMetrics } from '../garmin/metrics';
 
-// Tool implementations mirroring jarvis-backend's Mcp/BiometricsTool
-// (get_latest_biometrics, get_biometric_trends). No sync logic here — that's
-// src/lib/ultrahuman/sync.ts; these tools only ever read what's already in
-// Supabase, scoped to the authenticated user.
+// Ultrahuman tools (get_latest_ultrahuman / get_ultrahuman_trends) read
+// daily_biometrics. Garmin tools are separate. No sync logic here.
 
 function mapBiometricsRow(row: {
   id: number;
@@ -65,6 +64,7 @@ function mapBiometricsRow(row: {
 }) {
   const sleep = row.sleep_sessions?.[0] ?? null;
   return {
+    source: 'ultrahuman' as const,
     id: row.id,
     date: row.date,
     hrLastRead: row.hr_last_read,
@@ -121,7 +121,7 @@ function mapBiometricsRow(row: {
   };
 }
 
-export async function getLatestBiometrics(supabase: SupabaseClient, userId: string) {
+export async function getLatestUltrahuman(supabase: SupabaseClient, userId: string) {
   const { data, error } = await supabase
     .from('daily_biometrics')
     .select('*, sleep_sessions(*)')
@@ -130,10 +130,16 @@ export async function getLatestBiometrics(supabase: SupabaseClient, userId: stri
     .limit(1)
     .maybeSingle();
   if (error) throw new Error(error.message);
-  return data ? mapBiometricsRow(data) : null;
+  return data
+    ? mapBiometricsRow(data)
+    : {
+        source: 'ultrahuman' as const,
+        message:
+          'Nu există date Ultrahuman. Conectează inelul pe Profil și apasă Sincronizează.',
+      };
 }
 
-export async function getBiometricTrends(supabase: SupabaseClient, userId: string, days: number) {
+export async function getUltrahumanTrends(supabase: SupabaseClient, userId: string, days: number) {
   const sinceDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
   const { data, error } = await supabase
@@ -146,15 +152,16 @@ export async function getBiometricTrends(supabase: SupabaseClient, userId: strin
   return (data ?? []).map(mapBiometricsRow);
 }
 
-export const BIOMETRICS_TOOL_SCHEMAS: ToolSchema[] = [
+export const ULTRAHUMAN_TOOL_SCHEMAS: ToolSchema[] = [
   {
-    name: 'get_latest_biometrics',
-    description: 'Provides the most recent biometric and sleep data recorded (e.g., heart rate, SPO2, sleep score).',
+    name: 'get_latest_ultrahuman',
+    description:
+      'Latest Ultrahuman ring data: sleep score, restfulness, consistency, recovery index, night RHR, HRV, SPO2, sleep stages. Not Garmin.',
     parameters: { type: 'object', properties: {} },
   },
   {
-    name: 'get_biometric_trends',
-    description: 'Returns a list of biometric and sleep data from the past X days to analyze trends.',
+    name: 'get_ultrahuman_trends',
+    description: 'Ultrahuman ring sleep/recovery trends for the past X days.',
     parameters: {
       type: 'object',
       properties: { days: { type: 'integer', description: 'Number of past days to include (default 7)' } },
@@ -162,14 +169,55 @@ export const BIOMETRICS_TOOL_SCHEMAS: ToolSchema[] = [
   },
 ];
 
-export function createBiometricsToolExecutor(supabase: SupabaseClient, userId: string): ToolExecutor {
+export const GARMIN_TOOL_SCHEMAS: ToolSchema[] = [
+  {
+    name: 'get_latest_garmin',
+    description:
+      'Latest Garmin watch data: sleep duration/stages/score, HR, HRV, steps, body battery, stress, calories, activities. Not Ultrahuman.',
+    parameters: { type: 'object', properties: {} },
+  },
+  {
+    name: 'get_garmin_trends',
+    description: 'Garmin watch sleep/HR/activity trends for the past X days.',
+    parameters: {
+      type: 'object',
+      properties: { days: { type: 'integer', description: 'Number of past days to include (default 7)' } },
+    },
+  },
+];
+
+export function createUltrahumanToolExecutor(supabase: SupabaseClient, userId: string): ToolExecutor {
   return async (name, args) => {
     try {
       switch (name) {
-        case 'get_latest_biometrics':
-          return JSON.stringify(await getLatestBiometrics(supabase, userId));
-        case 'get_biometric_trends':
-          return JSON.stringify(await getBiometricTrends(supabase, userId, Number(args.days ?? 7)));
+        case 'get_latest_ultrahuman':
+          return JSON.stringify(await getLatestUltrahuman(supabase, userId));
+        case 'get_ultrahuman_trends':
+          return JSON.stringify(await getUltrahumanTrends(supabase, userId, Number(args.days ?? 7)));
+        default:
+          return `Tool '${name}' not found.`;
+      }
+    } catch (err) {
+      return `Tool '${name}' failed: ${err instanceof Error ? err.message : String(err)}`;
+    }
+  };
+}
+
+export function createGarminToolExecutor(supabase: SupabaseClient, userId: string): ToolExecutor {
+  return async (name, args) => {
+    try {
+      switch (name) {
+        case 'get_latest_garmin': {
+          const garmin = await getLatestGarminMetrics(supabase, userId);
+          return JSON.stringify(
+            garmin ?? {
+              source: 'garmin',
+              message: 'Nu există date Garmin. Sincronizează din Dashboard (tab Garmin → reîncarcă).',
+            }
+          );
+        }
+        case 'get_garmin_trends':
+          return JSON.stringify(await getGarminMetricTrends(supabase, userId, Number(args.days ?? 7)));
         default:
           return `Tool '${name}' not found.`;
       }
