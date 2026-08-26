@@ -1,11 +1,13 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import {
   Activity,
   CalendarDays,
   Flame,
   Footprints,
   Heart,
+  Landmark,
   Sparkles,
   TrendingUp,
   Zap,
@@ -22,6 +24,8 @@ import GarminWeekTable, { type GarminWeekRow } from '@/components/GarminWeekTabl
 import WeekMetricsCharts from '@/components/charts/WeekMetricsCharts';
 import WeightChartCard from '@/components/charts/WeightChartCard';
 import SportTodayCard from '@/components/SportTodayCard';
+import BankingConnectForm from '@/components/BankingConnectForm';
+import FinanceDashboard from '@/components/finance/FinanceDashboard';
 
 export type GarminTodayData = {
   active_kcal?: number | null;
@@ -69,6 +73,11 @@ export default function DashboardTabs({
   rec,
   recipes,
 }: Props) {
+  const [tab, setTab] = useState('garmin');
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).has('banking')) setTab('banca');
+  }, []);
+
   const raw = garminToday?.raw ?? {};
   const bbHigh = raw.body_battery_high as number | undefined;
   const bbAccent = !bbHigh
@@ -80,8 +89,8 @@ export default function DashboardTabs({
         : ('red' as const);
 
   return (
-    <Tabs defaultValue="garmin" className="w-full">
-      <TabsList className="grid w-full grid-cols-3">
+    <Tabs value={tab} onValueChange={setTab} className="w-full">
+      <TabsList className="grid w-full grid-cols-4">
         <TabsTrigger value="garmin" className="gap-1.5">
           <Activity className="h-4 w-4 shrink-0" />
           <span className="hidden sm:inline">Garmin</span>
@@ -96,6 +105,10 @@ export default function DashboardTabs({
           <TrendingUp className="h-4 w-4 shrink-0" />
           <span className="hidden sm:inline">Trends</span>
           <span className="sm:hidden">Trend</span>
+        </TabsTrigger>
+        <TabsTrigger value="banca" className="gap-1.5">
+          <Landmark className="h-4 w-4 shrink-0" />
+          Bancă
         </TabsTrigger>
       </TabsList>
 
@@ -303,6 +316,11 @@ export default function DashboardTabs({
         <WeekMetricsCharts rows={garminWeekRows} />
         <GarminWeekTable rows={garminWeekRows} />
         <WeightChartCard data={weightChart} target={targetWeight} />
+      </TabsContent>
+
+      <TabsContent value="banca" className="space-y-6">
+        <FinanceDashboard />
+        <BankingConnectForm />
       </TabsContent>
     </Tabs>
   );

@@ -20,7 +20,9 @@ npm run dev                        # http://localhost:3000
 2. SQL Editor → rulează în ordine: `supabase/schema.sql`, `supabase/20260825_schema_oauth.sql`,
    `supabase/schema_chat.sql`, `supabase/schema_food.sql`, `supabase/schema_modules.sql`,
    `supabase/20260825_fix_auth_signup.sql`,    `supabase/schema_home_assistant.sql`, `supabase/schema_biometrics.sql`,
-   `supabase/schema_financial.sql`, `supabase/20260826_garmin_connect.sql`.
+   `supabase/schema_financial.sql`, `supabase/20260826_garmin_connect.sql`,
+   `supabase/20260826_enable_banking_sessions.sql`,
+   `supabase/20260826_enable_banking_credentials.sql`.
 3. Authentication → Providers → activează **Email** (pentru dev, dezactivează „Confirm email").
 4. Settings → API → copiază URL, anon key, service_role key în `.env.local`.
 
@@ -73,12 +75,10 @@ Next.js, fără microserviciu separat. Fiecare domeniu e activabil per-user prin
   `src/lib/mcp/client.ts` (folosit și de Tavily, vezi mai jos).
 - **Biometrics**: conectare Ultrahuman prin `POST /api/biometrics/connection` (`{token}`),
   sincronizare zilnică prin `POST /api/biometrics/sync`.
-- **Financial**: conturile se înregistrează manual deocamdată prin `POST /api/financial/accounts`
-  (jarvis nu avea nici el un flow real de legare a contului prin Enable Banking — conturile
-  erau create din afara aplicației). Sincronizare sold/tranzacții prin
-  `/api/financial/accounts/sync-balances` și `/api/financial/transactions/sync`.
-  `ENABLE_BANKING_*` sunt credențiale la nivel de aplicație (o singură cheie privată
-  înregistrată la Enable Banking), nu per-user.
+- **Financial**: fiecare user își pune App ID + cheia PEM din Enable Banking Control Panel
+  pe tab-ul Bancă din `/dashboard` (sau `/profile`), apoi leagă banca
+  (`POST /api/enable-banking/auth` → callback). Cheia stă în Vault, nu în env.
+  În Control Panel, whitelist `{origin}/api/enable-banking/callback`.
 - Token-urile per-user (Home Assistant, Ultrahuman) trec prin Supabase Vault
   (`supabase/schema_home_assistant.sql`, `supabase/schema_biometrics.sql`) — niciodată
   într-o coloană în clar.
@@ -88,8 +88,7 @@ Next.js, fără microserviciu separat. Fiecare domeniu e activabil per-user prin
   agent (food/HA/biometrics/financial) și peste router. Credențial la nivel de
   aplicație (`TAVILY_API_KEY`), nu per-user.
 
-Neportat încă: fluxul real de legare a contului bancar (redirect + consimțământ la bancă)
-și o interfață pentru conectarea integrărilor (momentan doar API).
+Integrările (Garmin, Ultrahuman, bancă, Home Assistant) se conectează din `/profile`.
 
 ## Structură
 

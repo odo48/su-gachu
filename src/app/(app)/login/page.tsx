@@ -10,6 +10,11 @@ import { Separator } from '@/components/ui/separator';
 
 type SocialProvider = 'google' | 'apple';
 
+function safeNext(raw: string | null): string {
+  if (!raw || !raw.startsWith('/') || raw.startsWith('//') || raw.includes('://')) return '/profile';
+  return raw;
+}
+
 function GoogleIcon() {
   return (
     <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
@@ -60,7 +65,8 @@ export default function LoginPage() {
     setLoading(false);
     if (error) return setMsg(error.message);
     if (mode === 'up') return setMsg('Cont creat. Verifică emailul sau loghează-te.');
-    router.push('/profile');
+    const next = safeNext(new URLSearchParams(window.location.search).get('next'));
+    router.push(next);
     router.refresh();
   }
 
@@ -70,7 +76,9 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/profile`,
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(
+          safeNext(new URLSearchParams(window.location.search).get('next'))
+        )}`,
       },
     });
     if (error) {

@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { generateEnableBankingToken } from '@/lib/enable-banking/jwt';
+import { requireEnableBankingCreds } from '@/lib/enable-banking/connection';
+import { EnableBankingNotConfiguredError, generateEnableBankingToken } from '@/lib/enable-banking/jwt';
 
-// Mirrors jarvis-backend's Controller/EnableBanking/GetTokenController.
-// This is the app-level JWT (see lib/enable-banking/jwt.ts) — required for
-// whatever account-linking/consent flow gets built next; requires auth only
-// so it's not a public unauthenticated endpoint, not because the token
-// itself is user-specific.
+export const runtime = 'nodejs';
+
 export async function GET() {
   const supabase = await createClient();
   const {
@@ -14,5 +12,14 @@ export async function GET() {
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
-  return NextResponse.json({ token: generateEnableBankingToken() });
+  try {
+    const creds = await requireEnableBankingCreds(user.id);
+    return NextResponse.json({ token: generateEnableBankingToken(creds) });
+  } catch (err) {
+    if (err instanceof EnableBankingNotConfiguredError) {
+      return NextResponse.json({ error: err.message }, { status: 400 });
+    }
+    const message = err instanceof Error ? err.message : 'Enable Banking token failed';
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }

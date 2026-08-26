@@ -1,12 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
-// Mirrors jarvis-backend's Controller/Financial/ListAccountsController (GET).
-// POST is new: jarvis had no account-linking flow at all (Account rows were
-// created out-of-band after a manual Enable Banking consent) — this lets a
-// user register an already-linked account_id manually until a real
-// consent/callback flow exists. Also flips the financial module on, same as
-// the connect flows for home_assistant/biometrics.
+// POST remains as a fallback for already-linked account_ids. The main flow is
+// /api/enable-banking/auth + callback, which upserts accounts after bank consent.
 export async function GET(req: NextRequest) {
   const supabase = await createClient();
   const {
@@ -91,6 +87,7 @@ export async function DELETE(req: NextRequest) {
         { user_id: user.id, module: 'financial', enabled: false, updated_at: new Date().toISOString() },
         { onConflict: 'user_id,module' }
       );
+    await supabase.from('enable_banking_sessions').delete().eq('user_id', user.id);
   }
 
   return NextResponse.json({ ok: true });

@@ -13,7 +13,10 @@ export async function GET(request: Request) {
   const code = searchParams.get('code');
   const oauthError = searchParams.get('error_description') ?? searchParams.get('error');
   const nextParam = searchParams.get('next') ?? '/profile';
-  const next = nextParam.startsWith('/') ? nextParam : '/profile';
+  const next =
+    nextParam.startsWith('/') && !nextParam.startsWith('//') && !nextParam.includes('://')
+      ? nextParam
+      : '/profile';
 
   if (oauthError && !code) {
     return loginErrorRedirect(origin, oauthError);

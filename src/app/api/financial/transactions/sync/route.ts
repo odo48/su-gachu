@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { EnableBankingNotConfiguredError } from '@/lib/enable-banking/jwt';
 import { syncAllTransactions } from '@/lib/enable-banking/sync';
 
 // Mirrors jarvis-backend's Controller/Financial/SyncTransactionsController.
@@ -23,6 +24,9 @@ export async function POST(req: NextRequest) {
   try {
     results = await syncAllTransactions(supabase, user.id, { accountId, dateFrom, dateTo });
   } catch (err) {
+    if (err instanceof EnableBankingNotConfiguredError) {
+      return NextResponse.json({ error: err.message }, { status: 400 });
+    }
     return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 404 });
   }
 

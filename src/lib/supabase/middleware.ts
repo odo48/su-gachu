@@ -27,9 +27,14 @@ export async function updateSession(request: NextRequest) {
   const isPublic = path === '/login' || path.startsWith('/auth') || path.startsWith('/api/garmin');
 
   if (!user && !isPublic) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/login';
-    return NextResponse.redirect(url);
+    const login = request.nextUrl.clone();
+    const next = `${request.nextUrl.pathname}${request.nextUrl.search}`;
+    login.pathname = '/login';
+    login.search = '';
+    if (next && next !== '/' && next !== '/login') {
+      login.searchParams.set('next', next);
+    }
+    return NextResponse.redirect(login);
   }
   return response;
 }

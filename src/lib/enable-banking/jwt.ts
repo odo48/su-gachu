@@ -1,22 +1,26 @@
-import { createSign } from 'crypto';
+import { createPrivateKey, createSign } from 'crypto';
 
 const DEFAULT_EXPIRATION_SECONDS = 3600;
+export const DEFAULT_ENABLE_BANKING_API_URL = 'https://api.enablebanking.com';
 
-// Ported from jarvis-backend's EnableBanking/JwtTokenGenerator.php. Unlike
-// Home Assistant/Ultrahuman, Enable Banking authenticates at the
-// *application* level — one private key + app ID registered with Enable
-// Banking for the whole app, not per end-user — so this stays a single
-// app-wide secret (ENABLE_BANKING_PRIVATE_KEY), same as e.g. GEMINI_API_KEY.
-// What's actually per-user is which account_ids a user has linked, recorded
-// in the accounts table.
-export function generateEnableBankingToken(): string {
-  const url = process.env.ENABLE_BANKING_URL!;
-  const appId = process.env.ENABLE_BANKING_APP_ID!;
-  // Accepts a PEM string with literal "\n" escapes (common when a multi-line
-  // key is stored as a single env var).
-  const privateKey = process.env.ENABLE_BANKING_PRIVATE_KEY!.replace(/\\n/g, '\n');
+export type EnableBankingCreds = {
+  appId: string;
+  privateKeyPem: string;
+  apiUrl: string;
+};
 
-  const header = { alg: 'RS256', typ: 'JWT', kid: appId };
+export class EnableBankingNotConfiguredError extends Error {
+  constructor() {
+    super('Salvează App ID și cheia PEM din Enable Banking (Control Panel) ca să continui.');
+    this.name = 'EnableBankingNotConfiguredError';
+  }
+}
+
+export function generateEnableBankingToken(creds: EnableBankingCreds): string {
+  const url = creds.apiUrl || DEFAULT_ENABLE_BANKING_API_URL;
+  const privateKey = parseEnableBankingPrivateKey(creds.privateKeyPem);
+
+  const header = { alg: 'RS256', typ: 'JWT', kid: creds.appId };
   const now = Math.floor(Date.now() / 1000);
   const payload = {
     iss: url.replace('https://api.', ''),
@@ -27,8 +31,27 @@ export function generateEnableBankingToken(): string {
 
   const base64Url = (data: string) => Buffer.from(data).toString('base64url');
   const signingInput = `${base64Url(JSON.stringify(header))}.${base64Url(JSON.stringify(payload))}`;
-
   const signature = createSign('RSA-SHA256').update(signingInput).sign(privateKey).toString('base64url');
 
   return `${signingInput}.${signature}`;
+}
+
+export function parseEnableBankingPrivateKey(raw: string) {
+  let key = raw.trim();
+  if (
+    (key.startsWith('"') && key.endsWith('"')) ||
+    (key.startsWith("'") && key.endsWith("'"))
+  ) {
+    key = key.slice(1, -1);
+  }
+  key = key.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  if (key.includes('\\n')) key = key.replace(/\\n/g, '\n');
+  if (!key.includes('BEGIN')) {
+    throw new Error('Cheia nu e un PEM valid (lipsește BEGIN).');
+  }
+  if (!key.includes('END PRIVATE KEY') && !key.includes('END RSA PRIVATE KEY')) {
+    throw new Error('Cheia PEM e incompletă (lipsește END). Copiază tot fișierul, inclusiv linia de final.');
+  }
+  if (!key.endsWith('\n')) key += '\n';
+  return createPrivateKey(key);
 }

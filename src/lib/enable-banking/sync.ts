@@ -1,18 +1,18 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { getEnableBankingBalances, getEnableBankingTransactions } from './client';
-
-// Ported from jarvis-backend's Service/Financial/EnableBankingBalanceSyncService
-// and EnableBankingTransactionSyncService, scoped to a single user's accounts.
+import { requireEnableBankingCreds } from './connection';
+import type { EnableBankingCreds } from './jwt';
 
 export type BalanceSyncResult = { accountId: number; bank: string; success: boolean; balance: number | null; message: string };
 
 async function syncAccountBalance(
   supabase: SupabaseClient,
   userId: string,
-  account: { id: number; account_id: string; bank: string }
+  account: { id: number; account_id: string; bank: string },
+  creds: EnableBankingCreds
 ): Promise<BalanceSyncResult> {
   try {
-    const data = await getEnableBankingBalances(account.account_id);
+    const data = await getEnableBankingBalances(creds, account.account_id);
     const balances = data?.balances ?? [];
     const amount = balances[0]?.balance_amount?.amount;
     if (amount === undefined || amount === null) {
@@ -29,9 +29,10 @@ async function syncAccountBalance(
 }
 
 export async function syncAllBalances(supabase: SupabaseClient, userId: string): Promise<BalanceSyncResult[]> {
+  const creds = await requireEnableBankingCreds(userId);
   const { data: accounts, error } = await supabase.from('accounts').select('id, account_id, bank').eq('user_id', userId);
   if (error) throw new Error(error.message);
-  return Promise.all((accounts ?? []).map((a) => syncAccountBalance(supabase, userId, a)));
+  return Promise.all((accounts ?? []).map((a) => syncAccountBalance(supabase, userId, a, creds)));
 }
 
 export type TransactionSyncResult = { accountId: number; bank: string; success: boolean; transactionsSynced: number; message: string };
@@ -41,10 +42,11 @@ async function syncAccountTransactions(
   userId: string,
   account: { id: number; account_id: string; bank: string },
   dateFrom: string,
-  dateTo: string
+  dateTo: string,
+  creds: EnableBankingCreds
 ): Promise<TransactionSyncResult> {
   try {
-    const data = await getEnableBankingTransactions(account.account_id, dateFrom, dateTo);
+    const data = await getEnableBankingTransactions(creds, account.account_id, dateFrom, dateTo);
     const transactions: any[] = data?.transactions ?? [];
 
     for (const t of transactions) {
@@ -67,8 +69,6 @@ async function syncAccountTransactions(
         remittance_information: Array.isArray(t.remittance_information) ? t.remittance_information.join(' ') : null,
       };
 
-      // Only columns present in `row` are overwritten on conflict — category,
-      // tags and notes (set later by classify_transaction) are left alone.
       const { error } = await supabase.from('transactions').upsert(row, { onConflict: 'account_id,external_reference' });
       if (error) throw new Error(error.message);
     }
@@ -84,6 +84,7 @@ export async function syncAllTransactions(
   userId: string,
   opts: { accountId?: number; dateFrom: string; dateTo: string }
 ): Promise<TransactionSyncResult[]> {
+  const creds = await requireEnableBankingCreds(userId);
   let query = supabase.from('accounts').select('id, account_id, bank').eq('user_id', userId);
   if (opts.accountId) query = query.eq('id', opts.accountId);
   const { data: accounts, error } = await query;
@@ -92,5 +93,5 @@ export async function syncAllTransactions(
     throw new Error(`Account ${opts.accountId} not found.`);
   }
 
-  return Promise.all((accounts ?? []).map((a) => syncAccountTransactions(supabase, userId, a, opts.dateFrom, opts.dateTo)));
+  return Promise.all((accounts ?? []).map((a) => syncAccountTransactions(supabase, userId, a, opts.dateFrom, opts.dateTo, creds)));
 }
