@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -39,6 +40,7 @@ export default function LoginPage() {
   const supabase = createClient();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [honeypot, setHoneypot] = useState('');
   const [mode, setMode] = useState<'in' | 'up'>('in');
   const [msg, setMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -57,16 +59,22 @@ export default function LoginPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true); setMsg(null);
-    const fn = mode === 'in'
-      ? supabase.auth.signInWithPassword({ email, password })
-      : supabase.auth.signUp({ email, password });
-    const { error } = await fn;
-    setLoading(false);
-    if (error) return setMsg(error.message);
-    if (mode === 'up') return setMsg('Cont creat. Verifică emailul sau loghează-te.');
+    setLoading(true);
+    setMsg(null);
     const next = safeNext(new URLSearchParams(window.location.search).get('next'));
-    router.push(next);
+    const res = await fetch(mode === 'in' ? '/api/auth/login' : '/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, website: honeypot, next }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setLoading(false);
+    if (!res.ok) return setMsg(typeof data.error === 'string' ? data.error : 'Eroare');
+    if (mode === 'up') {
+      router.push('/multumim');
+      return;
+    }
+    router.push(typeof data.next === 'string' ? safeNext(data.next) : next);
     router.refresh();
   }
 
@@ -90,9 +98,10 @@ export default function LoginPage() {
   const busy = loading || oauthProvider !== null;
 
   return (
-    <Card className="mx-auto max-w-sm">
+    <Card id="cta" className="mx-auto max-w-sm">
       <CardHeader>
         <h1 className="font-heading text-2xl font-semibold leading-none tracking-tight">AI Coach</h1>
+        <p className="text-sm text-muted-foreground">Răspuns în chat de obicei sub un minut.</p>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
@@ -125,6 +134,18 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={submit} className="space-y-3">
+          <div className="absolute -left-[9999px] h-0 w-0 overflow-hidden" aria-hidden="true">
+            <label htmlFor="website">Website</label>
+            <input
+              id="website"
+              name="website"
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+            />
+          </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -147,6 +168,7 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
+              maxLength={128}
               autoComplete={mode === 'in' ? 'current-password' : 'new-password'}
             />
           </div>
@@ -163,6 +185,13 @@ export default function LoginPage() {
         >
           {mode === 'in' ? 'Nu ai cont? Înregistrează-te' : 'Ai deja cont? Loghează-te'}
         </Button>
+        <p className="mt-4 text-xs text-muted-foreground">
+          <Link href="/faq" className="underline-offset-2 hover:underline">Întrebări frecvente</Link>
+          {' · '}
+          <Link href="/confidentialitate" className="underline-offset-2 hover:underline">
+            Confidențialitate
+          </Link>
+        </p>
       </CardContent>
     </Card>
   );

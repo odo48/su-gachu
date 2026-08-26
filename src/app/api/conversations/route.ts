@@ -11,7 +11,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from('conversations')
-    .select('*')
+    .select('id, title, updated_at')
     .eq('user_id', user.id)
     .order('updated_at', { ascending: false });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -27,7 +27,8 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
   const body = await req.json().catch(() => ({}));
-  const title = typeof body?.title === 'string' ? body.title.trim() || null : null;
+  const title =
+    typeof body?.title === 'string' ? body.title.trim().slice(0, 120) || null : null;
 
   const { data, error } = await supabase
     .from('conversations')

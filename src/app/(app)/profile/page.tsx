@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
-import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import { parseProfileUpdate } from '@/lib/security/profile';
 import GarminConnectForm from '@/components/GarminConnectForm';
 import UltrahumanConnectForm from '@/components/UltrahumanConnectForm';
 import BankingConnectForm from '@/components/BankingConnectForm';
@@ -19,32 +19,16 @@ export default async function ProfilePage() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect('/login');
-    const num = (k: string) => {
-      const v = formData.get(k);
-      return v === null || v === '' ? null : Number(v);
-    };
-    await supabase.from('profiles').update({
-      full_name: formData.get('full_name') as string,
-      sex: formData.get('sex') as string,
-      birth_date: (formData.get('birth_date') as string) || null,
-      height_cm: num('height_cm'),
-      weight_kg: num('weight_kg'),
-      target_weight_kg: num('target_weight_kg'),
-      activity_level: formData.get('activity_level') as string,
-      goal: formData.get('goal') as string,
-      manual_calorie_cap: num('manual_calorie_cap'),
-      updated_at: new Date().toISOString(),
-    }).eq('id', user.id);
+    await supabase.from('profiles').update(parseProfileUpdate(formData)).eq('id', user.id);
     revalidatePath('/dashboard');
     redirect('/dashboard');
   }
 
-  const field = 'w-full rounded border p-2';
+  const field = 'h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground';
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Profil</h1>
-        <Link href="/dashboard" className="text-sm text-brand underline">Dashboard →</Link>
       </div>
       <form action={save} className="space-y-4">
         <input name="full_name" className={field} placeholder="Nume" defaultValue={p?.full_name ?? ''} />
@@ -72,7 +56,7 @@ export default async function ProfilePage() {
           <option value="muscle_gain">Masă musculară</option>
           <option value="maintenance">Mentenanță</option>
         </select>
-        <button className="w-full rounded bg-brand py-2 font-medium text-white hover:bg-brand-dark">
+        <button className="h-11 w-full rounded-lg bg-primary font-medium text-primary-foreground hover:bg-primary/90">
           Salvează
         </button>
       </form>

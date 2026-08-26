@@ -6,7 +6,7 @@ Next.js 15 app (AI Coach): nutrition, chat, Home Assistant, biometrics, banking.
 
 Read `design-system/MASTER.md` before UI work. If `design-system/pages/<page>.md` exists, it overrides Master.
 
-Tokens: cyan background `#ECFEFF`, emerald CTA `#059669`, cyan brand `#0891B2`, text `#164E63`. Fonts: Lora (headings), Raleway (body).
+Tokens: dark canvas `#0C1215`, emerald CTA `#10B981`, teal `#21A38A`, text `#E8F1F1`. Fonts: Lora (headings), Raleway (body).
 
 ## UI
 

@@ -13,7 +13,7 @@ export default {
       colors: {
         brand: {
           DEFAULT: 'hsl(var(--primary))',
-          dark: 'hsl(161 94% 26%)',
+          dark: 'hsl(160 84% 32%)',
         },
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',

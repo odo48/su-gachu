@@ -30,10 +30,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const conversation = await getOwnedConversation(supabase, user.id, conversationId);
   if (!conversation) return NextResponse.json({ error: `Conversation ${conversationId} not found.` }, { status: 404 });
 
-  const limit = Number(req.nextUrl.searchParams.get('limit') ?? 15);
+  const limit = Math.min(50, Math.max(1, Number(req.nextUrl.searchParams.get('limit') ?? 15) || 15));
   const { data, error } = await supabase
     .from('messages')
-    .select('*')
+    .select('id, role, content, created_at, provider')
     .eq('conversation_id', conversationId)
     .order('created_at', { ascending: false })
     .limit(limit);
@@ -56,10 +56,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   if (!conversation) return NextResponse.json({ error: `Conversation ${conversationId} not found.` }, { status: 404 });
 
   const body = await req.json().catch(() => null);
-  const content = body?.content;
-  const providerName = body?.provider ?? 'gemini';
-  if (!content || typeof content !== 'string') {
+  const content = typeof body?.content === 'string' ? body.content.trim() : '';
+  const providerName = body?.provider === 'claude' ? 'claude' : 'gemini';
+  if (!content) {
     return NextResponse.json({ error: '"content" is required' }, { status: 400 });
+  }
+  if (content.length > 8000) {
+    return NextResponse.json({ error: 'Mesajul e prea lung (max 8000 caractere).' }, { status: 400 });
   }
 
   // 1. History for LLM context, before this turn's messages exist.

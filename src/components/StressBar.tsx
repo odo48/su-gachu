@@ -51,7 +51,7 @@ export default function StressBar({ restSec, lowSec, mediumSec, highSec, avg, ma
         <>
           <div className="flex h-3 overflow-hidden rounded-full gap-px">
             {pct(restSec) > 0 && (
-              <div style={{ width: `${pct(restSec)}%` }} className="bg-sky-200" title={`Repaus ${toH(restSec)}`} />
+              <div style={{ width: `${pct(restSec)}%` }} className="bg-sky-500" title={`Repaus ${toH(restSec)}`} />
             )}
             {pct(lowSec) > 0 && (
               <div style={{ width: `${pct(lowSec)}%` }} className="bg-emerald-400" title={`Scăzut ${toH(lowSec)}`} />
@@ -69,7 +69,7 @@ export default function StressBar({ restSec, lowSec, mediumSec, highSec, avg, ma
           </div>
           <div className="grid grid-cols-2 gap-1 text-xs text-muted-foreground">
             <span className="flex items-center gap-1.5">
-              <span className="inline-block h-2 w-2 rounded-full bg-sky-200" />
+              <span className="inline-block h-2 w-2 rounded-full bg-sky-500" />
               Repaus {toH(restSec)}
             </span>
             <span className="flex items-center gap-1.5">

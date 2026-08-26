@@ -21,16 +21,16 @@
 
 ## Color Palette
 
-Tokens live in `src/app/globals.css` (`--primary`, `--background`, …) and are wired in `tailwind.config.ts`.
+Tokens live in `src/app/globals.css` (`--primary`, `--background`, …) and are wired in `tailwind.config.ts`. Dark-first.
 
 | Role | Hex | Tailwind |
 |------|-----|----------|
-| Primary / CTA | `#059669` | `bg-primary` `text-primary` |
-| Brand cyan | `#0891B2` | `bg-secondary` `text-secondary` |
-| Cyan bright | `#22D3EE` | charts / highlights |
-| Background | `#ECFEFF` | `bg-background` |
-| Text | `#164E63` | `text-foreground` |
-| Card | `#FFFFFF` | `bg-card` |
+| Primary / CTA | `#10B981` | `bg-primary` `text-primary` |
+| Teal accent | `#21A38A` | `bg-secondary` `text-secondary` |
+| Chart cyan | `#2EC4D6` | `--chart-2` |
+| Background | `#0C1215` | `bg-background` |
+| Text | `#E8F1F1` | `text-foreground` |
+| Card | `#151C20` | `bg-card` |
 
 `bg-brand` is an alias of primary for older screens — prefer `bg-primary` on new work.
 
@@ -64,14 +64,14 @@ Touch targets: `h-11` / 44px minimum. `cursor-pointer` on clickable elements (bu
 
 ## Style
 
-Calm wellness, light cyan canvas, white cards, emerald CTAs. Subtle shadow on cards (`shadow-md`). Not neon, not gaming, not dark-first.
+Calm wellness, dark ink canvas, raised cards, emerald CTAs. Subtle border on cards. Not neon, not gaming.
 
 ## Anti-patterns
 
 - Raw `<button>` / `<input>` when a shadcn primitive exists
 - Emoji icons
 - Placeholder-only inputs (no `<Label>`)
-- Low-contrast muted text (`text-neutral-400` on cyan)
+- Low-contrast muted text (`text-neutral-400` on dark canvas)
 - Instant state changes with no loading/disabled on async buttons
 
 ## Checklist
