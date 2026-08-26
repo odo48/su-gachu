@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { ChatMessage, ToolExecutor } from '../ai/types';
 import { getProvider } from '../ai/registry';
 import { combineTools } from '../ai/combine-tools';
+import { loadTenantDisplayName, tenantIsolationBlock } from '../ai/tenant-context';
 import { getGeneralToolSource } from '../mcp/tavily';
 import { createAdminClient } from '../supabase/admin';
 import { McpHttpClient } from '../mcp/client';
@@ -57,7 +58,9 @@ export async function runHomeAssistantAgentTurn(params: {
 
     const provider = getProvider(providerName);
     const { schemas, executor } = combineTools({ schemas: haTools, executor: haExecutor }, await getGeneralToolSource());
-    return await provider.call(task, schemas, HOME_ASSISTANT_PROMPT, history, executor);
+    const displayName = await loadTenantDisplayName(supabase, userId);
+    const systemPrompt = `${HOME_ASSISTANT_PROMPT}\n\n${tenantIsolationBlock(displayName)}`;
+    return await provider.call(task, schemas, systemPrompt, history, executor);
   } finally {
     await mcp.close();
   }

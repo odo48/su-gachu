@@ -34,7 +34,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const { data, error } = await supabase
     .from('messages')
     .select('id, role, content, created_at, provider')
-    .eq('conversation_id', conversationId)
+    .eq('conversation_id', conversation.id)
     .order('created_at', { ascending: false })
     .limit(limit);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -66,10 +66,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
 
   // 1. History for LLM context, before this turn's messages exist.
+  // conversation.id is already proven to belong to user.id (getOwnedConversation).
   const { data: recent, error: historyError } = await supabase
     .from('messages')
     .select('role, content')
-    .eq('conversation_id', conversationId)
+    .eq('conversation_id', conversation.id)
     .order('created_at', { ascending: false })
     .limit(15);
   if (historyError) return NextResponse.json({ error: historyError.message }, { status: 500 });
@@ -78,7 +79,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // 2. Persist the user message; auto-title on first message, bump updated_at.
   const { data: userMessage, error: userMsgError } = await supabase
     .from('messages')
-    .insert({ conversation_id: conversationId, role: 'user', content })
+    .insert({ conversation_id: conversation.id, role: 'user', content })
     .select()
     .single();
   if (userMsgError) return NextResponse.json({ error: userMsgError.message }, { status: 500 });
@@ -87,9 +88,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   await supabase
     .from('conversations')
     .update({ ...titleUpdate, updated_at: new Date().toISOString() })
-    .eq('id', conversationId);
+    .eq('id', conversation.id)
+    .eq('user_id', user.id);
 
-  // 3. Run the agent turn.
+  // 3. Run the agent turn. userId is always the session user, never from the body.
   let response: string;
   try {
     response = await runRouterTurn({ supabase, userId: user.id, task: content, provider: providerName, history });
@@ -100,12 +102,16 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // 4. Persist the assistant message, bump updated_at again.
   const { data: assistantMessage, error: assistantMsgError } = await supabase
     .from('messages')
-    .insert({ conversation_id: conversationId, role: 'assistant', content: response, provider: providerName })
+    .insert({ conversation_id: conversation.id, role: 'assistant', content: response, provider: providerName })
     .select()
     .single();
   if (assistantMsgError) return NextResponse.json({ error: assistantMsgError.message }, { status: 500 });
 
-  await supabase.from('conversations').update({ updated_at: new Date().toISOString() }).eq('id', conversationId);
+  await supabase
+    .from('conversations')
+    .update({ updated_at: new Date().toISOString() })
+    .eq('id', conversation.id)
+    .eq('user_id', user.id);
 
   return NextResponse.json({ userMessage, assistantMessage }, { status: 201 });
 }

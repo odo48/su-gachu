@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { ChatMessage, ToolExecutor, ToolSchema } from '../ai/types';
 import { getProvider } from '../ai/registry';
 import { combineTools } from '../ai/combine-tools';
+import { loadTenantDisplayName, tenantIsolationBlock } from '../ai/tenant-context';
 import { getGeneralToolSource } from '../mcp/tavily';
 import { AGENT_REGISTRY, type AppModule } from './registry';
 import { CORE_IDENTITY_PROMPT } from './prompt';
@@ -71,5 +72,7 @@ export async function runRouterTurn(params: {
   // jarvis-brain's BrainService.get_chat_response merging them in alongside
   // the agent-as-tool entries — not just inside each specialist.
   const { schemas, executor } = combineTools({ schemas: toolSchemas, executor: executeAgentTool }, await getGeneralToolSource());
-  return provider.call(task, schemas, CORE_IDENTITY_PROMPT, history, executor);
+  const displayName = await loadTenantDisplayName(supabase, userId);
+  const systemPrompt = `${CORE_IDENTITY_PROMPT}\n\n${tenantIsolationBlock(displayName)}`;
+  return provider.call(task, schemas, systemPrompt, history, executor);
 }

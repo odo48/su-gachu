@@ -59,7 +59,11 @@ export async function searchLocalRecipes(
   const ids = [...new Set((idRows ?? []).map((r) => r.id as number))];
   if (ids.length === 0) return [];
 
-  const { data, error } = await supabase.from('recipes').select('*, recipe_ingredients(*)').in('id', ids);
+  const { data, error } = await supabase
+    .from('recipes')
+    .select('*, recipe_ingredients(*)')
+    .eq('user_id', userId)
+    .in('id', ids);
   if (error) throw new Error(error.message);
 
   return (data ?? []).map(mapRecipeRow);

@@ -71,6 +71,8 @@ export class GeminiProvider implements ModelProvider {
       parametersJsonSchema: sanitizeParameters(t.parameters),
     }));
 
+    // Fresh chat object per request — Gemini does not keep history across calls.
+    // Isolation depends on the caller passing only this user's systemPrompt + history.
     const chat = this.client.chats.create({
       model: GEMINI_MODEL,
       config: {
