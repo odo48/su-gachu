@@ -58,7 +58,7 @@ function Modal({ recipe, slot, onClose }: { recipe: Recipe; slot: string; onClos
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
       <div className="relative max-h-[92vh] w-full overflow-y-auto rounded-t-3xl border border-border bg-card text-card-foreground shadow-2xl sm:max-w-lg sm:rounded-2xl">
         <div className="flex justify-center pb-1 pt-3 sm:hidden">
@@ -97,17 +97,17 @@ function Modal({ recipe, slot, onClose }: { recipe: Recipe; slot: string; onClos
             <MacroPill
               label="proteină"
               value={`${recipe.nutrition.protein_g}g`}
-              className="bg-emerald-100 text-emerald-800"
+              className="bg-primary/15 text-primary"
             />
             <MacroPill
               label="carbo"
               value={`${recipe.nutrition.carbs_g}g`}
-              className="bg-amber-100 text-amber-800"
+              className="bg-amber-500/15 text-amber-400"
             />
             <MacroPill
               label="grăsimi"
               value={`${recipe.nutrition.fat_g}g`}
-              className="bg-rose-100 text-rose-800"
+              className="bg-rose-500/15 text-rose-400"
             />
           </div>
 

@@ -1,7 +1,14 @@
 import { redirect } from 'next/navigation';
-import Link from 'next/link';
+import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
+import AppNav from '@/components/AppNav';
 import ConversationSidebar from '@/components/ConversationSidebar';
+
+export const metadata: Metadata = {
+  title: 'Chat',
+  description: 'Vorbește cu antrenorul AI despre mâncare, somn, antrenament și cheltuieli.',
+  robots: { index: false, follow: false },
+};
 
 export default async function ChatLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -17,16 +24,11 @@ export default async function ChatLayout({ children }: { children: React.ReactNo
     .order('updated_at', { ascending: false });
 
   return (
-    <div className="flex h-screen">
-      <ConversationSidebar conversations={conversations ?? []} />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <div className="flex items-center justify-between border-b border-neutral-200 px-4 py-3">
-          <h1 className="font-semibold">AI Coach</h1>
-          <Link href="/dashboard" className="text-sm text-brand underline">
-            ← Dashboard
-          </Link>
-        </div>
-        <div className="min-h-0 flex-1">{children}</div>
+    <div className="flex h-dvh flex-col">
+      <AppNav />
+      <div className="flex min-h-0 flex-1">
+        <ConversationSidebar conversations={conversations ?? []} />
+        <div className="flex min-w-0 flex-1 flex-col">{children}</div>
       </div>
     </div>
   );

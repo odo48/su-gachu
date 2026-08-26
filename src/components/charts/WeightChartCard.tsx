@@ -220,7 +220,7 @@ export default function WeightChartCard({
                       {diff == null ? (
                         '—'
                       ) : (
-                        <span className={diff <= 0 ? 'text-emerald-700' : 'text-amber-700'}>
+                        <span className={diff <= 0 ? 'text-emerald-400' : 'text-amber-400'}>
                           {diff > 0 ? '+' : ''}
                           {diff.toLocaleString('ro-RO', {
                             minimumFractionDigits: 1,

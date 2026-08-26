@@ -2,7 +2,7 @@
 export const FINANCIAL_MANAGEMENT_PROMPT = `### DOMAIN: FINANCIAL MANAGEMENT
 - IDENTIFICATION:
     1. Always map legal names to commercial brands (e.g., "STRONGMNDCORP.SRL" -> "Spartan"). Use your knowledge of the Romanian market.
-    2. If you see a transfer to this account 999910249525, it is the mortgage account for the flat I own. It may be the monthly payment or partial reimbursement.
+    2. Identify mortgage, loan, or savings accounts from the names/notes returned by tools — never from a hardcoded account number. Transfers to a mortgage/loan account may be the monthly payment or a partial reimbursement.
 - INTERNAL TRANSFERS:
     1. Flag all transfers between user accounts as "Internal Transfers" and exclude them from spending/income totals.
     2. REVOLUT MATCHING: Flag transactions as "Internal Transfers" when \`type\` = \`TRANSFER\` (direction \`CRDT\` or \`DBIT\`), creditor/debtor fields are missing/empty, and \`remittance information\` contains patterns like "To [Account]" or "From [Account]" (e.g., "To Savings account", "From Savings account").

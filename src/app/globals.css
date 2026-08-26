@@ -4,29 +4,29 @@
 
 @layer base {
   :root {
-    --background: 185 100% 96%;
-    --foreground: 196 64% 24%;
-    --card: 0 0% 100%;
-    --card-foreground: 196 64% 24%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 196 64% 24%;
-    --primary: 161 94% 30%;
+    --background: 200 22% 6%;
+    --foreground: 180 18% 93%;
+    --card: 200 18% 10%;
+    --card-foreground: 180 18% 93%;
+    --popover: 200 18% 10%;
+    --popover-foreground: 180 18% 93%;
+    --primary: 160 84% 39%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 192 91% 37%;
+    --secondary: 174 64% 36%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 186 40% 92%;
-    --muted-foreground: 192 25% 38%;
-    --accent: 187 70% 92%;
-    --accent-foreground: 192 91% 28%;
-    --destructive: 0 72% 51%;
+    --muted: 200 16% 14%;
+    --muted-foreground: 190 14% 68%;
+    --accent: 196 20% 16%;
+    --accent-foreground: 174 40% 78%;
+    --destructive: 0 72% 58%;
     --destructive-foreground: 0 0% 100%;
-    --border: 187 30% 86%;
-    --input: 187 30% 86%;
-    --ring: 192 91% 37%;
+    --border: 196 14% 18%;
+    --input: 196 14% 18%;
+    --ring: 160 72% 45%;
     --radius: 0.5rem;
-    --chart-1: 161 94% 30%;
-    --chart-2: 192 91% 37%;
-    --chart-3: 187 70% 42%;
+    --chart-1: 160 84% 45%;
+    --chart-2: 187 72% 52%;
+    --chart-3: 38 92% 58%;
   }
 
   * {
@@ -35,6 +35,7 @@
 
   html {
     @apply font-sans;
+    color-scheme: dark;
   }
 
   body {

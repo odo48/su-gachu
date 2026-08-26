@@ -60,7 +60,7 @@ export default function SleepBar({ totalMin, deepSec, lightSec, remSec, awakeSec
             />
             <div
               style={{ width: `${pct(lightSec)}%` }}
-              className="bg-cyan-300"
+              className="bg-cyan-400"
               title={`Light ${pct(lightSec)}%`}
             />
             <div
@@ -79,7 +79,7 @@ export default function SleepBar({ totalMin, deepSec, lightSec, remSec, awakeSec
               REM {Math.round((remSec ?? 0) / 60)}m
             </span>
             <span className="flex items-center gap-1">
-              <span className="inline-block h-2 w-2 rounded-full bg-cyan-300" />
+              <span className="inline-block h-2 w-2 rounded-full bg-cyan-400" />
               Light {Math.round((lightSec ?? 0) / 60)}m
             </span>
           </div>

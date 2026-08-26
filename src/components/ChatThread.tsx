@@ -50,30 +50,30 @@ export default function ChatThread({
     <div className="flex h-full flex-col">
       <div className="flex-1 space-y-4 overflow-y-auto p-4">
         {messages.length === 0 && (
-          <p className="text-sm text-neutral-400">Scrie ceva ca să începi conversația cu Food Agent-ul.</p>
+          <p className="text-sm text-muted-foreground">Scrie ceva ca să începi conversația cu Food Agent-ul.</p>
         )}
         {messages.map((m) => (
           <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div
-              className={`max-w-lg whitespace-pre-wrap rounded px-3 py-2 text-sm ${
-                m.role === 'user' ? 'bg-brand text-white' : 'bg-neutral-100 text-neutral-900'
+              className={`max-w-lg whitespace-pre-wrap rounded-lg px-3 py-2 text-sm ${
+                m.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'
               }`}
             >
               {m.content}
             </div>
           </div>
         ))}
-        {loading && <p className="text-sm text-neutral-400">Se gândește...</p>}
+        {loading && <p className="text-sm text-muted-foreground">Se gândește...</p>}
       </div>
 
-      {err && <p className="px-4 text-sm text-red-600">{err}</p>}
+      {err && <p className="px-4 text-sm text-destructive">{err}</p>}
 
-      <div className="flex items-center gap-2 border-t border-neutral-200 p-3">
+      <div className="flex items-center gap-2 border-t border-border p-3">
         <select
           value={provider}
           onChange={(e) => setProvider(e.target.value as Provider)}
           disabled={loading}
-          className="rounded border border-gray-300 px-2 py-2 text-sm disabled:opacity-50"
+          className="h-11 rounded-lg border border-input bg-background px-2 text-sm disabled:opacity-50"
         >
           <option value="gemini">Gemini</option>
           <option value="claude">Claude</option>
@@ -89,12 +89,13 @@ export default function ChatThread({
           }}
           disabled={loading}
           placeholder="Scrie un mesaj..."
-          className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm disabled:opacity-50"
+          maxLength={8000}
+          className="h-11 flex-1 rounded-lg border border-input bg-background px-3 text-sm disabled:opacity-50"
         />
         <button
           onClick={send}
           disabled={loading || !prompt.trim()}
-          className="rounded bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark disabled:opacity-50"
+          className="h-11 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
         >
           Trimite
         </button>

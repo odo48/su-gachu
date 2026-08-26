@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { ChatMessage } from '../ai/types';
 import { getProvider } from '../ai/registry';
 import { combineTools } from '../ai/combine-tools';
+import { loadTenantDisplayName, tenantIsolationBlock } from '../ai/tenant-context';
 import { getGeneralToolSource } from '../mcp/tavily';
 import { createFinancialToolExecutor, FINANCIAL_TOOL_SCHEMAS } from './tools';
 import { FINANCIAL_MANAGEMENT_PROMPT } from './prompt';
@@ -33,5 +34,7 @@ export async function runFinancialAgentTurn(params: {
     { schemas: FINANCIAL_TOOL_SCHEMAS, executor: createFinancialToolExecutor(params.supabase, params.userId) },
     await getGeneralToolSource()
   );
-  return provider.call(params.task, schemas, FINANCIAL_MANAGEMENT_PROMPT, params.history, executor);
+  const displayName = await loadTenantDisplayName(params.supabase, params.userId);
+  const systemPrompt = `${FINANCIAL_MANAGEMENT_PROMPT}\n\n${tenantIsolationBlock(displayName)}`;
+  return provider.call(params.task, schemas, systemPrompt, params.history, executor);
 }

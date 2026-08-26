@@ -47,10 +47,10 @@ const COUNTRIES: { code: string; label: string }[] = [
 ];
 
 const selectClass =
-  'flex h-11 w-full rounded-lg border border-input bg-card px-3 py-2 text-base text-foreground shadow-sm transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm';
+  'flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-base text-foreground shadow-sm transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm';
 
 const textareaClass =
-  'min-h-36 w-full rounded-lg border border-input bg-card px-3 py-2 font-mono text-xs text-foreground shadow-sm transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50';
+  'min-h-36 w-full rounded-lg border border-input bg-background px-3 py-2 font-mono text-xs text-foreground shadow-sm transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50';
 
 function daysAgoIso(n: number) {
   const d = new Date();

@@ -116,11 +116,20 @@ export async function POST(req: NextRequest) {
     highProtein: r.highProtein, lowCalorie: r.lowCalorie,
   }));
 
-  // 3. Modelul ales alege mesele + argumentează
-  const prompt = `Ești un coach pentru un cut agresiv pe termen scurt, asumat de user.
-Prioritatea #1: PĂSTRAREA masei musculare în deficit mare. Proteina e sacră, forța rămâne în program.
+  // 3. Modelul ales alege mesele + argumentează, using THIS user's profile.goal.
+  const goal = profile.goal as Goal;
+  const coaching =
+    goal === 'fat_loss'
+      ? 'Ești un coach pentru deficit caloric. Prioritatea #1: PĂSTRAREA masei musculare. Proteina e sacră, forța rămâne în program.'
+      : goal === 'recomposition'
+        ? 'Ești un coach pentru recompoziție. Prioritatea #1: proteina și antrenamentul de forță, calorii ușor sub TDEE.'
+        : goal === 'muscle_gain'
+          ? 'Ești un coach pentru surplus controlat. Prioritatea #1: progresie în forță, surplus modest fără exces de grăsime.'
+          : 'Ești un coach pentru menținere. Prioritatea #1: stabilitate, proteina constantă, forța păstrată.';
 
-Profil: ${profile.weight_kg}kg, ${profile.height_cm}cm, vârstă ${age(profile.birth_date)}, ${profile.sex}, obiectiv ${profile.goal}.
+  const prompt = `${coaching}
+
+Profil: ${profile.weight_kg}kg, ${profile.height_cm}cm, vârstă ${age(profile.birth_date)}, ${profile.sex}, obiectiv ${goal}.
 Metrici azi: ${metrics ? JSON.stringify({ steps: metrics.steps, active_kcal: metrics.active_kcal, sleep_min: metrics.sleep_minutes, hrv: metrics.hrv, resting_hr: metrics.resting_hr }) : 'fără date wearable azi'}.
 Ținte calculate (respectă-le STRICT, mai ales proteina și plafonul de calorii): ${t.calories} kcal, ${t.protein_g}g proteină, ${t.carbs_g}g carbo, ${t.fat_g}g grăsime.
 Estimare onestă pierdere grăsime: ~${t.estWeeklyFatLossKg} kg/săpt (restul scăderii de pe cântar e apă/glicogen).

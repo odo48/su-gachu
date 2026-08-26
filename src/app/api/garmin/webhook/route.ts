@@ -9,11 +9,28 @@ const admin = createSb(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+function webhookAuthorized(req: NextRequest): boolean {
+  const secret = process.env.GARMIN_WEBHOOK_SECRET;
+  if (!secret) return false;
+  const header = req.headers.get('x-webhook-secret') ?? '';
+  const bearer = req.headers.get('authorization') ?? '';
+  const token = bearer.toLowerCase().startsWith('bearer ') ? bearer.slice(7).trim() : '';
+  return header === secret || token === secret;
+}
+
 export async function POST(req: NextRequest) {
-  const body = await req.json();
+  if (!webhookAuthorized(req)) {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
+
+  const body = await req.json().catch(() => null);
+  if (!body || typeof body !== 'object') {
+    return NextResponse.json({ error: 'invalid json' }, { status: 400 });
+  }
+  const payload = body as { dailies?: Array<Record<string, unknown> & { userId?: string; calendarDate?: string; steps?: number; activeKilocalories?: number; restingHeartRateInBeatsPerMinute?: number; averageHeartRateInBeatsPerMinute?: number }> };
 
   // Garmin trimite array-uri per tip de date. Exemplu pt 'dailies':
-  for (const d of body.dailies ?? []) {
+  for (const d of payload.dailies ?? []) {
     const { data: tok } = await admin
       .from('garmin_tokens').select('user_id')
       .eq('garmin_user_id', d.userId).maybeSingle();

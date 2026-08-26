@@ -21,19 +21,19 @@ export default function ConversationSidebar({ conversations }: { conversations: 
   }
 
   return (
-    <div className="flex h-full w-64 flex-shrink-0 flex-col border-r border-neutral-200 bg-white">
+    <div className="flex h-full w-64 shrink-0 flex-col border-r border-border bg-card">
       <div className="p-3">
         <button
           onClick={handleNewChat}
           disabled={creating}
-          className="w-full rounded bg-brand px-3 py-2 text-sm font-medium text-white hover:bg-brand-dark disabled:opacity-50"
+          className="h-11 w-full rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
         >
           + Chat nou
         </button>
       </div>
       <nav className="flex-1 space-y-1 overflow-y-auto px-2 pb-3">
         {conversations.length === 0 && (
-          <p className="px-2 py-2 text-sm text-neutral-400">Nicio conversație încă.</p>
+          <p className="px-2 py-2 text-sm text-muted-foreground">Nicio conversație încă.</p>
         )}
         {conversations.map((c) => {
           const isActive = activeId === String(c.id);
@@ -42,8 +42,10 @@ export default function ConversationSidebar({ conversations }: { conversations: 
               key={c.id}
               href={`/chat/${c.id}`}
               title={c.title ?? 'Conversație nouă'}
-              className={`block truncate rounded px-2 py-2 text-sm ${
-                isActive ? 'bg-brand/10 text-brand' : 'text-neutral-700 hover:bg-neutral-100'
+              className={`block truncate rounded-lg px-2 py-2 text-sm ${
+                isActive
+                  ? 'bg-primary/15 text-primary'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
               }`}
             >
               {c.title || 'Conversație nouă'}

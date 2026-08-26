@@ -112,19 +112,26 @@ export default function DailyMetricsForm({
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) return;
+    const n = (raw: string, min: number, max: number) => {
+      if (!raw) return null;
+      const v = Number(raw);
+      if (!Number.isFinite(v)) return null;
+      return Math.min(max, Math.max(min, v));
+    };
+    const weightKg = n(weight, 20, 400);
     await upsertCommonBiometrics(
       supabase,
       user.id,
       isoDateLocal(),
       {
-        weight_kg: weight ? Number(weight) : null,
-        steps: steps ? Number(steps) : null,
-        active_kcal: activeKcal ? Number(activeKcal) : null,
-        sleep_minutes: sleep ? Math.round(Number(sleep) * 60) : null,
+        weight_kg: weightKg,
+        steps: n(steps, 0, 200_000),
+        active_kcal: n(activeKcal, 0, 20_000),
+        sleep_minutes: sleep ? Math.round((n(sleep, 0, 24) ?? 0) * 60) : null,
       },
       'manual'
     );
-    if (weight) await supabase.from('profiles').update({ weight_kg: Number(weight) }).eq('id', user.id);
+    if (weightKg) await supabase.from('profiles').update({ weight_kg: weightKg }).eq('id', user.id);
     setSaving(false);
     router.refresh();
   }

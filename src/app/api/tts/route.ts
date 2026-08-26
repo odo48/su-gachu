@@ -15,6 +15,9 @@ export async function POST(req: NextRequest) {
   if (!text || typeof text !== 'string') {
     return NextResponse.json({ error: '"text" is required' }, { status: 400 });
   }
+  if (text.length > 2000) {
+    return NextResponse.json({ error: 'Textul e prea lung (max 2000 caractere).' }, { status: 400 });
+  }
 
   try {
     const audio = await textToSpeech(text);

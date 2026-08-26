@@ -12,6 +12,7 @@ import {
   ULTRAHUMAN_TOOL_SCHEMAS,
 } from './tools';
 import { buildBiometricsPrompt } from './prompt';
+import { loadTenantDisplayName, tenantIsolationBlock } from '../ai/tenant-context';
 import { hasGarminConnection } from '../garmin/metrics';
 import { hasUltrahumanConnection } from '../ultrahuman/connection';
 
@@ -51,11 +52,7 @@ export async function runBiometricsAgentTurn(params: {
 
   const provider = getProvider(params.provider);
   const { schemas, executor } = combineTools(...sources);
-  return provider.call(
-    params.task,
-    schemas,
-    buildBiometricsPrompt({ ultrahuman, garmin }),
-    params.history,
-    executor
-  );
+  const displayName = await loadTenantDisplayName(params.supabase, params.userId);
+  const systemPrompt = `${buildBiometricsPrompt({ ultrahuman, garmin })}\n\n${tenantIsolationBlock(displayName)}`;
+  return provider.call(params.task, schemas, systemPrompt, params.history, executor);
 }

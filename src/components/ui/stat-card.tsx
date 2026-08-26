@@ -13,11 +13,11 @@ type Props = {
 
 const accentMap = {
   default: 'bg-primary/10 text-primary',
-  green: 'bg-emerald-100 text-emerald-700',
-  amber: 'bg-amber-100 text-amber-700',
-  red: 'bg-red-100 text-red-700',
-  purple: 'bg-violet-100 text-violet-700',
-  teal: 'bg-cyan-100 text-cyan-800',
+  green: 'bg-emerald-500/15 text-emerald-400',
+  amber: 'bg-amber-500/15 text-amber-400',
+  red: 'bg-red-500/15 text-red-400',
+  purple: 'bg-violet-500/15 text-violet-400',
+  teal: 'bg-cyan-500/15 text-cyan-400',
 };
 
 export function StatCard({ label, value, unit, sub, icon, accent = 'default' }: Props) {

@@ -197,12 +197,6 @@ export default async function Dashboard() {
               <Badge variant="warning">Lipsește: {missing.join(', ')}</Badge>
             </Link>
           )}
-          <Link href="/chat" className="text-sm text-secondary underline">
-            Chat
-          </Link>
-          <Link href="/profile" className="text-sm text-secondary underline">
-            Profil
-          </Link>
         </div>
       </div>
 

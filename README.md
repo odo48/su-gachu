@@ -13,6 +13,9 @@ npm run dev                        # http://localhost:3000
 ```
 
 `npm run typecheck` pentru verificarea tipurilor.
+`npm run audit` pentru vulnerabilități high/critical în dependențe.
+
+Pagini publice: `/login`, `/faq`, `/confidentialitate`, `/multumim`, `/robots.txt`, `/sitemap.xml`.
 
 ## Supabase
 
@@ -53,6 +56,7 @@ Parola și sesiunea OAuth stau în Vault (`supabase/20260826_garmin_connect.sql`
 Dacă Garmin cere MFA/2FA, login-ul neoficial poate eșua — același limit ca la garth fără prompt interactiv.
 
 Webhook-ul `/api/garmin/webhook` e doar pentru Health API oficial (parteneriat), nu pentru fluxul ăsta.
+Setează `GARMIN_WEBHOOK_SECRET` — fără el, endpoint-ul răspunde 401.
 
 ## Open Food Facts (nutriție + poze produse)
 

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Lora, Raleway } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/sonner';
+import { SITE_NAME, SITE_TAGLINE, SITE_URL } from '@/lib/site';
 import './globals.css';
 
 const raleway = Raleway({
@@ -17,18 +18,46 @@ const lora = Lora({
 });
 
 export const metadata: Metadata = {
-  title: 'AI Coach',
-  description: 'Nutriție și antrenament ghidate de AI',
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} — AI Coach`,
+    template: `%s · ${SITE_NAME}`,
+  },
+  description: SITE_TAGLINE,
+  applicationName: SITE_NAME,
+  openGraph: {
+    type: 'website',
+    locale: 'ro_RO',
+    url: SITE_URL,
+    siteName: SITE_NAME,
+  },
+  twitter: {
+    card: 'summary',
+  },
+  robots: { index: true, follow: true },
+};
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: SITE_NAME,
+  url: SITE_URL,
+  applicationCategory: 'HealthApplication',
+  operatingSystem: 'Web',
+  inLanguage: 'ro',
+  description: SITE_TAGLINE,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ro" className={cn(raleway.variable, lora.variable, 'font-sans')}>
+    <html lang="ro" className={cn(raleway.variable, lora.variable, 'dark font-sans')}>
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         {children}
-        <p className="mx-auto max-w-4xl px-4 pb-8 text-xs text-muted-foreground">
-          Informativ, nu sfat medical. Consultă un medic înainte de un deficit caloric agresiv.
-        </p>
         <Toaster />
       </body>
     </html>
