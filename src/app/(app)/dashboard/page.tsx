@@ -69,7 +69,7 @@ export default async function Dashboard() {
       .maybeSingle(),
     supabase
       .from('garmin_daily_biometrics')
-      .select('date, active_kcal, avg_hr, sleep_minutes, raw')
+              .select('date, active_kcal, avg_hr, resting_hr, sleep_minutes, raw')
       .eq('user_id', user.id)
       .gte('date', weekStartIso)
       .lte('date', today)

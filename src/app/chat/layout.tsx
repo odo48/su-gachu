@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import AppNav from '@/components/AppNav';
+import AppTabBar from '@/components/AppTabBar';
 import ConversationSidebar from '@/components/ConversationSidebar';
 
 export const metadata: Metadata = {
@@ -26,10 +27,13 @@ export default async function ChatLayout({ children }: { children: React.ReactNo
   return (
     <div className="flex h-dvh flex-col">
       <AppNav />
-      <div className="flex min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
         <ConversationSidebar conversations={conversations ?? []} />
-        <div className="flex min-w-0 flex-1 flex-col">{children}</div>
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0">
+          {children}
+        </div>
       </div>
+      <AppTabBar />
     </div>
   );
 }

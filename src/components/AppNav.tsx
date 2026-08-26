@@ -33,7 +33,7 @@ export default function AppNav() {
         {isApp ? (
           <nav
             aria-label="Principal"
-            className="flex items-center rounded-full bg-background p-1"
+            className="hidden items-center rounded-full bg-background p-1 md:flex"
           >
             {LINKS.map(({ href, label, icon: Icon, match }) => {
               const active = match(path);

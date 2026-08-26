@@ -20,6 +20,31 @@ function num(v: unknown): number | null {
   return null;
 }
 
+// Garmin often sends 0 (or omits averageHeartRate entirely) when it has no
+// daily average. 0 bpm is not a real reading — treat it as missing.
+function positiveHr(v: unknown): number | null {
+  const n = num(v);
+  if (n == null || n <= 0) return null;
+  return Math.round(n);
+}
+
+function averageFromHeartRateValues(heart: Loose | null): number | null {
+  const values = heart?.heartRateValues;
+  if (!Array.isArray(values) || values.length === 0) return null;
+  let sum = 0;
+  let count = 0;
+  for (const point of values) {
+    const bpm = Array.isArray(point)
+      ? num(point[1])
+      : num(asRecord(point as unknown)?.heartRate);
+    if (bpm != null && bpm > 0) {
+      sum += bpm;
+      count++;
+    }
+  }
+  return count > 0 ? Math.round(sum / count) : null;
+}
+
 async function settled<T>(p: Promise<T>): Promise<T | null> {
   try {
     return await p;
@@ -131,8 +156,12 @@ export async function fetchDayMetrics(
 
   const steps = num(summaryR?.totalSteps) ?? num(heartR?.totalSteps);
   const activeKcal = num(summaryR?.activeKilocalories);
-  const restingHr = num(heartR?.restingHeartRate) ?? num(summaryR?.restingHeartRate);
-  const avgHr = num(summaryR?.averageHeartRate) ?? num(heartR?.averageHeartRate);
+  const restingHr = positiveHr(heartR?.restingHeartRate) ?? positiveHr(summaryR?.restingHeartRate);
+  const avgHr =
+    positiveHr(summaryR?.averageHeartRate) ??
+    positiveHr(heartR?.averageHeartRate) ??
+    positiveHr(heartR?.heartRateAverage) ??
+    averageFromHeartRateValues(heartR);
   const sleepSeconds = num(sleepDto?.sleepTimeSeconds);
   const weightGrams = num(weightAvg?.weight);
   const hrvValue = num(hrvSummary?.lastNightAvg) ?? num(hrvSummary?.lastNight) ?? num(hrvSummary?.weeklyAvg);

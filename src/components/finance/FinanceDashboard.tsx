@@ -281,6 +281,7 @@ export default function FinanceDashboard() {
               {syncing ? 'Sincronizez tranzacțiile…' : 'Nicio tranzacție în ultimele 30 de zile.'}
             </p>
           ) : (
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -324,6 +325,7 @@ export default function FinanceDashboard() {
                 })}
               </TableBody>
             </Table>
+            </div>
           )}
         </CardContent>
       </Card>

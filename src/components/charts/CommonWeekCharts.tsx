@@ -13,26 +13,27 @@ import {
   Legend,
 } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import type { CommonWeekRow } from '@/lib/dashboard/weekRows';
+import { type CommonWeekRow, weekPulse } from '@/lib/dashboard/weekRows';
 import { axisTick, CHART_MARGIN, gridStroke, tooltipStyle } from '@/lib/chart-theme';
 
 function chartData(rows: CommonWeekRow[]) {
-  return [...rows].reverse().map((r) => ({
-    label: r.label.replace(/\s+\d{4}/, ''),
-    kcal: r.activeKcal ?? 0,
-    somn: r.sleepHours ?? 0,
-    hr: r.avgHr ?? 0,
-    hasKcal: r.activeKcal != null,
-    hasSomn: r.sleepHours != null,
-    hasHr: r.avgHr != null,
-  }));
+  return [...rows].reverse().map((r) => {
+    const hr = weekPulse(r);
+    return {
+      label: r.shortLabel,
+      kcal: r.activeKcal ?? 0,
+      somn: r.sleepHours ?? null,
+      hr,
+      hasKcal: r.activeKcal != null,
+      hasSomn: r.sleepHours != null,
+      hasHr: hr != null,
+    };
+  });
 }
 
 type Props = { rows: CommonWeekRow[] };
 
-// Same chart shapes as WeekMetricsCharts, but fed by the merged
-// daily_biometrics table instead of Garmin's raw table — works regardless
-// of which wearable(s) contributed each day.
+// Merged daily_biometrics: kcal + sleep/HR from whichever wearable contributed.
 export default function CommonWeekCharts({ rows }: Props) {
   const data = chartData(rows);
   const hasData = data.some((d) => d.hasKcal || d.hasSomn || d.hasHr);
@@ -48,7 +49,7 @@ export default function CommonWeekCharts({ rows }: Props) {
   }
 
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="grid min-w-0 gap-4 lg:grid-cols-2">
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base">Calorii active</CardTitle>
@@ -73,7 +74,7 @@ export default function CommonWeekCharts({ rows }: Props) {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base">Somn & puls</CardTitle>
-          <CardDescription>Ore de somn și HR mediu</CardDescription>
+          <CardDescription>Ore de somn și puls (mediu sau de repaus)</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={220}>
@@ -90,7 +91,20 @@ export default function CommonWeekCharts({ rows }: Props) {
                 width={40}
                 domain={['auto', 'auto']}
               />
-              <Tooltip contentStyle={tooltipStyle} />
+              <Tooltip
+                contentStyle={tooltipStyle}
+                formatter={(v: number | string, name: string) => {
+                  if (v == null || v === '') return ['—', name];
+                  if (name.startsWith('Somn')) {
+                    return [
+                      `${Number(v).toLocaleString('ro-RO', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} h`,
+                      name,
+                    ];
+                  }
+                  if (name.startsWith('HR')) return [`${v} bpm`, name];
+                  return [v, name];
+                }}
+              />
               <Legend wrapperStyle={{ fontSize: 11, color: 'hsl(var(--muted-foreground))' }} />
               <Line
                 yAxisId="left"

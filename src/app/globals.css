@@ -36,10 +36,19 @@
   html {
     @apply font-sans;
     color-scheme: dark;
+    overflow-x: hidden;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 
   h1,

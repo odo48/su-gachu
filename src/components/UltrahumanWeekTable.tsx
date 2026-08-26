@@ -25,8 +25,8 @@ export default function UltrahumanWeekTable({ rows }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Tabel săptămână</CardTitle>
-        <CardDescription>Ultimele 7 zile din Ultrahuman</CardDescription>
+        <CardTitle className="text-base">Săptămână Ultrahuman</CardTitle>
+        <CardDescription>Sleep score, recovery și HRV de pe inel</CardDescription>
       </CardHeader>
       <CardContent>
         {!hasAny ? (
@@ -34,6 +34,7 @@ export default function UltrahumanWeekTable({ rows }: Props) {
             Nu există date Ultrahuman în ultima săptămână. Sincronizează inelul din tab-ul Ultrahuman.
           </p>
         ) : (
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -43,7 +44,6 @@ export default function UltrahumanWeekTable({ rows }: Props) {
                 <TableHead>Restfulness</TableHead>
                 <TableHead>RHR nocturn</TableHead>
                 <TableHead>HRV</TableHead>
-                <TableHead>Pași</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -62,11 +62,11 @@ export default function UltrahumanWeekTable({ rows }: Props) {
                   <TableCell>{fmtNum(row.restfulness)}</TableCell>
                   <TableCell>{row.nightRhrAvg != null ? `${fmtNum(row.nightRhrAvg)} bpm` : '—'}</TableCell>
                   <TableCell>{row.hrvLastRead != null ? `${fmtNum(row.hrvLastRead)} ms` : '—'}</TableCell>
-                  <TableCell>{fmtNum(row.steps)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+          </div>
         )}
       </CardContent>
     </Card>

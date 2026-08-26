@@ -8,7 +8,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import type { CommonWeekRow } from '@/lib/dashboard/weekRows';
+import { type CommonWeekRow } from '@/lib/dashboard/weekRows';
 
 const SOURCE_LABELS: Record<string, string> = { garmin: 'Garmin', ultrahuman: 'Ultrahuman', manual: 'manual' };
 
@@ -23,14 +23,14 @@ type Props = { rows: CommonWeekRow[] };
 // table, whichever provider(s) fed each field, credited per row.
 export default function CommonWeekTable({ rows }: Props) {
   const hasAny = rows.some(
-    (r) => r.steps != null || r.activeKcal != null || r.sleepHours != null || r.avgHr != null
+    (r) => r.steps != null || r.activeKcal != null || r.sleepHours != null || r.restingHr != null || r.hrv != null
   );
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Tabel săptămână</CardTitle>
-        <CardDescription>Ultimele 7 zile, combinate din toate sursele conectate</CardDescription>
+        <CardTitle className="text-base">Săptămână combinată</CardTitle>
+        <CardDescription>Pași, kcal, somn și recuperare din toate sursele</CardDescription>
       </CardHeader>
       <CardContent>
         {!hasAny ? (
@@ -38,6 +38,7 @@ export default function CommonWeekTable({ rows }: Props) {
             Nu există date în ultima săptămână. Conectează un device sau introdu manual din tab-ul Sănătate.
           </p>
         ) : (
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -45,7 +46,8 @@ export default function CommonWeekTable({ rows }: Props) {
                 <TableHead>Pași</TableHead>
                 <TableHead>Active</TableHead>
                 <TableHead>Somn</TableHead>
-                <TableHead>HR mediu</TableHead>
+                <TableHead>RHR</TableHead>
+                <TableHead>HRV</TableHead>
                 <TableHead>Surse</TableHead>
               </TableRow>
             </TableHeader>
@@ -67,7 +69,8 @@ export default function CommonWeekTable({ rows }: Props) {
                       ? `${row.sleepHours.toLocaleString('ro-RO', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} h`
                       : '—'}
                   </TableCell>
-                  <TableCell>{row.avgHr != null ? `${fmtNum(row.avgHr)} bpm` : '—'}</TableCell>
+                  <TableCell>{row.restingHr != null && row.restingHr > 0 ? `${fmtNum(row.restingHr)} bpm` : '—'}</TableCell>
+                  <TableCell>{row.hrv != null && row.hrv > 0 ? `${fmtNum(row.hrv)} ms` : '—'}</TableCell>
                   <TableCell>
                     {row.sources.length ? (
                       <div className="flex flex-wrap gap-1">
@@ -85,6 +88,7 @@ export default function CommonWeekTable({ rows }: Props) {
               ))}
             </TableBody>
           </Table>
+          </div>
         )}
       </CardContent>
     </Card>

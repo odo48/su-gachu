@@ -55,7 +55,7 @@ export default function ChatThread({
         {messages.map((m) => (
           <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div
-              className={`max-w-lg whitespace-pre-wrap rounded-lg px-3 py-2 text-sm ${
+              className={`max-w-[85%] whitespace-pre-wrap rounded-lg px-3 py-2 text-sm sm:max-w-lg ${
                 m.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'
               }`}
             >
@@ -68,12 +68,13 @@ export default function ChatThread({
 
       {err && <p className="px-4 text-sm text-destructive">{err}</p>}
 
-      <div className="flex items-center gap-2 border-t border-border p-3">
+      <div className="flex min-w-0 items-center gap-2 border-t border-border p-3">
         <select
           value={provider}
           onChange={(e) => setProvider(e.target.value as Provider)}
           disabled={loading}
-          className="h-11 rounded-lg border border-input bg-background px-2 text-sm disabled:opacity-50"
+          aria-label="Model"
+          className="h-11 shrink-0 rounded-lg border border-input bg-background px-2 text-base disabled:opacity-50"
         >
           <option value="gemini">Gemini</option>
           <option value="claude">Claude</option>
@@ -90,12 +91,12 @@ export default function ChatThread({
           disabled={loading}
           placeholder="Scrie un mesaj..."
           maxLength={8000}
-          className="h-11 flex-1 rounded-lg border border-input bg-background px-3 text-sm disabled:opacity-50"
+          className="h-11 min-w-0 flex-1 rounded-lg border border-input bg-background px-3 text-base disabled:opacity-50"
         />
         <button
           onClick={send}
           disabled={loading || !prompt.trim()}
-          className="h-11 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+          className="h-11 shrink-0 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50 sm:px-4"
         >
           Trimite
         </button>

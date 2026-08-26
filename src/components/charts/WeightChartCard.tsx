@@ -194,6 +194,7 @@ export default function WeightChartCard({
           <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Istoric recent
           </p>
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -235,6 +236,7 @@ export default function WeightChartCard({
               })}
             </TableBody>
           </Table>
+          </div>
         </div>
       </CardContent>
     </Card>

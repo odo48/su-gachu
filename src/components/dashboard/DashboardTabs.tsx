@@ -25,13 +25,15 @@ import SleepBar from '@/components/SleepBar';
 import StressBar from '@/components/StressBar';
 import MealList from '@/components/RecipeModal';
 import GarminWeekTable, { type GarminWeekRow } from '@/components/GarminWeekTable';
-import WeekMetricsCharts from '@/components/charts/WeekMetricsCharts';
 import WeightChartCard from '@/components/charts/WeightChartCard';
 import SportTodayCard from '@/components/SportTodayCard';
 import BankingConnectForm from '@/components/BankingConnectForm';
 import FinanceDashboard from '@/components/finance/FinanceDashboard';
 import CommonWeekCharts from '@/components/charts/CommonWeekCharts';
 import CommonWeekTable from '@/components/CommonWeekTable';
+import GarminLoadChart from '@/components/charts/GarminLoadChart';
+import ReadinessWeekCard from '@/components/dashboard/ReadinessWeekCard';
+import UltrahumanReadinessCard from '@/components/dashboard/UltrahumanReadinessCard';
 import UltrahumanWeekChart from '@/components/charts/UltrahumanWeekChart';
 import UltrahumanWeekTable from '@/components/UltrahumanWeekTable';
 import type { CommonWeekRow, UltrahumanWeekRow } from '@/lib/dashboard/weekRows';
@@ -165,43 +167,38 @@ export default function DashboardTabs({
         : ('red' as const);
 
   const extraTabs = (garminConnected ? 1 : 0) + (ultrahumanConnected ? 1 : 0);
-  const gridClass = extraTabs === 2 ? 'grid-cols-6' : extraTabs === 1 ? 'grid-cols-5' : 'grid-cols-4';
+  const mdGridClass = extraTabs === 2 ? 'md:grid-cols-6' : extraTabs === 1 ? 'md:grid-cols-5' : 'md:grid-cols-4';
 
   return (
-    <Tabs value={tab} onValueChange={setTab} className="w-full">
-      <TabsList className={`grid w-full ${gridClass}`}>
-        <TabsTrigger value="today" className="gap-1.5">
+    <Tabs value={tab} onValueChange={setTab} className="w-full min-w-0">
+      <TabsList className={`no-scrollbar flex h-12 w-full justify-start gap-0 overflow-x-auto md:grid ${mdGridClass}`}>
+        <TabsTrigger value="today" aria-label="Sănătate" className="min-w-11 flex-none px-2.5 md:min-w-0 md:flex-1">
           <Sun className="h-4 w-4 shrink-0" />
           <span className="hidden sm:inline">Sănătate</span>
-          <span className="sm:hidden">Sănătate</span>
         </TabsTrigger>
         {garminConnected && (
-          <TabsTrigger value="garmin" className="gap-1.5">
+          <TabsTrigger value="garmin" aria-label="Garmin" className="min-w-11 flex-none px-2.5 md:min-w-0 md:flex-1">
             <Activity className="h-4 w-4 shrink-0" />
             <span className="hidden sm:inline">Garmin</span>
-            <span className="sm:hidden">Date</span>
           </TabsTrigger>
         )}
         {ultrahumanConnected && (
-          <TabsTrigger value="ultrahuman" className="gap-1.5">
+          <TabsTrigger value="ultrahuman" aria-label="Ultrahuman" className="min-w-11 flex-none px-2.5 md:min-w-0 md:flex-1">
             <CircleDashed className="h-4 w-4 shrink-0" />
             <span className="hidden sm:inline">Ultrahuman</span>
-            <span className="sm:hidden">Inel</span>
           </TabsTrigger>
         )}
-        <TabsTrigger value="plan" className="gap-1.5">
+        <TabsTrigger value="plan" aria-label="Plan zilei" className="min-w-11 flex-none px-2.5 md:min-w-0 md:flex-1">
           <CalendarDays className="h-4 w-4 shrink-0" />
           <span className="hidden sm:inline">Plan zilei</span>
-          <span className="sm:hidden">Plan</span>
         </TabsTrigger>
-        <TabsTrigger value="trends" className="gap-1.5">
+        <TabsTrigger value="trends" aria-label="Trends" className="min-w-11 flex-none px-2.5 md:min-w-0 md:flex-1">
           <TrendingUp className="h-4 w-4 shrink-0" />
           <span className="hidden sm:inline">Trends</span>
-          <span className="sm:hidden">Trend</span>
         </TabsTrigger>
-        <TabsTrigger value="banca" className="gap-1.5">
+        <TabsTrigger value="banca" aria-label="Bancă" className="min-w-11 flex-none px-2.5 md:min-w-0 md:flex-1">
           <Landmark className="h-4 w-4 shrink-0" />
-          Bancă
+          <span className="hidden sm:inline">Bancă</span>
         </TabsTrigger>
       </TabsList>
 
@@ -565,7 +562,11 @@ export default function DashboardTabs({
 
       <TabsContent value="trends" className="space-y-6">
         <div className="space-y-4">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Prezentare săptămână
+          </h3>
           <CommonWeekCharts rows={commonWeekRows} />
+          <ReadinessWeekCard rows={commonWeekRows} />
           <CommonWeekTable rows={commonWeekRows} />
         </div>
 
@@ -574,10 +575,10 @@ export default function DashboardTabs({
         {garminConnected && (
           <div>
             <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Trend Garmin
+              Garmin — load & energie
             </h3>
             <div className="space-y-4">
-              <WeekMetricsCharts rows={garminWeekRows} />
+              <GarminLoadChart rows={garminWeekRows} />
               <GarminWeekTable rows={garminWeekRows} />
             </div>
           </div>
@@ -586,9 +587,10 @@ export default function DashboardTabs({
         {ultrahumanConnected && (
           <div>
             <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Trend Ultrahuman
+              Ultrahuman — recovery
             </h3>
             <div className="space-y-4">
+              <UltrahumanReadinessCard rows={ultrahumanWeekRows} />
               <UltrahumanWeekChart rows={ultrahumanWeekRows} />
               <UltrahumanWeekTable rows={ultrahumanWeekRows} />
             </div>

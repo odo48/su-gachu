@@ -14,6 +14,7 @@ type GarminMetric = {
   date: string;
   active_kcal?: number | null;
   avg_hr?: number | null;
+  resting_hr?: number | null;
   sleep_minutes?: number | null;
   raw?: Record<string, unknown> | null;
 };
@@ -21,11 +22,17 @@ type GarminMetric = {
 export type GarminWeekRow = {
   date: string;
   label: string;
+  shortLabel: string;
   isToday: boolean;
   totalKcal: number | null;
   sleepHours: number | null;
   bodyBattery: string | null;
+  bodyBatteryHigh: number | null;
+  intensityMin: number | null;
+  stressAvg: number | null;
+  workouts: number | null;
   avgHr: number | null;
+  restingHr: number | null;
 };
 
 function fmtNum(n: number | null | undefined, digits = 0): string {
@@ -68,14 +75,28 @@ export function buildGarminWeekRows(metrics: GarminMetric[]): GarminWeekRow[] {
     const m = byDate.get(iso);
     const raw = (m?.raw ?? {}) as Record<string, unknown>;
 
+    const moderate = typeof raw.intensity_moderate_min === 'number' ? raw.intensity_moderate_min : 0;
+    const vigorous = typeof raw.intensity_vigorous_min === 'number' ? raw.intensity_vigorous_min : 0;
+    const intensityMin =
+      m && (raw.intensity_moderate_min != null || raw.intensity_vigorous_min != null)
+        ? moderate + vigorous
+        : null;
+    const acts = Array.isArray(raw.activities) ? raw.activities.length : null;
+
     rows.push({
       date: iso,
       label: d.toLocaleDateString('ro-RO', { weekday: 'short', day: 'numeric', month: 'short' }),
+      shortLabel: d.toLocaleDateString('ro-RO', { weekday: 'short' }).replace(/\.$/, ''),
       isToday: i === 0,
       totalKcal: m ? kcalFromMetric(m) : null,
       sleepHours: m?.sleep_minutes != null ? m.sleep_minutes / 60 : null,
       bodyBattery: m ? fmtBodyBattery(raw) : null,
+      bodyBatteryHigh: typeof raw.body_battery_high === 'number' ? raw.body_battery_high : null,
+      intensityMin,
+      stressAvg: typeof raw.stress_avg === 'number' ? raw.stress_avg : null,
+      workouts: m ? acts : null,
       avgHr: m?.avg_hr ?? null,
+      restingHr: m?.resting_hr ?? null,
     });
   }
 
@@ -86,7 +107,7 @@ type Props = { rows: GarminWeekRow[]; embedded?: boolean };
 
 export default function GarminWeekTable({ rows, embedded = false }: Props) {
   const hasAny = rows.some(
-    (r) => r.totalKcal != null || r.sleepHours != null || r.bodyBattery != null || r.avgHr != null
+    (r) => r.bodyBattery != null || r.intensityMin != null || r.stressAvg != null || r.workouts != null
   );
 
   const table = (
@@ -96,14 +117,15 @@ export default function GarminWeekTable({ rows, embedded = false }: Props) {
           Nu există date Garmin în ultima săptămână. Sincronizează ceasul din tab-ul Garmin.
         </p>
       ) : (
+        <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Zi</TableHead>
-              <TableHead>Calorii</TableHead>
-              <TableHead>Somn</TableHead>
               <TableHead>Body battery</TableHead>
-              <TableHead>HR mediu</TableHead>
+              <TableHead>Intensitate</TableHead>
+              <TableHead>Stress</TableHead>
+              <TableHead>Antrenamente</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -117,18 +139,15 @@ export default function GarminWeekTable({ rows, embedded = false }: Props) {
                     </Badge>
                   )}
                 </TableCell>
-                <TableCell>{row.totalKcal != null ? `${fmtNum(row.totalKcal)} kcal` : '—'}</TableCell>
-                <TableCell>
-                  {row.sleepHours != null
-                    ? `${row.sleepHours.toLocaleString('ro-RO', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} h`
-                    : '—'}
-                </TableCell>
                 <TableCell>{row.bodyBattery ?? '—'}</TableCell>
-                <TableCell>{row.avgHr != null ? `${fmtNum(row.avgHr)} bpm` : '—'}</TableCell>
+                <TableCell>{row.intensityMin != null ? `${fmtNum(row.intensityMin)} min` : '—'}</TableCell>
+                <TableCell>{row.stressAvg != null ? fmtNum(row.stressAvg) : '—'}</TableCell>
+                <TableCell>{row.workouts != null ? fmtNum(row.workouts) : '—'}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+        </div>
       )}
     </>
   );
@@ -138,8 +157,8 @@ export default function GarminWeekTable({ rows, embedded = false }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Tabel săptămână</CardTitle>
-        <CardDescription>Ultimele 7 zile din Garmin</CardDescription>
+        <CardTitle className="text-base">Săptămână Garmin</CardTitle>
+        <CardDescription>Energie, intensitate și sesiuni — fără calorii/somn (sunt mai sus)</CardDescription>
       </CardHeader>
       <CardContent>{table}</CardContent>
     </Card>

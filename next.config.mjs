@@ -22,7 +22,10 @@ const nextConfig = {
     remotePatterns: [{ protocol: 'https', hostname: 'images.openfoodfacts.org' }],
   },
   async headers() {
-    return [{ source: '/:path*', headers: securityHeaders }];
+    return [
+      { source: '/:path*', headers: securityHeaders },
+      { source: '/sw.js', headers: [{ key: 'Service-Worker-Allowed', value: '/' }, { key: 'Cache-Control', value: 'no-cache' }] },
+    ];
   },
 };
 export default nextConfig;

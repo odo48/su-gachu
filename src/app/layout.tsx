@@ -1,7 +1,8 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Lora, Raleway } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/sonner';
+import PwaRegister from '@/components/PwaRegister';
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from '@/lib/site';
 import './globals.css';
 
@@ -25,6 +26,18 @@ export const metadata: Metadata = {
   },
   description: SITE_TAGLINE,
   applicationName: SITE_NAME,
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: SITE_NAME,
+  },
+  icons: {
+    icon: [
+      { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
   openGraph: {
     type: 'website',
     locale: 'ro_RO',
@@ -35,6 +48,13 @@ export const metadata: Metadata = {
     card: 'summary',
   },
   robots: { index: true, follow: true },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#0C1215',
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
 };
 
 const jsonLd = {
@@ -59,6 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         {children}
         <Toaster />
+        <PwaRegister />
       </body>
     </html>
   );

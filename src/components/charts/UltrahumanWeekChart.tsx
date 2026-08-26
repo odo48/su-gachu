@@ -16,10 +16,10 @@ import { axisTick, CHART_MARGIN, gridStroke, tooltipStyle } from '@/lib/chart-th
 
 function chartData(rows: UltrahumanWeekRow[]) {
   return [...rows].reverse().map((r) => ({
-    label: r.label.replace(/\s+\d{4}/, ''),
-    sleepScore: r.sleepScore ?? 0,
-    recovery: r.recoveryIndex ?? 0,
-    rhr: r.nightRhrAvg ?? 0,
+    label: r.shortLabel,
+    sleepScore: r.sleepScore,
+    recovery: r.recoveryIndex,
+    rhr: r.nightRhrAvg,
     hasScore: r.sleepScore != null,
     hasRecovery: r.recoveryIndex != null,
     hasRhr: r.nightRhrAvg != null,
@@ -48,7 +48,7 @@ export default function UltrahumanWeekChart({ rows }: Props) {
         <CardTitle className="text-base">Recovery & sleep score</CardTitle>
         <CardDescription>Evoluție săptămânală, inel Ultrahuman</CardDescription>
       </CardHeader>
-      <CardContent>
+        <CardContent className="min-w-0">
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={data} margin={{ ...CHART_MARGIN, left: 8, right: 8 }}>
             <CartesianGrid stroke={gridStroke} strokeDasharray="4 4" vertical={false} />
@@ -63,7 +63,14 @@ export default function UltrahumanWeekChart({ rows }: Props) {
               width={40}
               domain={['auto', 'auto']}
             />
-            <Tooltip contentStyle={tooltipStyle} />
+            <Tooltip
+              contentStyle={tooltipStyle}
+              formatter={(v: number | string, name: string) => {
+                if (v == null || v === '') return ['—', name];
+                if (name.startsWith('RHR')) return [`${v} bpm`, name];
+                return [v, name];
+              }}
+            />
             <Legend wrapperStyle={{ fontSize: 11, color: 'hsl(var(--muted-foreground))' }} />
             <Line
               yAxisId="left"
