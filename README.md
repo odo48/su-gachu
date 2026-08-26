@@ -17,9 +17,10 @@ npm run dev                        # http://localhost:3000
 ## Supabase
 
 1. supabase.com → proiect nou.
-2. SQL Editor → rulează în ordine: `supabase/schema.sql`, `supabase/schema_chat.sql`,
-   `supabase/schema_food.sql`, `supabase/schema_modules.sql`, `supabase/schema_home_assistant.sql`,
-   `supabase/schema_biometrics.sql`, `supabase/schema_financial.sql`.
+2. SQL Editor → rulează în ordine: `supabase/schema.sql`, `supabase/20260825_schema_oauth.sql`,
+   `supabase/schema_chat.sql`, `supabase/schema_food.sql`, `supabase/schema_modules.sql`,
+   `supabase/20260825_fix_auth_signup.sql`,    `supabase/schema_home_assistant.sql`, `supabase/schema_biometrics.sql`,
+   `supabase/schema_financial.sql`, `supabase/20260826_garmin_connect.sql`.
 3. Authentication → Providers → activează **Email** (pentru dev, dezactivează „Confirm email").
 4. Settings → API → copiază URL, anon key, service_role key în `.env.local`.
 
@@ -38,13 +39,18 @@ Model folosit: `gemini-2.5-flash`. Numerele (calorii/macros) se calculează dete
 2. `/profile` → completezi greutate, înălțime, dată naștere, **cap calorii 1500**, greutate țintă.
 3. `/dashboard` → introduci metricile zilei → „Generează planul zilei" (cheamă `/api/recommend`).
 
-## Garmin (când ai ceasul + aprobarea)
+## Garmin
 
-1. `developer.garmin.com` → aplică pt Health API (durează; începe devreme).
-2. La aprobare: `GARMIN_CONSUMER_KEY/SECRET` în env.
-3. Înregistrează webhook-ul: `https://<domeniu>/api/garmin/webhook`.
-4. Implementează OAuth 1.0a (stocare în tabelul `garmin_tokens`) și completează maparea
-   câmpurilor în `src/app/api/garmin/webhook/route.ts` (vezi TODO).
+Login **Garmin Connect** (email + parolă, ca în jarvis-brain/garth), per user, pe `/profile`.
+Parola și sesiunea OAuth stau în Vault (`supabase/20260826_garmin_connect.sql`).
+
+1. Rulează migrarea `supabase/20260826_garmin_connect.sql`.
+2. Profil → Conectează Garmin cu emailul/parola de pe connect.garmin.com.
+3. Dashboard → **Sincronizează Garmin** (ultimele 7 zile → `daily_metrics`).
+
+Dacă Garmin cere MFA/2FA, login-ul neoficial poate eșua — același limit ca la garth fără prompt interactiv.
+
+Webhook-ul `/api/garmin/webhook` e doar pentru Health API oficial (parteneriat), nu pentru fluxul ăsta.
 
 ## Open Food Facts (nutriție + poze produse)
 

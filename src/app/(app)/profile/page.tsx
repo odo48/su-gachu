@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import GarminConnectForm from '@/components/GarminConnectForm';
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -72,6 +73,9 @@ export default async function ProfilePage() {
           Salvează
         </button>
       </form>
+      <div className="mt-8">
+        <GarminConnectForm />
+      </div>
     </div>
   );
 }

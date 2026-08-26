@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient as createSb } from '@supabase/supabase-js';
 
-// STUB: Garmin Health API trimite date PUSH aici (după aprobarea parteneriatului).
-// Garmin face POST cu payload-uri de tip "dailies", "sleeps", "stressDetails" etc.
-// Folosim service_role (server-only) ca să scriem pentru userul corelat prin garmin_user_id.
-// TODO după aprobare: verifică semnătura/OAuth conform docs Garmin înainte de a avea încredere în payload.
+// Unused for Garmin Connect email/password sync (see /api/garmin/connection).
+// Kept for a future official Health API push partnership.
 
 const admin = createSb(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

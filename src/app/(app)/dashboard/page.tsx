@@ -24,6 +24,12 @@ export default async function Dashboard() {
     .eq('user_id', user.id).not('weight_kg', 'is', null)
     .order('date', { ascending: true }).limit(60);
 
+  const { data: garminConn } = await supabase
+    .from('garmin_connections')
+    .select('email')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
   const chart = (history ?? []).map((h) => ({ date: h.date.slice(5), weight: Number(h.weight_kg) }));
 
   return (
@@ -49,7 +55,7 @@ export default async function Dashboard() {
 
       <section className="space-y-3">
         <h2 className="font-semibold">Metricile zilei</h2>
-        <DailyMetricsForm />
+        <DailyMetricsForm garminConnected={!!garminConn} />
       </section>
 
       <section className="space-y-3">
