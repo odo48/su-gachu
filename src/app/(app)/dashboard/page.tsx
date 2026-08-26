@@ -7,6 +7,7 @@ import DashboardTabs, {
   type UltrahumanTodayData,
 } from '@/components/dashboard/DashboardTabs';
 import { buildGarminWeekRows } from '@/components/GarminWeekTable';
+import { buildCommonWeekRows, buildUltrahumanWeekRows } from '@/lib/dashboard/weekRows';
 import { Badge } from '@/components/ui/badge';
 import { flattenGarminRaw } from '@/lib/garmin/raw';
 import { isoDateLocal } from '@/lib/garmin/dates';
@@ -41,6 +42,8 @@ export default async function Dashboard() {
     { data: garminConn },
     { data: ultrahumanToday },
     { data: ultrahumanConn },
+    { data: commonWeek },
+    { data: ultrahumanWeek },
   ] = await Promise.all([
     supabase
       .from('recommendations')
@@ -79,6 +82,18 @@ export default async function Dashboard() {
       .eq('date', today)
       .maybeSingle(),
     supabase.from('ultrahuman_connections').select('user_id').eq('user_id', user.id).maybeSingle(),
+    supabase
+      .from('daily_biometrics')
+      .select('date, steps, active_kcal, resting_hr, avg_hr, sleep_minutes, hrv, sources')
+      .eq('user_id', user.id)
+      .gte('date', weekStartIso)
+      .lte('date', today),
+    supabase
+      .from('ultrahuman_daily_biometrics')
+      .select('date, sleep_score, recovery_index, restfulness, night_rhr_avg, hrv_last_read, steps')
+      .eq('user_id', user.id)
+      .gte('date', weekStartIso)
+      .lte('date', today),
   ]);
 
   const weightChart = (history ?? []).map((h) => ({ date: h.date, weight: Number(h.weight_kg) }));
@@ -87,6 +102,10 @@ export default async function Dashboard() {
     raw: flattenGarminRaw((row.raw ?? {}) as Record<string, unknown>),
   }));
   const garminWeekRows = buildGarminWeekRows(garminWeekNormalized);
+  const commonWeekRows = buildCommonWeekRows(
+    (commonWeek ?? []).map((r) => ({ ...r, sources: r.sources as Record<string, string> | null }))
+  );
+  const ultrahumanWeekRows = buildUltrahumanWeekRows(ultrahumanWeek ?? []);
   const hasGarminToday = !!garminToday;
   const needsWeekSync = (garminWeek ?? []).length < 7;
   const garminConnected = !!garminConn;
@@ -195,6 +214,8 @@ export default async function Dashboard() {
         garminToday={garminTodayData}
         ultrahumanConnected={ultrahumanConnected}
         ultrahumanToday={ultrahumanData}
+        commonWeekRows={commonWeekRows}
+        ultrahumanWeekRows={ultrahumanWeekRows}
         garminWeekRows={garminWeekRows}
         weightChart={weightChart}
         targetWeight={profile?.target_weight_kg}

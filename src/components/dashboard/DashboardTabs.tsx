@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import {
   Activity,
   CalendarDays,
+  CircleDashed,
   Flame,
   Footprints,
   Gauge,
@@ -29,6 +30,11 @@ import WeightChartCard from '@/components/charts/WeightChartCard';
 import SportTodayCard from '@/components/SportTodayCard';
 import BankingConnectForm from '@/components/BankingConnectForm';
 import FinanceDashboard from '@/components/finance/FinanceDashboard';
+import CommonWeekCharts from '@/components/charts/CommonWeekCharts';
+import CommonWeekTable from '@/components/CommonWeekTable';
+import UltrahumanWeekChart from '@/components/charts/UltrahumanWeekChart';
+import UltrahumanWeekTable from '@/components/UltrahumanWeekTable';
+import type { CommonWeekRow, UltrahumanWeekRow } from '@/lib/dashboard/weekRows';
 
 export type GarminTodayData = {
   active_kcal?: number | null;
@@ -112,6 +118,8 @@ type Props = {
   ultrahumanConnected: boolean;
   ultrahumanToday: UltrahumanTodayData;
   garminWeekRows: GarminWeekRow[];
+  commonWeekRows: CommonWeekRow[];
+  ultrahumanWeekRows: UltrahumanWeekRow[];
   weightChart: { date: string; weight: number }[];
   targetWeight?: number | null;
   profileReady: boolean;
@@ -128,6 +136,8 @@ export default function DashboardTabs({
   ultrahumanConnected,
   ultrahumanToday,
   garminWeekRows,
+  commonWeekRows,
+  ultrahumanWeekRows,
   weightChart,
   targetWeight,
   profileReady,
@@ -174,7 +184,7 @@ export default function DashboardTabs({
         )}
         {ultrahumanConnected && (
           <TabsTrigger value="ultrahuman" className="gap-1.5">
-            <Moon className="h-4 w-4 shrink-0" />
+            <CircleDashed className="h-4 w-4 shrink-0" />
             <span className="hidden sm:inline">Ultrahuman</span>
             <span className="sm:hidden">Inel</span>
           </TabsTrigger>
@@ -202,6 +212,7 @@ export default function DashboardTabs({
               garminConnected={garminConnected}
               hasGarminToday={hasGarminToday}
               needsWeekSync={needsWeekSync}
+              ultrahumanConnected={ultrahumanConnected}
             />
           </CardContent>
         </Card>
@@ -552,10 +563,37 @@ export default function DashboardTabs({
         )}
       </TabsContent>
 
-      <TabsContent value="trends" className="space-y-4">
-        <WeekMetricsCharts rows={garminWeekRows} />
-        <GarminWeekTable rows={garminWeekRows} />
+      <TabsContent value="trends" className="space-y-6">
+        <div className="space-y-4">
+          <CommonWeekCharts rows={commonWeekRows} />
+          <CommonWeekTable rows={commonWeekRows} />
+        </div>
+
         <WeightChartCard data={weightChart} target={targetWeight} />
+
+        {garminConnected && (
+          <div>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Trend Garmin
+            </h3>
+            <div className="space-y-4">
+              <WeekMetricsCharts rows={garminWeekRows} />
+              <GarminWeekTable rows={garminWeekRows} />
+            </div>
+          </div>
+        )}
+
+        {ultrahumanConnected && (
+          <div>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Trend Ultrahuman
+            </h3>
+            <div className="space-y-4">
+              <UltrahumanWeekChart rows={ultrahumanWeekRows} />
+              <UltrahumanWeekTable rows={ultrahumanWeekRows} />
+            </div>
+          </div>
+        )}
       </TabsContent>
 
       <TabsContent value="banca" className="space-y-6">
