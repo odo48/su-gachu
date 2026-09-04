@@ -28,7 +28,9 @@ import GarminWeekTable, { type GarminWeekRow } from '@/components/GarminWeekTabl
 import WeightChartCard from '@/components/charts/WeightChartCard';
 import SportTodayCard from '@/components/SportTodayCard';
 import BankingConnectForm from '@/components/BankingConnectForm';
+import GmailConnectForm from '@/components/GmailConnectForm';
 import FinanceDashboard from '@/components/finance/FinanceDashboard';
+import SignalsPanel from '@/components/finance/SignalsPanel';
 import CommonWeekCharts from '@/components/charts/CommonWeekCharts';
 import CommonWeekTable from '@/components/CommonWeekTable';
 import GarminLoadChart from '@/components/charts/GarminLoadChart';
@@ -148,7 +150,8 @@ export default function DashboardTabs({
 }: Props) {
   const [tab, setTab] = useState('today');
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).has('banking')) setTab('banca');
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('banking') || params.has('gmail')) setTab('banca');
   }, []);
 
   const sourceLabel = (field: string) => {
@@ -600,6 +603,8 @@ export default function DashboardTabs({
 
       <TabsContent value="banca" className="space-y-6">
         <FinanceDashboard />
+        <SignalsPanel />
+        <GmailConnectForm />
         <BankingConnectForm />
       </TabsContent>
     </Tabs>

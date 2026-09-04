@@ -42,7 +42,7 @@ export const AGENT_REGISTRY: Record<AppModule, { toolName: string; description: 
   financial: {
     toolName: 'financial_agent',
     description:
-      'Specialized agent for personal finances. Use this for: transactions, balances, expense categorization, financial reports, budgets, account transfers.',
+      'Specialized agent for personal finances. Use this for: transactions, balances, expense categorization, financial reports, budgets, account transfers, recurring subscriptions, low-balance forecasts, and proactive alerts (fraud, refunds, trial endings, income anomalies) derived from bank and email data.',
     runTurn: runFinancialAgentTurn,
   },
 };
