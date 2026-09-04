@@ -9,6 +9,7 @@ export type InternalTransferTx = {
   description: string;
   date: string;
   categoryName?: string | null;
+  categoryKind?: string | null;
   tags?: string | null;
   code?: string;
 };
@@ -155,6 +156,7 @@ export function isInternalTransfer(
   accounts: OwnAccountHint[],
   allTxs: InternalTransferTx[]
 ) {
+  if (tx.categoryKind === 'transfer') return true;
   if (tx.categoryName && INTERNAL_CATEGORY.test(fold(tx.categoryName))) return true;
   if (tx.tags && /internal[_ ]?transfer|transfer[_ ]?intern/.test(fold(tx.tags))) return true;
 

@@ -19,7 +19,7 @@ function mapTransactionRow(row: {
   tags: string | null;
   notes: string | null;
   accounts?: { bank: string; currency: string } | null;
-  categories?: { id: number; name: string } | null;
+  categories?: { id: number; name: string; kind: string } | null;
 }) {
   return {
     id: row.id,
@@ -35,6 +35,7 @@ function mapTransactionRow(row: {
     date: row.booking_date,
     categoryId: row.categories?.id ?? null,
     categoryName: row.categories?.name ?? null,
+    categoryKind: row.categories?.kind ?? null,
     tags: row.tags,
     notes: row.notes,
   };
@@ -69,7 +70,7 @@ export async function getTransactions(
 ) {
   let query = supabase
     .from('transactions')
-    .select('*, accounts!inner(bank, currency), categories(id, name)')
+    .select('*, accounts!inner(bank, currency), categories(id, name, kind)')
     .eq('user_id', userId);
 
   if (args.accountId) query = query.eq('account_id', args.accountId);
@@ -95,15 +96,19 @@ export async function getTransactions(
 }
 
 export async function getCategories(supabase: SupabaseClient, userId: string) {
-  const { data, error } = await supabase.from('categories').select('id, name, icon').eq('user_id', userId);
+  const { data, error } = await supabase.from('categories').select('id, name, icon, kind').eq('user_id', userId);
   if (error) throw new Error(error.message);
   return data ?? [];
 }
 
-export async function createCategory(supabase: SupabaseClient, userId: string, args: { name: string; icon?: string }) {
+export async function createCategory(
+  supabase: SupabaseClient,
+  userId: string,
+  args: { name: string; icon?: string; kind?: 'income' | 'expense' | 'transfer' }
+) {
   const { data: existing, error: findError } = await supabase
     .from('categories')
-    .select('id, name, icon')
+    .select('id, name, icon, kind')
     .eq('user_id', userId)
     .eq('name', args.name)
     .maybeSingle();
@@ -112,8 +117,8 @@ export async function createCategory(supabase: SupabaseClient, userId: string, a
 
   const { data, error } = await supabase
     .from('categories')
-    .insert({ user_id: userId, name: args.name, icon: args.icon ?? null })
-    .select('id, name, icon')
+    .insert({ user_id: userId, name: args.name, icon: args.icon ?? null, kind: args.kind ?? 'expense' })
+    .select('id, name, icon, kind')
     .single();
   if (error) throw new Error(error.message);
   return data;
@@ -142,12 +147,25 @@ export async function classifyTransaction(
     .update(update)
     .eq('id', args.transactionId)
     .eq('user_id', userId)
-    .select('*, accounts!inner(bank, currency), categories(id, name)')
+    .select('*, accounts!inner(bank, currency), categories(id, name, kind)')
     .maybeSingle();
   if (error) throw new Error(error.message);
   if (!data) throw new Error(`Transaction not found with ID: ${args.transactionId}`);
 
   return mapTransactionRow(data);
+}
+
+export async function getSignals(supabase: SupabaseClient, userId: string, args: { status?: string }) {
+  let query = supabase
+    .from('financial_signals')
+    .select('id, type, priority, expected_value, expected_by_date, confidence, created_at')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+  query = args.status ? query.eq('status', args.status) : query.in('status', ['detected', 'confirmed']);
+
+  const { data, error } = await query.limit(20);
+  if (error) throw new Error(error.message);
+  return data ?? [];
 }
 
 export const FINANCIAL_TOOL_SCHEMAS: ToolSchema[] = [
@@ -192,7 +210,16 @@ export const FINANCIAL_TOOL_SCHEMAS: ToolSchema[] = [
     description: 'Creates a new transaction category. Use this only if no existing category matches the transaction context.',
     parameters: {
       type: 'object',
-      properties: { name: { type: 'string' }, icon: { type: 'string' } },
+      properties: {
+        name: { type: 'string' },
+        icon: { type: 'string' },
+        kind: {
+          type: 'string',
+          enum: ['income', 'expense', 'transfer'],
+          description:
+            'income = money arriving that is not a transfer/refund; transfer = movement between the user\'s own accounts; expense = default for everything else.',
+        },
+      },
       required: ['name'],
     },
   },
@@ -210,6 +237,17 @@ export const FINANCIAL_TOOL_SCHEMAS: ToolSchema[] = [
       required: ['transactionId', 'categoryId'],
     },
   },
+  {
+    name: 'get_signals',
+    description:
+      'Returns proactive alerts (subscription renewals, low-balance forecasts, fraud outliers, refund/trial reminders, income anomalies) for this user. Defaults to open (unresolved) ones.',
+    parameters: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', enum: ['detected', 'confirmed', 'resolved', 'expired', 'dismissed'] },
+      },
+    },
+  },
 ];
 
 export function createFinancialToolExecutor(supabase: SupabaseClient, userId: string): ToolExecutor {
@@ -223,9 +261,13 @@ export function createFinancialToolExecutor(supabase: SupabaseClient, userId: st
         case 'get_categories':
           return JSON.stringify(await getCategories(supabase, userId));
         case 'create_category':
-          return JSON.stringify(await createCategory(supabase, userId, args as { name: string; icon?: string }));
+          return JSON.stringify(
+            await createCategory(supabase, userId, args as Parameters<typeof createCategory>[2])
+          );
         case 'classify_transaction':
           return JSON.stringify(await classifyTransaction(supabase, userId, args as Parameters<typeof classifyTransaction>[2]));
+        case 'get_signals':
+          return JSON.stringify(await getSignals(supabase, userId, args as { status?: string }));
         default:
           return `Tool '${name}' not found.`;
       }

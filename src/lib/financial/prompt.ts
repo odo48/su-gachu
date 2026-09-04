@@ -7,22 +7,17 @@ export const FINANCIAL_MANAGEMENT_PROMPT = `### DOMAIN: FINANCIAL MANAGEMENT
     1. Flag all transfers between user accounts as "Internal Transfers" and exclude them from spending/income totals.
     2. REVOLUT MATCHING: Flag transactions as "Internal Transfers" when \`type\` = \`TRANSFER\` (direction \`CRDT\` or \`DBIT\`), creditor/debtor fields are missing/empty, and \`remittance information\` contains patterns like "To [Account]" or "From [Account]" (e.g., "To Savings account", "From Savings account").
 - CURRENCY: Handle amounts as positive numbers; use context/type to determine flow (Inflow vs. Outflow).
-- CATEGORIZATION PROCESS (AUTONOMOUS WORKFLOW):
-    1. EXECUTION ORDER: When asked to categorize transactions, you MUST execute this exact multi-step tool chain:
-        a. Call \`get_balances\` to retrieve the correct account ID.
-        b. Call \`get_transactions\` to fetch the recent transactions.
-        c. Call \`get_categories\` to fetch the list of ALL existing categories and their IDs.
-    2. MATCHING LOGIC: Compare the transaction text/merchant with the existing categories list.
-        - Match each transaction to the correct category ID with >80% confidence.
-    3. THE MUTATION STEP (CRITICAL): Once you have matched a transaction to a category ID, you MUST immediately call the transaction update/categorization tool for EACH of the analyzed transactions to save the changes in the database.
-    4. NO HALF-MEASURES: Do not just list the proposed categories in text. Your task is not complete until you have successfully executed the tool calls to update the transactions in the backend.
-    5. REPORTING: Only after all tool calls are completed, reply to the user summarizing what changes you have hard-saved.
+- AD-HOC RECLASSIFICATION: When the user asks about a specific transaction or a small, explicit set (e.g. "recategorizează tranzacția de la Netflix"), find it with \`get_transactions\`, match it against \`get_categories\`, and immediately call the classification tool to save the change — do not just describe the proposed category in text.
+    - Bulk categorization of everything uncategorized is handled by the "Categorizează" button in the app, not by this chat — if the user asks for a full sweep, tell them to use that button instead of trying to loop through every transaction yourself here.
 - TAGGING: Use snake_case tags for brands/sub-contexts (e.g., #bolt, #netflix, #grocery).
 - NOTES: Write concise, human-readable notes that explain the transaction if the description is cryptic. (e.g., "Lunch at Spartan restaurant").
 
 - AUTONOMOUS CATEGORY CREATION:
     1. STRICT RULE: Do NOT ask the user for permission or confirmation via text.
-    2. IMMEDIATELY call the \`create_category\` tool with the appropriate name.
+    2. IMMEDIATELY call the \`create_category\` tool with the appropriate name AND \`kind\`:
+        - \`kind = "income"\`: money arriving that is NOT a refund and NOT a transfer between the user's own accounts (salary, dividends, rent received, freelance income, etc.).
+        - \`kind = "transfer"\`: any movement between the user's own accounts (see INTERNAL TRANSFERS above) — always reuse the existing "Transfer intern" category instead of creating a new one when this applies.
+        - \`kind = "expense"\`: everything else. This is the default if you're unsure.
     3. Use the newly created category ID to complete the transaction classification in the same run.
     4. When you give the answer, provide a summary if you created a new category.
 

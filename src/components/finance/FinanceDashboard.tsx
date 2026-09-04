@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { ArrowDownLeft, ArrowUpRight, Landmark, RefreshCw, Wallet } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, Landmark, RefreshCw, Sparkles, Wallet } from 'lucide-react';
 import {
   Bar,
   BarChart,
@@ -38,6 +38,7 @@ type Tx = {
   description: string;
   date: string;
   categoryName: string | null;
+  categoryKind?: string | null;
   tags?: string | null;
   code?: string;
 };
@@ -87,6 +88,7 @@ export default function FinanceDashboard() {
   const [txs, setTxs] = useState<Tx[]>([]);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const [enriching, setEnriching] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const autoSynced = useRef(false);
 
@@ -143,6 +145,38 @@ export default function FinanceDashboard() {
         }.`
       );
     }
+    const [nextAccounts, nextTxs] = await Promise.all([loadAccounts(), loadTxs()]);
+    setAccounts(nextAccounts);
+    setTxs(nextTxs);
+  }
+
+  async function enrich() {
+    setEnriching(true);
+    setMsg(null);
+    let ruleHits = 0;
+    let llmCalls = 0;
+    let remaining = 0;
+    let failed: string | null = null;
+
+    // Chains a few calls automatically since each one is capped — stops
+    // once nothing is left or after a handful of rounds, whichever first.
+    for (let round = 0; round < 5; round++) {
+      const res = await fetch('/api/financial/enrich', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        failed = data.error ?? 'Categorizarea a eșuat.';
+        break;
+      }
+      ruleHits += (data.ruleHits ?? 0) + (data.transferHits ?? 0) + (data.incomeHits ?? 0);
+      llmCalls += data.llmCalls ?? 0;
+      remaining = data.remainingGroups ?? 0;
+      if (remaining === 0 || (data.processedGroups ?? 0) === 0) break;
+    }
+
+    setEnriching(false);
+    setMsg(
+      failed ?? `${ruleHits} după reguli · ${llmCalls} prin AI${remaining > 0 ? ` · ${remaining} rămase, apasă din nou` : ''}.`
+    );
     const [nextAccounts, nextTxs] = await Promise.all([loadAccounts(), loadTxs()]);
     setAccounts(nextAccounts);
     setTxs(nextTxs);
@@ -212,10 +246,16 @@ export default function FinanceDashboard() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-heading text-xl font-semibold tracking-tight">Cheltuieli</h2>
-        <Button type="button" variant="outline" disabled={syncing} onClick={() => sync()}>
-          <RefreshCw className="h-4 w-4" />
-          {syncing ? 'Sincronizez…' : 'Sincronizează'}
-        </Button>
+        <div className="flex gap-2">
+          <Button type="button" variant="outline" disabled={syncing} onClick={() => sync()}>
+            <RefreshCw className="h-4 w-4" />
+            {syncing ? 'Sincronizez…' : 'Sincronizează'}
+          </Button>
+          <Button type="button" variant="outline" disabled={enriching} onClick={() => enrich()}>
+            <Sparkles className="h-4 w-4" />
+            {enriching ? 'Categorizez…' : 'Categorizează'}
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
