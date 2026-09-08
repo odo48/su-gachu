@@ -229,6 +229,132 @@ export function createGarminToolExecutor(supabase: SupabaseClient, userId: strin
   };
 }
 
+// Apple Watch (via the iOS Shortcut) — apple_health_daily_biometrics. Carries
+// the sleep-stage breakdown, HR min/avg/max, HRV, VO2max, respiratory rate
+// and SpO2 that the common daily_biometrics table drops. No body battery,
+// stress, or recovery score — Apple doesn't expose those.
+
+function mapAppleHealthRow(row: {
+  date: string;
+  steps: number | null;
+  active_kcal: number | null;
+  exercise_min: number | null;
+  resting_hr: number | null;
+  avg_hr: number | null;
+  min_hr: number | null;
+  max_hr: number | null;
+  hrv: number | null;
+  vo2max: number | null;
+  respiratory_rate: number | null;
+  spo2_avg: number | null;
+  weight_kg: number | null;
+  sleep_start: string | null;
+  sleep_end: string | null;
+  in_bed_min: number | null;
+  asleep_min: number | null;
+  core_min: number | null;
+  deep_min: number | null;
+  rem_min: number | null;
+  awake_min: number | null;
+}) {
+  return {
+    source: 'apple_health' as const,
+    date: row.date,
+    steps: row.steps,
+    activeKcal: row.active_kcal,
+    exerciseMinutes: row.exercise_min,
+    restingHr: row.resting_hr,
+    avgHr: row.avg_hr,
+    minHr: row.min_hr,
+    maxHr: row.max_hr,
+    hrvMs: row.hrv,
+    vo2Max: row.vo2max,
+    respiratoryRate: row.respiratory_rate,
+    spo2Avg: row.spo2_avg,
+    weightKg: row.weight_kg,
+    sleep:
+      row.asleep_min != null || row.in_bed_min != null
+        ? {
+            start: row.sleep_start,
+            end: row.sleep_end,
+            inBedMinutes: row.in_bed_min,
+            asleepMinutes: row.asleep_min,
+            coreMinutes: row.core_min,
+            deepMinutes: row.deep_min,
+            remMinutes: row.rem_min,
+            awakeMinutes: row.awake_min,
+          }
+        : null,
+  };
+}
+
+const APPLE_HEALTH_SELECT =
+  'date, steps, active_kcal, exercise_min, resting_hr, avg_hr, min_hr, max_hr, hrv, vo2max, respiratory_rate, spo2_avg, weight_kg, sleep_start, sleep_end, in_bed_min, asleep_min, core_min, deep_min, rem_min, awake_min';
+
+export async function getLatestAppleHealth(supabase: SupabaseClient, userId: string) {
+  const { data, error } = await supabase
+    .from('apple_health_daily_biometrics')
+    .select(APPLE_HEALTH_SELECT)
+    .eq('user_id', userId)
+    .order('date', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return data
+    ? mapAppleHealthRow(data)
+    : {
+        source: 'apple_health' as const,
+        message:
+          'Nu există date Apple Watch. Conectează pe Profil, apoi apasă „Sincronizează Apple Watch" în Dashboard.',
+      };
+}
+
+export async function getAppleHealthTrends(supabase: SupabaseClient, userId: string, days: number) {
+  const sinceDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  const { data, error } = await supabase
+    .from('apple_health_daily_biometrics')
+    .select(APPLE_HEALTH_SELECT)
+    .eq('user_id', userId)
+    .gte('date', sinceDate)
+    .order('date', { ascending: true });
+  if (error) throw new Error(error.message);
+  return (data ?? []).map(mapAppleHealthRow);
+}
+
+export const APPLE_HEALTH_TOOL_SCHEMAS: ToolSchema[] = [
+  {
+    name: 'get_latest_apple_health',
+    description:
+      'Latest Apple Watch data: sleep duration + stages (core/deep/REM/awake), resting/avg/min/max HR, HRV, VO2max, respiratory rate, SpO2, steps, active calories, exercise minutes. Not Garmin, not Ultrahuman. No body battery / stress / recovery score — Apple does not provide those.',
+    parameters: { type: 'object', properties: {} },
+  },
+  {
+    name: 'get_apple_health_trends',
+    description: 'Apple Watch sleep/HR/activity trends for the past X days.',
+    parameters: {
+      type: 'object',
+      properties: { days: { type: 'integer', description: 'Number of past days to include (default 7)' } },
+    },
+  },
+];
+
+export function createAppleHealthToolExecutor(supabase: SupabaseClient, userId: string): ToolExecutor {
+  return async (name, args) => {
+    try {
+      switch (name) {
+        case 'get_latest_apple_health':
+          return JSON.stringify(await getLatestAppleHealth(supabase, userId));
+        case 'get_apple_health_trends':
+          return JSON.stringify(await getAppleHealthTrends(supabase, userId, Number(args.days ?? 7)));
+        default:
+          return `Tool '${name}' not found.`;
+      }
+    } catch (err) {
+      return `Tool '${name}' failed: ${err instanceof Error ? err.message : String(err)}`;
+    }
+  };
+}
+
 // Merged view: the common `daily_biometrics` table, translated from
 // whichever provider(s) synced most recently (see ../biometrics/translate.ts),
 // plus manual entries. `sources` names which provider last set each field —

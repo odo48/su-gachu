@@ -36,7 +36,7 @@ export const AGENT_REGISTRY: Record<AppModule, { toolName: string; description: 
   biometrics: {
     toolName: 'biometrics_agent',
     description:
-      'Specialized agent for sleep and wearables. Ultrahuman (ring: recovery, restfulness, night HRV) and/or Garmin (watch: workouts, body battery, stress, activity). Always keep the two sources distinct. Do NOT send sleep or wearable questions to the food agent.',
+      'Specialized agent for sleep and wearables. Ultrahuman (ring: recovery, restfulness, night HRV), Garmin (watch: workouts, body battery, stress, activity) and/or Apple Watch (activity, cardio, staged sleep — no recovery score). Always keep the sources distinct. Do NOT send sleep or wearable questions to the food agent.',
     runTurn: runBiometricsAgentTurn,
   },
   financial: {

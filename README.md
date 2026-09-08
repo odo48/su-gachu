@@ -25,7 +25,9 @@ Pagini publice: `/login`, `/faq`, `/confidentialitate`, `/multumim`, `/robots.tx
    `supabase/20260825_fix_auth_signup.sql`,    `supabase/schema_home_assistant.sql`, `supabase/schema_biometrics.sql`,
    `supabase/schema_financial.sql`, `supabase/20260826_garmin_connect.sql`,
    `supabase/20260826_enable_banking_sessions.sql`,
-   `supabase/20260826_enable_banking_credentials.sql`.
+   `supabase/20260826_enable_banking_credentials.sql`,
+   apoi restul migrărilor datate în ordine cronologică (`supabase/20260826_*` …
+   `supabase/20260830_gmail_connections.sql`, `supabase/20260909_apple_health.sql`).
 3. Authentication → Providers → activează **Email** (pentru dev, dezactivează „Confirm email").
 4. Settings → API → copiază URL, anon key, service_role key în `.env.local`.
 
@@ -58,6 +60,27 @@ Dacă Garmin cere MFA/2FA, login-ul neoficial poate eșua — același limit ca 
 Webhook-ul `/api/garmin/webhook` e doar pentru Health API oficial (parteneriat), nu pentru fluxul ăsta.
 Setează `GARMIN_WEBHOOK_SECRET` — fără el, endpoint-ul răspunde 401.
 
+## Apple Watch (Shortcut)
+
+Apple Health nu are API de server — datele nu pleacă de pe iPhone fără un app
+nativ. Ocolire, fără cont Apple Developer: un **Shortcut** pe iPhone citește
+metricile zilei + stadiile de somn și le trimite la `/api/apple-health/ingest`.
+
+1. Rulează `supabase/20260909_apple_health.sql`.
+2. Construiește Shortcut-ul „Su Gachu Health Sync" din
+   [`docs/apple-health-shortcut.md`](docs/apple-health-shortcut.md) (sau importă
+   `public/shortcuts/su-gachu-health-sync.shortcut` — best-effort), partajează-l
+   pe iCloud și pune linkul în `NEXT_PUBLIC_APPLE_HEALTH_SHORTCUT_URL`.
+3. Profil → **Conectează Apple Watch** → copiază `INGEST_URL` + `TOKEN` în
+   cele două câmpuri Text din capul Shortcut-ului.
+4. Dashboard (tab Sănătate) → **Sincronizează Apple Watch** (deschide
+   Shortcut-ul via `shortcuts://x-callback-url` și revine în PWA).
+
+Auth e un token per-user; stocăm doar `sha256` (fără Vault). Rândurile intră în
+`apple_health_daily_biometrics` (raw) și, prin `src/lib/biometrics/translate.ts`,
+în `daily_biometrics` (comun). Limite: fără detaliu per-antrenament, fără serii
+HR de rezoluție mare; se sincronizează doar când userul apasă butonul.
+
 ## Open Food Facts (nutriție + poze produse)
 
 Gratuit, fără cheie. `GET /api/food/search?q=iaurt grecesc` → produse cu macros/100g + poză.
@@ -78,7 +101,8 @@ Next.js, fără microserviciu separat. Fiecare domeniu e activabil per-user prin
   descoperite dinamic de la serverul MCP al HA-ului, via clientul MCP generic
   `src/lib/mcp/client.ts` (folosit și de Tavily, vezi mai jos).
 - **Biometrics**: conectare Ultrahuman prin `POST /api/biometrics/connection` (`{token}`),
-  sincronizare zilnică prin `POST /api/biometrics/sync`.
+  sincronizare zilnică prin `POST /api/biometrics/sync`. Garmin și Apple Watch
+  (vezi secțiunile de mai sus) alimentează același tabel comun `daily_biometrics`.
 - **Financial**: fiecare user își pune App ID + cheia PEM din Enable Banking Control Panel
   pe tab-ul Bancă din `/dashboard` (sau `/profile`), apoi leagă banca
   (`POST /api/enable-banking/auth` → callback). Cheia stă în Vault, nu în env.

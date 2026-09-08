@@ -14,6 +14,8 @@ import {
   Sparkles,
   Sun,
   TrendingUp,
+  Watch,
+  Wind,
   Zap,
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -38,7 +40,8 @@ import ReadinessWeekCard from '@/components/dashboard/ReadinessWeekCard';
 import UltrahumanReadinessCard from '@/components/dashboard/UltrahumanReadinessCard';
 import UltrahumanWeekChart from '@/components/charts/UltrahumanWeekChart';
 import UltrahumanWeekTable from '@/components/UltrahumanWeekTable';
-import type { CommonWeekRow, UltrahumanWeekRow } from '@/lib/dashboard/weekRows';
+import AppleWatchWeekTable from '@/components/AppleWatchWeekTable';
+import type { AppleWatchWeekRow, CommonWeekRow, UltrahumanWeekRow } from '@/lib/dashboard/weekRows';
 
 export type GarminTodayData = {
   active_kcal?: number | null;
@@ -67,7 +70,12 @@ export type CommonTodayData = {
   sources: Record<string, string>;
 } | null;
 
-const SOURCE_LABELS: Record<string, string> = { garmin: 'Garmin', ultrahuman: 'Ultrahuman', manual: 'manual' };
+const SOURCE_LABELS: Record<string, string> = {
+  garmin: 'Garmin',
+  ultrahuman: 'Ultrahuman',
+  apple_health: 'Apple Watch',
+  manual: 'manual',
+};
 
 // Full-detail Ultrahuman ring data — ultrahuman_daily_biometrics +
 // ultrahuman_sleep_sessions, not carried by the common table.
@@ -103,6 +111,31 @@ export type UltrahumanTodayData = {
   } | null;
 } | null;
 
+// Apple Watch daily detail — apple_health_daily_biometrics. Staged sleep
+// (Apple has "core" not "light") + HR range the common table drops. No
+// body battery / stress / recovery score — Apple doesn't provide those.
+export type AppleHealthTodayData = {
+  steps: number | null;
+  activeKcal: number | null;
+  exerciseMinutes: number | null;
+  restingHr: number | null;
+  avgHr: number | null;
+  minHr: number | null;
+  maxHr: number | null;
+  hrv: number | null;
+  vo2max: number | null;
+  respiratoryRate: number | null;
+  spo2Avg: number | null;
+  sleep: {
+    asleepMinutes: number | null;
+    inBedMinutes: number | null;
+    coreMinutes: number | null;
+    deepMinutes: number | null;
+    remMinutes: number | null;
+    awakeMinutes: number | null;
+  } | null;
+} | null;
+
 export type PlanRec = {
   target_calories: number;
   target_protein_g: number;
@@ -121,9 +154,12 @@ type Props = {
   garminToday: GarminTodayData;
   ultrahumanConnected: boolean;
   ultrahumanToday: UltrahumanTodayData;
+  appleHealthConnected: boolean;
+  appleHealthToday: AppleHealthTodayData;
   garminWeekRows: GarminWeekRow[];
   commonWeekRows: CommonWeekRow[];
   ultrahumanWeekRows: UltrahumanWeekRow[];
+  appleHealthWeekRows: AppleWatchWeekRow[];
   weightChart: { date: string; weight: number }[];
   targetWeight?: number | null;
   profileReady: boolean;
@@ -139,9 +175,12 @@ export default function DashboardTabs({
   garminToday,
   ultrahumanConnected,
   ultrahumanToday,
+  appleHealthConnected,
+  appleHealthToday,
   garminWeekRows,
   commonWeekRows,
   ultrahumanWeekRows,
+  appleHealthWeekRows,
   weightChart,
   targetWeight,
   profileReady,
@@ -169,8 +208,18 @@ export default function DashboardTabs({
         ? ('amber' as const)
         : ('red' as const);
 
-  const extraTabs = (garminConnected ? 1 : 0) + (ultrahumanConnected ? 1 : 0);
-  const mdGridClass = extraTabs === 2 ? 'md:grid-cols-6' : extraTabs === 1 ? 'md:grid-cols-5' : 'md:grid-cols-4';
+  const extraTabs =
+    (garminConnected ? 1 : 0) + (ultrahumanConnected ? 1 : 0) + (appleHealthConnected ? 1 : 0);
+  const mdGridClass =
+    extraTabs >= 3
+      ? 'md:grid-cols-7'
+      : extraTabs === 2
+        ? 'md:grid-cols-6'
+        : extraTabs === 1
+          ? 'md:grid-cols-5'
+          : 'md:grid-cols-4';
+
+  const appleSleep = appleHealthToday?.sleep ?? null;
 
   return (
     <Tabs value={tab} onValueChange={setTab} className="w-full min-w-0">
@@ -189,6 +238,12 @@ export default function DashboardTabs({
           <TabsTrigger value="ultrahuman" aria-label="Ultrahuman" className="min-w-11 flex-none px-2.5 md:min-w-0 md:flex-1">
             <CircleDashed className="h-4 w-4 shrink-0" />
             <span className="hidden sm:inline">Ultrahuman</span>
+          </TabsTrigger>
+        )}
+        {appleHealthConnected && (
+          <TabsTrigger value="apple" aria-label="Apple Watch" className="min-w-11 flex-none px-2.5 md:min-w-0 md:flex-1">
+            <Watch className="h-4 w-4 shrink-0" />
+            <span className="hidden sm:inline">Apple Watch</span>
           </TabsTrigger>
         )}
         <TabsTrigger value="plan" aria-label="Plan zilei" className="min-w-11 flex-none px-2.5 md:min-w-0 md:flex-1">
@@ -213,6 +268,7 @@ export default function DashboardTabs({
               hasGarminToday={hasGarminToday}
               needsWeekSync={needsWeekSync}
               ultrahumanConnected={ultrahumanConnected}
+              appleHealthConnected={appleHealthConnected}
             />
           </CardContent>
         </Card>
@@ -502,6 +558,103 @@ export default function DashboardTabs({
       </TabsContent>
       )}
 
+      {appleHealthConnected && (
+        <TabsContent value="apple" className="space-y-4">
+          <div>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Somn
+            </h3>
+            {appleSleep ? (
+              <Card>
+                <CardContent className="space-y-3 pt-5">
+                  <SleepBar
+                    totalMin={appleSleep.asleepMinutes}
+                    deepSec={appleSleep.deepMinutes != null ? appleSleep.deepMinutes * 60 : null}
+                    lightSec={appleSleep.coreMinutes != null ? appleSleep.coreMinutes * 60 : null}
+                    remSec={appleSleep.remMinutes != null ? appleSleep.remMinutes * 60 : null}
+                    awakeSec={appleSleep.awakeMinutes != null ? appleSleep.awakeMinutes * 60 : null}
+                    score={null}
+                  />
+                  {appleSleep.inBedMinutes != null && (
+                    <p className="text-xs text-muted-foreground">
+                      În pat {(appleSleep.inBedMinutes / 60).toFixed(1)}h · „Core" = somn ușor
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Fără somn azi. Apasă „Sincronizează Apple Watch" în tab-ul Sănătate.
+              </p>
+            )}
+          </div>
+
+          <div>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Cardiovascular
+            </h3>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <StatCard
+                label="HR repaus"
+                value={appleHealthToday?.restingHr}
+                unit="bpm"
+                accent="red"
+                icon={<Heart className="h-4 w-4" />}
+              />
+              <StatCard
+                label="HR mediu"
+                value={appleHealthToday?.avgHr}
+                unit="bpm"
+                accent="amber"
+                sub={
+                  appleHealthToday?.minHr != null && appleHealthToday?.maxHr != null
+                    ? `${appleHealthToday.minHr}–${appleHealthToday.maxHr} bpm`
+                    : undefined
+                }
+              />
+              <StatCard label="HRV" value={appleHealthToday?.hrv} unit="ms" accent="purple" />
+              <StatCard label="VO₂ max" value={appleHealthToday?.vo2max} accent="teal" />
+              <StatCard
+                label="Respirație"
+                value={appleHealthToday?.respiratoryRate}
+                unit="/min"
+                accent="default"
+                icon={<Wind className="h-4 w-4" />}
+              />
+              <StatCard label="SpO₂" value={appleHealthToday?.spo2Avg} unit="%" accent="teal" />
+            </div>
+          </div>
+
+          <div>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Activitate
+            </h3>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <StatCard
+                label="Pași"
+                value={appleHealthToday?.steps}
+                accent="teal"
+                icon={<Footprints className="h-4 w-4" />}
+              />
+              <StatCard
+                label="Active"
+                value={appleHealthToday?.activeKcal}
+                unit="kcal"
+                accent="green"
+                icon={<Zap className="h-4 w-4" />}
+              />
+              <StatCard
+                label="Exercițiu"
+                value={appleHealthToday?.exerciseMinutes}
+                unit="min"
+                accent="green"
+                icon={<Activity className="h-4 w-4" />}
+              />
+            </div>
+          </div>
+        </TabsContent>
+      )}
+
       <TabsContent value="plan" className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
@@ -597,6 +750,15 @@ export default function DashboardTabs({
               <UltrahumanWeekChart rows={ultrahumanWeekRows} />
               <UltrahumanWeekTable rows={ultrahumanWeekRows} />
             </div>
+          </div>
+        )}
+
+        {appleHealthConnected && (
+          <div>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Apple Watch — somn & cardio
+            </h3>
+            <AppleWatchWeekTable rows={appleHealthWeekRows} />
           </div>
         )}
       </TabsContent>

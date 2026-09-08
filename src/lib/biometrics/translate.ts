@@ -18,7 +18,7 @@ export type CommonBiometricFields = {
   vo2max?: number | null;
 };
 
-export type BiometricSource = 'garmin' | 'ultrahuman' | 'manual';
+export type BiometricSource = 'garmin' | 'ultrahuman' | 'manual' | 'apple_health';
 
 // Only non-null fields in `patch` are written, so a partial sync from one
 // provider never clobbers another provider's values for the same day.
@@ -75,6 +75,33 @@ export function translateGarminToCommon(metrics: {
     sleep_minutes: metrics.sleep_minutes,
     hrv: metrics.hrv,
     vo2max: metrics.vo2max,
+  };
+}
+
+// Apple Watch, via the iOS Shortcut (see src/lib/apple-health/ingest.ts).
+// The Shortcut delivers day-grain aggregates whose names already line up
+// with the common table; `asleep_min` is the sleep-stage total, not
+// time-in-bed. Fields the Watch didn't sync arrive null and are skipped by
+// upsertCommonBiometrics, so another provider's value for that day survives.
+export function translateAppleHealthToCommon(day: {
+  weight_kg?: number | null;
+  steps?: number | null;
+  active_energy_kcal?: number | null;
+  resting_hr?: number | null;
+  avg_hr?: number | null;
+  hrv_sdnn_ms?: number | null;
+  vo2max?: number | null;
+  sleep?: { asleep_min?: number | null } | null;
+}): CommonBiometricFields {
+  return {
+    weight_kg: day.weight_kg ?? null,
+    steps: day.steps ?? null,
+    active_kcal: day.active_energy_kcal ?? null,
+    resting_hr: day.resting_hr ?? null,
+    avg_hr: day.avg_hr ?? null,
+    hrv: day.hrv_sdnn_ms ?? null,
+    vo2max: day.vo2max ?? null,
+    sleep_minutes: day.sleep?.asleep_min ?? null,
   };
 }
 

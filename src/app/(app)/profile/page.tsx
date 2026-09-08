@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { parseProfileUpdate } from '@/lib/security/profile';
 import GarminConnectForm from '@/components/GarminConnectForm';
 import UltrahumanConnectForm from '@/components/UltrahumanConnectForm';
+import AppleHealthConnectForm from '@/components/AppleHealthConnectForm';
 import BankingConnectForm from '@/components/BankingConnectForm';
 import HomeAssistantConnectForm from '@/components/HomeAssistantConnectForm';
 
@@ -63,6 +64,7 @@ export default async function ProfilePage() {
       <div className="mt-8 space-y-6">
         <GarminConnectForm />
         <UltrahumanConnectForm />
+        <AppleHealthConnectForm />
         <BankingConnectForm />
         <HomeAssistantConnectForm />
       </div>

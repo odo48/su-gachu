@@ -115,3 +115,47 @@ export function buildUltrahumanWeekRows(metrics: UltrahumanWeekMetric[]): Ultrah
     };
   });
 }
+
+// Apple Watch weekly view — staged sleep + cardio the common table drops
+// (apple_health_daily_biometrics has its own stage columns).
+export type AppleWatchWeekRow = {
+  date: string;
+  label: string;
+  shortLabel: string;
+  isToday: boolean;
+  sleepHours: number | null;
+  deepMinutes: number | null;
+  remMinutes: number | null;
+  restingHr: number | null;
+  hrv: number | null;
+  steps: number | null;
+};
+
+type AppleWatchWeekMetric = {
+  date: string;
+  asleep_min?: number | null;
+  deep_min?: number | null;
+  rem_min?: number | null;
+  resting_hr?: number | null;
+  hrv?: number | null;
+  steps?: number | null;
+};
+
+export function buildAppleWatchWeekRows(metrics: AppleWatchWeekMetric[]): AppleWatchWeekRow[] {
+  const byDate = new Map(metrics.map((m) => [m.date, m]));
+  return weekDates().map(({ iso, label, shortLabel, isToday }) => {
+    const m = byDate.get(iso);
+    return {
+      date: iso,
+      label,
+      shortLabel,
+      isToday,
+      sleepHours: m?.asleep_min != null ? m.asleep_min / 60 : null,
+      deepMinutes: m?.deep_min ?? null,
+      remMinutes: m?.rem_min ?? null,
+      restingHr: m?.resting_hr ?? null,
+      hrv: m?.hrv ?? null,
+      steps: m?.steps ?? null,
+    };
+  });
+}

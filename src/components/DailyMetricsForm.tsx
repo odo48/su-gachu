@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { CircleDashed, Loader2, Pencil, Watch } from 'lucide-react';
+import { Apple, CircleDashed, Loader2, Pencil, Watch } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { isoDateLocal } from '@/lib/garmin/dates';
 import { upsertCommonBiometrics } from '@/lib/biometrics/translate';
@@ -18,11 +18,13 @@ export default function DailyMetricsForm({
   hasGarminToday = false,
   needsWeekSync = false,
   ultrahumanConnected = false,
+  appleHealthConnected = false,
 }: {
   garminConnected?: boolean;
   hasGarminToday?: boolean;
   needsWeekSync?: boolean;
   ultrahumanConnected?: boolean;
+  appleHealthConnected?: boolean;
 }) {
   const router = useRouter();
   const supabase = createClient();
@@ -38,6 +40,7 @@ export default function DailyMetricsForm({
   const [garminMsg, setGarminMsg] = useState('');
   const [ultrahumanStatus, setUltrahumanStatus] = useState<SyncStatus>('idle');
   const [ultrahumanMsg, setUltrahumanMsg] = useState('');
+  const [appleMsg, setAppleMsg] = useState('');
 
   const syncGarmin = useCallback(
     async (force = false) => {
@@ -99,6 +102,22 @@ export default function DailyMetricsForm({
       setUltrahumanMsg(e instanceof Error ? e.message : 'Sincronizarea a eșuat');
     }
   }, [router]);
+
+  const syncAppleWatch = useCallback(() => {
+    // Apple Health has no server API — the "Su Gachu Health Sync" Shortcut on
+    // the user's iPhone reads HealthKit and POSTs to /api/apple-health/ingest.
+    // We just launch it; x-success returns to this page, which re-renders with
+    // the new rows. iOS only (the shortcuts:// scheme is a no-op elsewhere).
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    if (!isIOS) {
+      setAppleMsg('Deschide aplicația pe iPhone-ul cu Apple Watch ca să sincronizezi.');
+      return;
+    }
+    const back = encodeURIComponent(window.location.href);
+    window.location.href =
+      `shortcuts://x-callback-url/run-shortcut?name=${encodeURIComponent('Su Gachu Health Sync')}` +
+      `&x-success=${back}&x-error=${back}`;
+  }, []);
 
   useEffect(() => {
     if (!garminConnected) return;
@@ -176,9 +195,20 @@ export default function DailyMetricsForm({
             <Watch /> Conectează Garmin
           </Link>
         )}
+
+        {appleHealthConnected ? (
+          <Button type="button" variant="outline" size="sm" onClick={syncAppleWatch}>
+            <Apple />
+            Sincronizează Apple Watch
+          </Button>
+        ) : (
+          <Link href="/profile" className={buttonVariants({ variant: 'ghost', size: 'sm' })}>
+            <Apple /> Conectează Apple Watch
+          </Link>
+        )}
       </div>
 
-      {(ultrahumanMsg || garminMsg) && (
+      {(ultrahumanMsg || garminMsg || appleMsg) && (
         <div className="space-y-0.5 text-xs">
           {ultrahumanMsg && (
             <p className={ultrahumanStatus === 'error' ? 'text-destructive' : 'text-muted-foreground'}>
@@ -190,6 +220,7 @@ export default function DailyMetricsForm({
               Garmin: {garminMsg}
             </p>
           )}
+          {appleMsg && <p className="text-muted-foreground">Apple Watch: {appleMsg}</p>}
         </div>
       )}
 

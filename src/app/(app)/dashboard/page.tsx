@@ -2,12 +2,17 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import DashboardTabs, {
+  type AppleHealthTodayData,
   type CommonTodayData,
   type GarminTodayData,
   type UltrahumanTodayData,
 } from '@/components/dashboard/DashboardTabs';
 import { buildGarminWeekRows } from '@/components/GarminWeekTable';
-import { buildCommonWeekRows, buildUltrahumanWeekRows } from '@/lib/dashboard/weekRows';
+import {
+  buildAppleWatchWeekRows,
+  buildCommonWeekRows,
+  buildUltrahumanWeekRows,
+} from '@/lib/dashboard/weekRows';
 import { Badge } from '@/components/ui/badge';
 import { flattenGarminRaw } from '@/lib/garmin/raw';
 import { isoDateLocal } from '@/lib/garmin/dates';
@@ -44,6 +49,9 @@ export default async function Dashboard() {
     { data: ultrahumanConn },
     { data: commonWeek },
     { data: ultrahumanWeek },
+    { data: appleHealthToday },
+    { data: appleHealthConn },
+    { data: appleHealthWeek },
   ] = await Promise.all([
     supabase
       .from('recommendations')
@@ -94,6 +102,19 @@ export default async function Dashboard() {
       .eq('user_id', user.id)
       .gte('date', weekStartIso)
       .lte('date', today),
+    supabase
+      .from('apple_health_daily_biometrics')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('date', today)
+      .maybeSingle(),
+    supabase.from('apple_health_connections').select('user_id').eq('user_id', user.id).maybeSingle(),
+    supabase
+      .from('apple_health_daily_biometrics')
+      .select('date, asleep_min, deep_min, rem_min, resting_hr, hrv, steps')
+      .eq('user_id', user.id)
+      .gte('date', weekStartIso)
+      .lte('date', today),
   ]);
 
   const weightChart = (history ?? []).map((h) => ({ date: h.date, weight: Number(h.weight_kg) }));
@@ -106,10 +127,12 @@ export default async function Dashboard() {
     (commonWeek ?? []).map((r) => ({ ...r, sources: r.sources as Record<string, string> | null }))
   );
   const ultrahumanWeekRows = buildUltrahumanWeekRows(ultrahumanWeek ?? []);
+  const appleHealthWeekRows = buildAppleWatchWeekRows(appleHealthWeek ?? []);
   const hasGarminToday = !!garminToday;
   const needsWeekSync = (garminWeek ?? []).length < 7;
   const garminConnected = !!garminConn;
   const ultrahumanConnected = !!ultrahumanConn;
+  const appleHealthConnected = !!appleHealthConn;
 
   const todayData: CommonTodayData = todayCommon
     ? {
@@ -176,6 +199,33 @@ export default async function Dashboard() {
       }
     : null;
 
+  const appleHealthData: AppleHealthTodayData = appleHealthToday
+    ? {
+        steps: appleHealthToday.steps,
+        activeKcal: appleHealthToday.active_kcal,
+        exerciseMinutes: appleHealthToday.exercise_min,
+        restingHr: appleHealthToday.resting_hr,
+        avgHr: appleHealthToday.avg_hr,
+        minHr: appleHealthToday.min_hr,
+        maxHr: appleHealthToday.max_hr,
+        hrv: appleHealthToday.hrv,
+        vo2max: appleHealthToday.vo2max,
+        respiratoryRate: appleHealthToday.respiratory_rate,
+        spo2Avg: appleHealthToday.spo2_avg,
+        sleep:
+          appleHealthToday.asleep_min != null || appleHealthToday.in_bed_min != null
+            ? {
+                asleepMinutes: appleHealthToday.asleep_min,
+                inBedMinutes: appleHealthToday.in_bed_min,
+                coreMinutes: appleHealthToday.core_min,
+                deepMinutes: appleHealthToday.deep_min,
+                remMinutes: appleHealthToday.rem_min,
+                awakeMinutes: appleHealthToday.awake_min,
+              }
+            : null,
+      }
+    : null;
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
@@ -208,8 +258,11 @@ export default async function Dashboard() {
         garminToday={garminTodayData}
         ultrahumanConnected={ultrahumanConnected}
         ultrahumanToday={ultrahumanData}
+        appleHealthConnected={appleHealthConnected}
+        appleHealthToday={appleHealthData}
         commonWeekRows={commonWeekRows}
         ultrahumanWeekRows={ultrahumanWeekRows}
+        appleHealthWeekRows={appleHealthWeekRows}
         garminWeekRows={garminWeekRows}
         weightChart={weightChart}
         targetWeight={profile?.target_weight_kg}

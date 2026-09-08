@@ -10,7 +10,12 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { type CommonWeekRow } from '@/lib/dashboard/weekRows';
 
-const SOURCE_LABELS: Record<string, string> = { garmin: 'Garmin', ultrahuman: 'Ultrahuman', manual: 'manual' };
+const SOURCE_LABELS: Record<string, string> = {
+  garmin: 'Garmin',
+  ultrahuman: 'Ultrahuman',
+  apple_health: 'Apple Watch',
+  manual: 'manual',
+};
 
 function fmtNum(n: number | null | undefined, digits = 0): string {
   if (n == null) return '—';

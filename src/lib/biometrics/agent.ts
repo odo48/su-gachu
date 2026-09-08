@@ -4,9 +4,11 @@ import { getProvider } from '../ai/registry';
 import { combineTools } from '../ai/combine-tools';
 import { getGeneralToolSource } from '../mcp/tavily';
 import {
+  createAppleHealthToolExecutor,
   createCommonBiometricsToolExecutor,
   createGarminToolExecutor,
   createUltrahumanToolExecutor,
+  APPLE_HEALTH_TOOL_SCHEMAS,
   COMMON_BIOMETRICS_TOOL_SCHEMAS,
   GARMIN_TOOL_SCHEMAS,
   ULTRAHUMAN_TOOL_SCHEMAS,
@@ -15,6 +17,7 @@ import { buildBiometricsPrompt } from './prompt';
 import { loadTenantDisplayName, tenantIsolationBlock } from '../ai/tenant-context';
 import { hasGarminConnection } from '../garmin/metrics';
 import { hasUltrahumanConnection } from '../ultrahuman/connection';
+import { hasAppleHealthConnection } from '../apple-health/connection';
 
 export async function runBiometricsAgentTurn(params: {
   supabase: SupabaseClient;
@@ -25,9 +28,10 @@ export async function runBiometricsAgentTurn(params: {
 }): Promise<string> {
   const ultrahuman = await hasUltrahumanConnection(params.supabase, params.userId);
   const garmin = await hasGarminConnection(params.supabase, params.userId);
+  const appleHealth = await hasAppleHealthConnection(params.supabase, params.userId);
 
-  if (!ultrahuman && !garmin) {
-    throw new Error('Niciun wearable conectat. Adaugă Garmin și/sau Ultrahuman pe Profil.');
+  if (!ultrahuman && !garmin && !appleHealth) {
+    throw new Error('Niciun wearable conectat. Adaugă Garmin, Ultrahuman sau Apple Watch pe Profil.');
   }
 
   const sources = [
@@ -48,11 +52,17 @@ export async function runBiometricsAgentTurn(params: {
       executor: createGarminToolExecutor(params.supabase, params.userId),
     });
   }
+  if (appleHealth) {
+    sources.push({
+      schemas: APPLE_HEALTH_TOOL_SCHEMAS,
+      executor: createAppleHealthToolExecutor(params.supabase, params.userId),
+    });
+  }
   sources.push(await getGeneralToolSource());
 
   const provider = getProvider(params.provider);
   const { schemas, executor } = combineTools(...sources);
   const displayName = await loadTenantDisplayName(params.supabase, params.userId);
-  const systemPrompt = `${buildBiometricsPrompt({ ultrahuman, garmin })}\n\n${tenantIsolationBlock(displayName)}`;
+  const systemPrompt = `${buildBiometricsPrompt({ ultrahuman, garmin, appleHealth })}\n\n${tenantIsolationBlock(displayName)}`;
   return provider.call(params.task, schemas, systemPrompt, params.history, executor);
 }
