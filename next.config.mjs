@@ -14,12 +14,18 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
+const supabaseHostname = process.env.NEXT_PUBLIC_SUPABASE_URL
+  ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
+  : undefined;
+
 const nextConfig = {
   poweredByHeader: false,
   serverExternalPackages: ['garmin-connect'],
   images: {
-    // pozele de produse de la Open Food Facts
-    remotePatterns: [{ protocol: 'https', hostname: 'images.openfoodfacts.org' }],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'images.openfoodfacts.org' }, // pozele de produse de la Open Food Facts
+      ...(supabaseHostname ? [{ protocol: 'https', hostname: supabaseHostname }] : []), // exercițiile din exercise-images
+    ],
   },
   async headers() {
     return [

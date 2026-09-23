@@ -27,7 +27,9 @@ Pagini publice: `/login`, `/faq`, `/confidentialitate`, `/multumim`, `/robots.tx
    `supabase/20260826_enable_banking_sessions.sql`,
    `supabase/20260826_enable_banking_credentials.sql`,
    apoi restul migrărilor datate în ordine cronologică (`supabase/20260826_*` …
-   `supabase/20260830_gmail_connections.sql`, `supabase/20260909_apple_health.sql`).
+   `supabase/20260830_gmail_connections.sql`, `supabase/20260909_apple_health.sql`), apoi
+   `supabase/schema_workouts.sql`, `supabase/20260915_add_workout_module_type.sql` (execuție
+   separată — vezi nota din fișier despre enum-uri Postgres), `supabase/20260915_seed_workout_module.sql`.
 3. Authentication → Providers → activează **Email** (pentru dev, dezactivează „Confirm email").
 4. Settings → API → copiază URL, anon key, service_role key în `.env.local`.
 
@@ -86,6 +88,27 @@ HR de rezoluție mare; se sincronizează doar când userul apasă butonul.
 Gratuit, fără cheie. `GET /api/food/search?q=iaurt grecesc` → produse cu macros/100g + poză.
 Folosit pentru logarea meselor din magazin (Lidl/Kaufland) și scanare cod de bare.
 
+## Antrenamente (workout tracker)
+
+Loghezi antrenamente (exerciții + seturi/reps/greutate), salvezi rutine reutilizabile
+și vezi progresul (recorduri, volum per grupă musculară). Modul de bază, pornit
+implicit pentru toți userii (ca `food`), nu integrare opțională.
+
+Catalogul de exerciții (~870, din **Free Exercise DB** — yuhonas/free-exercise-db,
+Unlicense/public domain) e importat o singură dată în propriul proiect Supabase, nu
+citit live de la GitHub:
+
+1. Rulează `supabase/schema_workouts.sql` (creează tabelele + bucket-ul Storage
+   `exercise-images`), apoi cele două migrări `20260915_*_workout_module*.sql`.
+2. `npm run import:exercises` (citește `.env.local` — are nevoie de
+   `NEXT_PUBLIC_SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`). Descarcă
+   `exercises.json` + pozele de la GitHub o singură dată și le scrie în tabela
+   `exercises` + bucket-ul `exercise-images`. Idempotent — un rerun sare peste
+   pozele deja încărcate.
+
+După import, aplicația nu mai contactează GitHub — căutarea (`/workouts`, tab
+Rutine → alege exercițiu) interoghează direct tabela `exercises` din Supabase.
+
 ## Jarvis (portare în curs)
 
 Domeniile portate din jarvis (vezi `/Users/lucy/projects/jarvis`) rulează toate în acest
@@ -123,16 +146,19 @@ Integrările (Garmin, Ultrahuman, bancă, Home Assistant) se conectează din `/p
 ```
 src/
   app/
-    login/ profile/ dashboard/
+    login/ profile/ dashboard/ workouts/
     api/recommend/      → Gemini
     api/garmin/webhook/ → push Garmin (stub)
     api/food/search/    → Open Food Facts
   components/  → WeightChart, RecommendButton, DailyMetricsForm
+    workouts/  → ActiveWorkout, ExercisePicker, RoutineBuilder, ProgressPanel
   lib/
     nutrition.ts        → TDEE + macros (determinist)
     openfoodfacts.ts
+    workouts/            → tipuri, queries Supabase, progres (1RM/volum, determinist)
     supabase/{client,server,middleware}.ts
   data/recipes.json
+scripts/import-exercise-db.mjs → import unic Free Exercise DB → Supabase
 supabase/schema.sql
 ```
 

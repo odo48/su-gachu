@@ -2,18 +2,24 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { HeartPulse, LayoutDashboard, MessageCircle, UserRound } from 'lucide-react';
+import { Dumbbell, HeartPulse, LayoutDashboard, MessageCircle, UserRound } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 const LINKS = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, match: (p: string) => p.startsWith('/dashboard') },
+  { href: '/workouts', label: 'Antrenamente', icon: Dumbbell, match: (p: string) => p.startsWith('/workouts') },
   { href: '/chat', label: 'Chat', icon: MessageCircle, match: (p: string) => p.startsWith('/chat') },
   { href: '/profile', label: 'Profil', icon: UserRound, match: (p: string) => p.startsWith('/profile') },
 ] as const;
 
 function isAppPath(path: string) {
-  return path.startsWith('/dashboard') || path.startsWith('/chat') || path.startsWith('/profile');
+  return (
+    path.startsWith('/dashboard') ||
+    path.startsWith('/workouts') ||
+    path.startsWith('/chat') ||
+    path.startsWith('/profile')
+  );
 }
 
 export default function AppNav() {

@@ -2,18 +2,23 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, MessageCircle, UserRound } from 'lucide-react';
+import { Dumbbell, LayoutDashboard, MessageCircle, UserRound } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const LINKS = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, match: (p: string) => p.startsWith('/dashboard') },
+  { href: '/workouts', label: 'Antrenamente', icon: Dumbbell, match: (p: string) => p.startsWith('/workouts') },
   { href: '/chat', label: 'Chat', icon: MessageCircle, match: (p: string) => p.startsWith('/chat') },
   { href: '/profile', label: 'Profil', icon: UserRound, match: (p: string) => p.startsWith('/profile') },
 ] as const;
 
 export default function AppTabBar() {
   const path = usePathname() || '';
-  const isApp = path.startsWith('/dashboard') || path.startsWith('/chat') || path.startsWith('/profile');
+  const isApp =
+    path.startsWith('/dashboard') ||
+    path.startsWith('/workouts') ||
+    path.startsWith('/chat') ||
+    path.startsWith('/profile');
   if (!isApp) return null;
 
   return (
@@ -21,7 +26,7 @@ export default function AppTabBar() {
       aria-label="Navigare aplicație"
       className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md md:hidden"
     >
-      <div className="grid h-14 grid-cols-3">
+      <div className="grid h-14 grid-cols-4">
         {LINKS.map(({ href, label, icon: Icon, match }) => {
           const active = match(path);
           return (
